@@ -1,0 +1,36 @@
+package nl.markpost.aiassistant.openai.service;
+
+import dev.langchain4j.data.message.SystemMessage;
+import dev.langchain4j.memory.ChatMemory;
+import nl.markpost.aiassistant.interfaces.ChatService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+
+@Service
+public class OpenAIChatService implements ChatService {
+
+  private final Assistant assistant;
+  private final ChatMemory chatMemory;
+
+  @Autowired
+  public OpenAIChatService(Assistant assistant, ChatMemory chatMemory) {
+    this.assistant = assistant;
+    this.chatMemory = chatMemory;
+  }
+
+  public String chat(String message) {
+    if (chatMemory.messages().isEmpty()) {
+      chatMemory.add(
+          SystemMessage.systemMessage(
+              "You are a personal assistant. You are here to help answering questions and retrieve information. Keep your answers short and to the point unless asked otherwise.If asked for the weather, don't make up a response, but search it online."));
+    }
+
+    return assistant.chat(message);
+  }
+
+  @Override
+  public Flux<String> chatStream(String input) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+}

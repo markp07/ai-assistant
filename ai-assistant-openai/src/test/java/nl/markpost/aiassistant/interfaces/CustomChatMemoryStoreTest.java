@@ -1,11 +1,11 @@
-package nl.markpost.aiassistant.service;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package nl.markpost.aiassistant.interfaces;
 
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
 import java.util.Collections;
 import java.util.List;
+import nl.markpost.aiassistant.openai.service.CustomChatMemoryStore;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapdb.DB;
@@ -25,7 +25,7 @@ class CustomChatMemoryStoreTest {
   @Test
   void getMessagesReturnsEmptyListWhenNoMessagesExist() {
     List<ChatMessage> messages = customChatMemoryStore.getMessages("nonexistent");
-    assertEquals(Collections.emptyList(), messages);
+    Assertions.assertEquals(Collections.emptyList(), messages);
   }
 
   @Test
@@ -33,7 +33,7 @@ class CustomChatMemoryStoreTest {
     List<ChatMessage> expectedMessages = List.of(new UserMessage("Hello"));
     customChatMemoryStore.updateMessages("memory1", expectedMessages);
     List<ChatMessage> actualMessages = customChatMemoryStore.getMessages("memory1");
-    assertEquals(expectedMessages, actualMessages);
+    Assertions.assertEquals(expectedMessages, actualMessages);
   }
 
   @Test
@@ -41,7 +41,7 @@ class CustomChatMemoryStoreTest {
     List<ChatMessage> messages = List.of(new UserMessage("Hello"));
     customChatMemoryStore.updateMessages("memory1", messages);
     List<ChatMessage> storedMessages = customChatMemoryStore.getMessages("memory1");
-    assertEquals(messages, storedMessages);
+    Assertions.assertEquals(messages, storedMessages);
   }
 
   @Test
@@ -50,12 +50,13 @@ class CustomChatMemoryStoreTest {
     customChatMemoryStore.updateMessages("memory1", messages);
     customChatMemoryStore.deleteMessages("memory1");
     List<ChatMessage> storedMessages = customChatMemoryStore.getMessages("memory1");
-    assertEquals(Collections.emptyList(), storedMessages);
+    Assertions.assertEquals(Collections.emptyList(), storedMessages);
   }
 
   @Test
   void deleteMessagesDoesNothingIfMemoryIdDoesNotExist() {
     customChatMemoryStore.deleteMessages("nonexistent");
-    assertEquals(Collections.EMPTY_LIST, customChatMemoryStore.getMessages("nonexistent"));
+    Assertions.assertEquals(
+        Collections.EMPTY_LIST, customChatMemoryStore.getMessages("nonexistent"));
   }
 }

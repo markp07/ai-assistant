@@ -1,4 +1,4 @@
-package nl.markpost.aiassistant.service;
+package nl.markpost.aiassistant.interfaces;
 
 import reactor.core.publisher.Flux;
 
