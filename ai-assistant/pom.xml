@@ -58,6 +58,30 @@
       <version>${mapstruct.version}</version>
     </dependency>
 
+    <!-- OpenAI dependencies -->
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+      <version>${langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-open-ai</artifactId>
+      <version>${langchain4j.version}</version>
+    </dependency>
+
+    <!-- Database dependencies -->
+    <dependency>
+  <groupId>org.hibernate.validator</groupId>
+  <artifactId>hibernate-validator</artifactId>
+  <version>${hibernate-validator.version}</version>
+</dependency>
+<dependency>
+  <groupId>org.mapdb</groupId>
+  <artifactId>mapdb</artifactId>
+  <version>${mapdb.version}</version>
+</dependency>
+
     <!-- Testing dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -83,6 +107,18 @@
     <dependency>
       <groupId>io.projectreactor</groupId>
       <artifactId>reactor-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>4.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>4.0.0</version>
       <scope>test</scope>
     </dependency>
 
