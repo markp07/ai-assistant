@@ -1,11 +1,10 @@
 package nl.markpost.aiassistant.service;
 
-import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
-@Service
-public class ChatService {
+public interface ChatService {
 
-  public String chat(String input) {
-    return "Hello, " + input + "!";
-  }
+  String chat(String input);
+
+  Flux<String> chatStream(String input);
 }
