@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  title: AI Assistant
+  version: 1.0.0
+servers:
+  - url: /api
+tags:
+  - name: chat
+    description: Chat endpoint
+paths:
+  /chat:
+    post:
+      tags:
+        - chat
+      summary: Chat endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatInput'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatOutput'
+components:
+  schemas:
+    ChatInput:
+      type: object
+      properties:
+        chat:
+          type: string
+      required:
+        - chat
+    ChatOutput:
+      type: object
+      properties:
+        chat:
+          type: string
+      required:
+        - chat

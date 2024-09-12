@@ -1,0 +1,4 @@
+# Set the base path for the API
+server:
+  servlet:
+    context-path: /api
