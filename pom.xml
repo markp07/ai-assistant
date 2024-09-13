@@ -20,11 +20,14 @@
     <lombok.version>1.18.34</lombok.version>
     <mapstruct.version>1.6.0</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
-    <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+    <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
     <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
     <springdoc-openapi-webmvc-core.version>2.6.0</springdoc-openapi-webmvc-core.version>
+    <assertj.version>3.26.3</assertj.version>
     <!-- Plugin versions -->
-    <jacoco.version>0.8.7</jacoco.version>
+    <jacoco.version>0.8.12</jacoco.version>
+    <fmt-maven-plugin.version>2.24</fmt-maven-plugin.version>
+    <dependency-check-maven.version>8.2.1</dependency-check-maven.version>
     <maven.failsafe.version>3.0.0-M5</maven.failsafe.version>
     <flatten.maven.version>1.2.7</flatten.maven.version>
     <maven.compiler.version>3.13.0</maven.compiler.version>

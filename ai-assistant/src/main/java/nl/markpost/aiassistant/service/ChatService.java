@@ -8,5 +8,4 @@ public class ChatService {
   public String chat(String input) {
     return "Hello, " + input + "!";
   }
-
 }
