@@ -183,6 +183,7 @@
           <format>HTML</format>
           <outputDirectory>${project.build.directory}/dependency-check-report</outputDirectory>
           <failBuildOnCVSS>7.0</failBuildOnCVSS>
+          <scanSet>false</scanSet>
         </configuration>
       </plugin>
       <plugin>

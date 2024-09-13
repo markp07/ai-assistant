@@ -59,6 +59,18 @@ curl -X POST http://localhost:8080/api/v1/chat -H "Content-Type: application/jso
 
 Refer to the [User Guide](docs/user_guide.md) for detailed instructions on how to use the features of the AI Assistant.
 
+## Continuous Integration
+
+This project uses GitHub Actions for Continuous Integration. The workflow is defined in `.github/workflows/maven.yml` and includes the following steps:
+
+- **Checkout code**: Uses `actions/checkout@v4` to checkout the code.
+- **Setup Maven**: Uses `s4u/setup-maven-action@v1.7.0` to set up Maven with Java 21 and Maven 3.9.9.
+- **Build with Maven**: Runs `mvn -B package --file pom.xml` to build the project.
+- **Run tests and generate JaCoCo report**: Runs `mvn test jacoco:report` to execute tests and generate a JaCoCo coverage report.
+- **Check code style with Google Java Format**: Runs `mvn com.spotify.fmt:fmt-maven-plugin:check` to check code formatting.
+- **Display Dependency Updates**: Runs `mvn versions:display-dependency-updates` to display available dependency updates.
+- **Display Plugin Updates**: Runs `mvn versions:display-plugin-updates` to display available plugin updates.
+
 ## Contributing
 
 We welcome contributions from the community! To contribute to this project, follow these steps:
@@ -74,4 +86,4 @@ Please refer to the [Contributing Guide](CONTRIBUTING.md) for more details.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information. 
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
