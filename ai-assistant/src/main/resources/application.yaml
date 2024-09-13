@@ -2,3 +2,6 @@
 server:
   servlet:
     context-path: /api
+
+openai:
+  api-key: ${OPENAI_API_KEY}
