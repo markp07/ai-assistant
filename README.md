@@ -1,6 +1,3 @@
-Here's an updated README file based on the information provided:
-
-```markdown
 # AI Assistant
 
 AI Assistant is a Java project using Maven, designed to create an intelligent assistant capable of automating tasks, providing support, and enhancing productivity through advanced machine learning algorithms and natural language processing.
@@ -77,7 +74,4 @@ Please refer to the [Contributing Guide](CONTRIBUTING.md) for more details.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-```
-
-Feel free to adapt the sections as needed to better fit your specific project requirements!
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information. 
