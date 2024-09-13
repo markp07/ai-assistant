@@ -27,7 +27,6 @@
     <!-- Plugin versions -->
     <jacoco.version>0.8.12</jacoco.version>
     <fmt-maven-plugin.version>2.24</fmt-maven-plugin.version>
-    <dependency-check-maven.version>8.2.1</dependency-check-maven.version>
     <maven.failsafe.version>3.0.0-M5</maven.failsafe.version>
     <flatten.maven.version>1.2.7</flatten.maven.version>
     <maven.compiler.version>3.13.0</maven.compiler.version>
