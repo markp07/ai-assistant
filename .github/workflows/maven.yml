@@ -24,7 +24,7 @@ jobs:
     - name: Run tests and generate JaCoCo report
       run: mvn test jacoco:report
     - name: Check code style with Google Java Format
-      run: mvn fmt:check
+      run: mvn com.spotify.fmt:fmt-maven-plugin:check
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
