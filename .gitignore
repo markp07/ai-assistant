@@ -28,3 +28,5 @@ chat-memory.db
 
 # Exclude target folders in all modules
 **/target/
+
+.idea
