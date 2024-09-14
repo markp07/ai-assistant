@@ -20,9 +20,14 @@
     <lombok.version>1.18.34</lombok.version>
     <mapstruct.version>1.6.0</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
+    <langchain4j.version>0.34.0</langchain4j.version>
+    <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
+    <mapdb.version>3.0.8</mapdb.version>
+    <!-- Generated API versions -->
     <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
     <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
     <springdoc-openapi-webmvc-core.version>2.6.0</springdoc-openapi-webmvc-core.version>
+    <!-- Test dependency versions -->
     <assertj.version>3.26.3</assertj.version>
     <!-- Plugin versions -->
     <jacoco.version>0.8.12</jacoco.version>
