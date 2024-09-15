@@ -1,6 +1,6 @@
 # AI Assistant
 
-AI Assistant is a Java project using Maven, designed to create an intelligent assistant capable of automating tasks, providing support, and enhancing productivity through advanced machine learning algorithms and natural language processing.
+AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model and the NS API to provide real-time railway information in the Netherlands.
 
 ## Table of Contents
 
