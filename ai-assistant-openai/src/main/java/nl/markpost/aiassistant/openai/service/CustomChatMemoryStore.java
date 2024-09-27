@@ -1,4 +1,4 @@
-package nl.markpost.aiassistant.service;
+package nl.markpost.aiassistant.openai.service;
 
 import static dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson;
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
@@ -13,8 +13,8 @@ import org.mapdb.DBMaker;
 
 public class CustomChatMemoryStore implements ChatMemoryStore {
 
-  private final DB db = DBMaker.fileDB("chat-memory.db").transactionEnable().fileLockDisable()
-      .make();
+  private final DB db =
+      DBMaker.fileDB("chat-memory.db").transactionEnable().fileLockDisable().make();
   private final Map<String, String> map = db.hashMap("messages", STRING, STRING).createOrOpen();
 
   @Override
@@ -35,5 +35,4 @@ public class CustomChatMemoryStore implements ChatMemoryStore {
     map.remove((String) memoryId);
     db.commit();
   }
-
 }

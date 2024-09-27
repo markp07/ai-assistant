@@ -37,6 +37,7 @@
     <maven.compiler.version>3.13.0</maven.compiler.version>
     <maven.resources.version>3.2.0</maven.resources.version>
     <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
+    <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -100,13 +101,81 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>${maven.resources.version}</version>
         </plugin>
+        <plugin>
+          <groupId>com.spotify</groupId>
+          <artifactId>dockerfile-maven-plugin</artifactId>
+          <version>${dockerfile-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <goals>
+                <goal>build</goal>
+                <goal>push</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <repository>your-docker-repo/ai-assistant</repository>
+            <tag>${revision}</tag>
+            <buildArgs>
+              <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+            </buildArgs>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
 
-  <modules>
-    <module>ai-assistant-api</module>
-    <module>ai-assistant</module>
-  </modules>
-
+  <profiles>
+    <profile>
+      <id>openai</id>
+      <modules>
+        <module>ai-assistant-api</module>
+        <module>ai-assistant</module>
+        <module>ai-assistant-interfaces</module>
+        <module>ai-assistant-openai</module>
+      </modules>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>hugging-face</id>
+      <modules>
+        <module>ai-assistant-api</module>
+        <module>ai-assistant</module>
+        <module>ai-assistant-interfaces</module>
+        <module>ai-assistant-hugging-face</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>ollama</id>
+      <modules>
+        <module>ai-assistant-api</module>
+        <module>ai-assistant</module>
+        <module>ai-assistant-interfaces</module>
+        <module>ai-assistant-ollama</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>raspberry-pi</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>dockerfile-maven-plugin</artifactId>
+            <version>${dockerfile-maven-plugin.version}</version>
+            <configuration>
+              <repository>markpost/ai-assistant</repository>
+              <tag>${revision}-raspberry-pi</tag>
+              <buildArgs>
+                <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+              </buildArgs>
+              <dockerHost>tcp://raspberrypi.local:2375</dockerHost>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

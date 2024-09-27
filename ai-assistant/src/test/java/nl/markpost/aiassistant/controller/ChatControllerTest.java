@@ -3,9 +3,9 @@ package nl.markpost.aiassistant.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import nl.markpost.aiassistant.interfaces.ChatService;
 import nl.markpost.aiassistant.model.ChatInput;
 import nl.markpost.aiassistant.model.ChatOutput;
-import nl.markpost.aiassistant.service.ChatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,7 +25,7 @@ public class ChatControllerTest {
   }
 
   @Test
-  public void testChatPost() {
+  void testChatPost() {
     ChatInput chatInput = new ChatInput();
     chatInput.setChat("Hello");
 
