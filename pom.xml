@@ -157,25 +157,5 @@
         <module>ai-assistant-ollama</module>
       </modules>
     </profile>
-    <profile>
-      <id>raspberry-pi</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.spotify</groupId>
-            <artifactId>dockerfile-maven-plugin</artifactId>
-            <version>${dockerfile-maven-plugin.version}</version>
-            <configuration>
-              <repository>markpost/ai-assistant</repository>
-              <tag>${revision}-raspberry-pi</tag>
-              <buildArgs>
-                <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-              </buildArgs>
-              <dockerHost>tcp://raspberrypi.local:2375</dockerHost>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>
