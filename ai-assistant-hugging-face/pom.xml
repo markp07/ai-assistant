@@ -6,7 +6,8 @@
   <parent>
     <groupId>nl.markpost</groupId>
     <artifactId>ai-assistant-parent</artifactId>
-    <version>0.0.1</version>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>ai-assistant-hugging-face</artifactId>
