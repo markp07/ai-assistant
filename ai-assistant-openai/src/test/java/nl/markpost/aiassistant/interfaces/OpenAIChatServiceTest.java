@@ -4,6 +4,8 @@ import static org.mockito.Mockito.mock;
 
 import dev.langchain4j.memory.ChatMemory;
 import java.util.Collections;
+import nl.markpost.aiassistant.common.models.ChatInputDTO;
+import nl.markpost.aiassistant.common.models.ChatOutputDTO;
 import nl.markpost.aiassistant.openai.service.Assistant;
 import nl.markpost.aiassistant.openai.service.OpenAIChatService;
 import org.junit.jupiter.api.Assertions;
@@ -26,13 +28,13 @@ class OpenAIChatServiceTest {
 
     String input = "World";
     String expectedOutput = "Hello, World!";
-    String actualOutput = openAIChatService.chat(input);
-    Assertions.assertEquals(expectedOutput, actualOutput);
+    ChatOutputDTO actualOutput = openAIChatService.chat(new ChatInputDTO(input));
+    Assertions.assertEquals(expectedOutput, actualOutput.chat());
   }
 
   @Test
   void testChatStream() {
-    String input = "World";
+    ChatInputDTO input = new ChatInputDTO("World");
 
     Assertions.assertThrows(
         UnsupportedOperationException.class,

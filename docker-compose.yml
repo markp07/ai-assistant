@@ -1,0 +1,14 @@
+services:
+  ai-assistant:
+    image: ai-assistant:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - /data/ai_assistant
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+volumes:
+  ai_assistant:

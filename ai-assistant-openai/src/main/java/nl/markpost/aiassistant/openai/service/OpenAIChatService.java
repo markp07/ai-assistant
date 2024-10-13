@@ -3,6 +3,8 @@ package nl.markpost.aiassistant.openai.service;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.memory.ChatMemory;
 import nl.markpost.aiassistant.common.interfaces.ChatService;
+import nl.markpost.aiassistant.common.models.ChatInputDTO;
+import nl.markpost.aiassistant.common.models.ChatOutputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -19,18 +21,20 @@ public class OpenAIChatService implements ChatService {
     this.chatMemory = chatMemory;
   }
 
-  public String chat(String message) {
+  public ChatOutputDTO chat(ChatInputDTO chatInputDTO) {
     if (chatMemory.messages().isEmpty()) {
       chatMemory.add(
           SystemMessage.systemMessage(
               "You are a personal assistant. You are here to help answering questions and retrieve information. Keep your answers short and to the point unless asked otherwise.If asked for the weather, don't make up a response, but search it online."));
     }
 
-    return assistant.chat(message);
+    String response = assistant.chat(chatInputDTO.chat());
+
+    return new ChatOutputDTO(response);
   }
 
   @Override
-  public Flux<String> chatStream(String input) {
+  public Flux<String> chatStream(ChatInputDTO input) {
     throw new UnsupportedOperationException("Not implemented yet");
   }
 }

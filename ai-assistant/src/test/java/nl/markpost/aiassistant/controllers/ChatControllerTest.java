@@ -1,21 +1,33 @@
-package nl.markpost.aiassistant.controller;
+package nl.markpost.aiassistant.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import nl.markpost.aiassistant.api.model.ChatInput;
 import nl.markpost.aiassistant.api.model.ChatOutput;
 import nl.markpost.aiassistant.common.interfaces.ChatService;
+import nl.markpost.aiassistant.common.models.ChatInputDTO;
+import nl.markpost.aiassistant.common.models.ChatOutputDTO;
+import nl.markpost.aiassistant.mappers.ChatInputDTOMapper;
+import nl.markpost.aiassistant.mappers.ChatInputDTOMapperImpl;
+import nl.markpost.aiassistant.mappers.ChatOutputMapper;
+import nl.markpost.aiassistant.mappers.ChatOutputMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.http.ResponseEntity;
 
 public class ChatControllerTest {
 
   @Mock private ChatService chatService;
+
+  @Spy private ChatInputDTOMapper chatInputDTOMapper = new ChatInputDTOMapperImpl();
+
+  @Spy private ChatOutputMapper chatOutputDTOMapper = new ChatOutputMapperImpl();
 
   @InjectMocks private ChatController chatController;
 
@@ -32,7 +44,9 @@ public class ChatControllerTest {
     ChatOutput chatOutput = new ChatOutput();
     chatOutput.setChat("Hello, world!");
 
-    when(chatService.chat("Hello")).thenReturn("Hello, world!");
+    ChatOutputDTO chatOutputDto = new ChatOutputDTO("Hello, world!");
+
+    when(chatService.chat(any(ChatInputDTO.class))).thenReturn(chatOutputDto);
 
     ResponseEntity<ChatOutput> response = chatController.chatPost(chatInput);
 

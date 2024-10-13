@@ -36,6 +36,8 @@
     <flatten.maven.version>1.2.7</flatten.maven.version>
     <maven.compiler.version>3.13.0</maven.compiler.version>
     <maven.resources.version>3.2.0</maven.resources.version>
+    <maven.jar.version>3.2.0</maven.jar.version>
+    <maven.assembly.version>3.3.0</maven.assembly.version>
     <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
     <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
   </properties>
@@ -100,27 +102,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>${maven.resources.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>com.spotify</groupId>
-          <artifactId>dockerfile-maven-plugin</artifactId>
-          <version>${dockerfile-maven-plugin.version}</version>
-          <executions>
-            <execution>
-              <id>default</id>
-              <goals>
-                <goal>build</goal>
-                <goal>push</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <repository>your-docker-repo/ai-assistant</repository>
-            <tag>${revision}</tag>
-            <buildArgs>
-              <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-            </buildArgs>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
