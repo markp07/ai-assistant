@@ -2,7 +2,7 @@ package nl.markpost.aiassistant.openai.service;
 
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.memory.ChatMemory;
-import nl.markpost.aiassistant.interfaces.ChatService;
+import nl.markpost.aiassistant.common.interfaces.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

@@ -1,9 +1,9 @@
 package nl.markpost.aiassistant.controller;
 
-import nl.markpost.aiassistant.api.ChatApi;
-import nl.markpost.aiassistant.interfaces.ChatService;
-import nl.markpost.aiassistant.model.ChatInput;
-import nl.markpost.aiassistant.model.ChatOutput;
+import nl.markpost.aiassistant.api.controller.ChatApi;
+import nl.markpost.aiassistant.api.model.ChatInput;
+import nl.markpost.aiassistant.api.model.ChatOutput;
+import nl.markpost.aiassistant.common.interfaces.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

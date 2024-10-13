@@ -10,7 +10,10 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>ai-assistant-interfaces</artifactId>
+  <artifactId>ai-assistant-common</artifactId>
+  <version>${revision}</version>
+  <name>AI Assistant Common</name>
+  <description>AI Assistant application Common components</description>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -22,6 +25,11 @@
     <dependency>
       <groupId>io.projectreactor</groupId>
       <artifactId>reactor-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 </project>

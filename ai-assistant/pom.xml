@@ -24,7 +24,7 @@
     </dependency>
     <dependency>
       <groupId>nl.markpost</groupId>
-      <artifactId>ai-assistant-interfaces</artifactId>
+      <artifactId>ai-assistant-common</artifactId>
       <version>${revision}</version>
     </dependency>
     <dependency>

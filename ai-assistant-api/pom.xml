@@ -52,8 +52,8 @@
               <inputSpec>${project.basedir}/src/main/resources/api/ai-assistant-api.yml</inputSpec>
               <generatorName>spring</generatorName>
               <output>${project.build.directory}/generated-sources</output>
-              <apiPackage>nl.markpost.aiassistant.api</apiPackage>
-              <modelPackage>nl.markpost.aiassistant.model</modelPackage>
+              <apiPackage>nl.markpost.aiassistant.api.controller</apiPackage>
+              <modelPackage>nl.markpost.aiassistant.api.model</modelPackage>
               <supportingFilesToGenerate>false</supportingFilesToGenerate>
               <configOptions>
                 <title>AI Assistant API</title>

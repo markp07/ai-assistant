@@ -9,18 +9,14 @@ COPY pom.xml .
 COPY ai-assistant ai-assistant
 COPY ai-assistant-api ai-assistant-api
 COPY ai-assistant-hugging-face ai-assistant-hugging-face
-COPY ai-assistant-interfaces ai-assistant-interfaces
+COPY ai-assistant-common ai-assistant-common
 COPY ai-assistant-ollama ai-assistant-ollama
 COPY ai-assistant-openai ai-assistant-openai
 
-# Update Maven Compiler Plugin to a version that supports Java 21
-RUN ./mvnw versions:use-latest-versions -Dincludes=org.apache.maven.plugins:maven-compiler-plugin
-
-# Build the project and skip tests
+# Build the project
 RUN ./mvnw install
 
-# Extract the project version from pom.xml and save it to version.txt
-FROM build AS extract-version
+# Extract the project version to a file
 RUN ./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout > version.txt
 
 # Use OpenJDK 21 with a slim base image for the final stage

@@ -11,6 +11,9 @@
   </parent>
 
   <artifactId>ai-assistant-openai</artifactId>
+  <version>${revision}</version>
+  <name>AI Assistant OpenAI</name>
+  <description>AI Assistant application OpenAI</description>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -21,7 +24,7 @@
   <dependencies>
     <dependency>
       <groupId>nl.markpost</groupId>
-      <artifactId>ai-assistant-interfaces</artifactId>
+      <artifactId>ai-assistant-common</artifactId>
       <version>${revision}</version>
     </dependency>
 
