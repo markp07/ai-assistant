@@ -13,12 +13,14 @@ AI Assistant is a Java project built with Maven and Docker. It integrates with t
 
 ## Project Structure
 
-The project is organized into two modules:
+The project is organized into multiple modules:
 
 1. **ai-assistant-api**: This module holds the API specification and generates the API interfaces and models.
-2. **ai-assistant**: This module contains the main application with a single endpoint.
-
-The parent POM file is `ai-assistant-parent`.
+2. **ai-assistant**: This module contains the main application logic.
+3. **ai-assistant-common**: This module contains common interfaces and models.
+4. **ai-assistant-openai**: This module integrates with the OpenAI API.
+5. **ai-assistant-hugging-face**: This module integrates with the Hugging Face API.
+6. **ai-assistant-ollama**: This module integrates with the Ollama API.
 
 ## Features
 
@@ -26,6 +28,85 @@ The parent POM file is `ai-assistant-parent`.
 - **Task Automation**: Automates repetitive tasks to save time and increase efficiency.
 - **Machine Learning**: Utilizes machine learning models to continuously improve performance.
 - **Customizable**: Easily customizable to suit different use cases and industries.
+
+## Docker Setup
+
+### Dockerfile
+
+A Dockerfile is a script that contains a series of instructions on how to build a Docker image. Each instruction in a Dockerfile creates a layer in the image, and these layers are cached to speed up the build process. Here is a brief explanation of a typical Dockerfile setup:
+
+1. **Base Image**: Specifies the starting point for the image, usually an official image from Docker Hub.
+   ```dockerfile
+   FROM openjdk:11-jre-slim
+   ```
+
+2. **Maintainer**: (Optional) Specifies the author of the Dockerfile.
+   ```dockerfile
+   LABEL maintainer="your-email@example.com"
+   ```
+
+3. **Working Directory**: Sets the working directory inside the container.
+   ```dockerfile
+   WORKDIR /app
+   ```
+
+4. **Copy Files**: Copies files from the host machine to the container.
+   ```dockerfile
+   COPY target/your-app.jar /app/your-app.jar
+   ```
+
+5. **Run Commands**: Executes commands in the container, such as installing dependencies.
+   ```dockerfile
+   RUN apt-get update && apt-get install -y some-package
+   ```
+
+6. **Expose Ports**: Informs Docker that the container listens on the specified network ports at runtime.
+   ```dockerfile
+   EXPOSE 8080
+   ```
+
+7. **Entry Point**: Specifies the command to run within the container when it starts.
+   ```dockerfile
+   ENTRYPOINT ["java", "-jar", "your-app.jar"]
+   ```
+
+### Docker Compose
+
+`docker-compose` is a tool for defining and running multi-container Docker applications. It uses a `docker-compose.yml` file to configure the application's services, networks, and volumes. Here is a brief explanation of a typical `docker-compose.yml` setup:
+
+1. **Version**: Specifies the version of the Docker Compose file format.
+   ```yaml
+   version: '3.8'
+   ```
+
+2. **Services**: Defines the services (containers) that make up the application.
+   ```yaml
+   services:
+     app:
+       image: your-app-image
+       build:
+         context: .
+         dockerfile: Dockerfile
+       ports:
+         - "8080:8080"
+       environment:
+         - ENV_VAR=value
+   ```
+
+3. **Networks**: (Optional) Defines custom networks for the services.
+   ```yaml
+   networks:
+     app-network:
+       driver: bridge
+   ```
+
+4. **Volumes**: (Optional) Defines volumes to persist data.
+   ```yaml
+   volumes:
+     app-data:
+   ```
+
+In summary, a Dockerfile is used to build a Docker image by specifying a series of instructions, while `docker-compose` is used to manage multi-container applications by defining services, networks, and volumes in a `docker-compose.yml` file.
 
 ## Installation
 
@@ -42,10 +123,9 @@ To install and run the AI Assistant locally, follow these steps:
     mvn clean install
     ```
 
-3. **Run the application**
+3. **Run Docker Compose to build and deploy the application**
     ```sh
-    cd ai-assistant
-    mvn spring-boot:run
+    ./start.sh
     ```
 
 ## Usage
@@ -57,33 +137,10 @@ Example CURL command:
 curl -X POST http://localhost:8080/api/v1/chat -H "Content-Type: application/json" -d '{"chat": "Hello, AI Assistant!"}'
 ```
 
-Refer to the [User Guide](docs/user_guide.md) for detailed instructions on how to use the features of the AI Assistant.
+## Changes
 
-## Continuous Integration
-
-This project uses GitHub Actions for Continuous Integration. The workflow is defined in `.github/workflows/maven.yml` and includes the following steps:
-
-- **Checkout code**: Uses `actions/checkout@v4` to checkout the code.
-- **Setup Maven**: Uses `s4u/setup-maven-action@v1.7.0` to set up Maven with Java 21 and Maven 3.9.9.
-- **Build with Maven**: Runs `mvn -B package --file pom.xml` to build the project.
-- **Run tests and generate JaCoCo report**: Runs `mvn test jacoco:report` to execute tests and generate a JaCoCo coverage report.
-- **Check code style with Google Java Format**: Runs `mvn com.spotify.fmt:fmt-maven-plugin:check` to check code formatting.
-- **Display Dependency Updates**: Runs `mvn versions:display-dependency-updates` to display available dependency updates.
-- **Display Plugin Updates**: Runs `mvn versions:display-plugin-updates` to display available plugin updates.
-
-## Contributing
-
-We welcome contributions from the community! To contribute to this project, follow these steps:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes.
-4. Commit your changes (`git commit -m 'Add new feature'`).
-5. Push to the branch (`git push origin feature-branch`).
-6. Create a Pull Request.
-
-Please refer to the [Contributing Guide](CONTRIBUTING.md) for more details.
+Please read the [CHANGELOG.md](CHANGELOG.md) for the changes to this project.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

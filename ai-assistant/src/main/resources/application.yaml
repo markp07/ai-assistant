@@ -6,3 +6,10 @@ server:
 
 openai:
   api-key: ${OPENAI_API_KEY}
+
+logging:
+  level:
+    root: info
+    nl:
+      markpost:
+        aiassistant: info

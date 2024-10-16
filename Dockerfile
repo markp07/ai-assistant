@@ -29,7 +29,13 @@ VOLUME /tmp
 EXPOSE 9000
 
 # Copy the JAR file from the build stage using the extracted version
-COPY --from=build /workspace/app/ai-assistant/target/ai-assistant-*-jar-with-dependencies.jar app.jar
+COPY --from=build /workspace/app/ai-assistant/target/ai-assistant-*.jar app.jar
+
+# Set the argument for the OpenAI API key
+ARG OPENAI_API_KEY_FILE=/run/secrets/openai_api_key
+
+# Set the environment variable for the OpenAI API key using Docker secrets
+RUN echo "OPENAI_API_KEY=$(cat ${OPENAI_API_KEY_FILE})" > /etc/environment
 
 # Set the entry point to run the JAR file
 ENTRYPOINT ["java","-jar","/app.jar"]
