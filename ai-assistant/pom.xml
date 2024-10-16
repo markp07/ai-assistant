@@ -24,6 +24,11 @@
     </dependency>
     <dependency>
       <groupId>nl.markpost</groupId>
+      <artifactId>ai-assistant-external-api</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>nl.markpost</groupId>
       <artifactId>ai-assistant-common</artifactId>
       <version>${revision}</version>
     </dependency>
@@ -37,6 +42,10 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-openfeign</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -145,6 +154,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
         <executions>
           <execution>
             <goals>
@@ -154,95 +164,58 @@
         </executions>
       </plugin>
 <!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-jar-plugin</artifactId>-->
-<!--        <version>${maven.jar.version}</version>-->
-<!--        <configuration>-->
-<!--          <archive>-->
-<!--            <manifest>-->
-<!--              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
-<!--              <mainClass>nl.markpost.aiassistant.AiAssistant</mainClass>-->
-<!--            </manifest>-->
-<!--          </archive>-->
-<!--        </configuration>-->
-<!--      </plugin>-->
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-assembly-plugin</artifactId>-->
-<!--        <version>${maven.assembly.version}</version>-->
-<!--        <configuration>-->
-<!--          <archive>-->
-<!--            <manifest>-->
-<!--              <mainClass>nl.markpost.aiassistant.AiAssistant</mainClass>-->
-<!--            </manifest>-->
-<!--          </archive>-->
-<!--          <descriptorRefs>-->
-<!--            <descriptorRef>jar-with-dependencies</descriptorRef>-->
-<!--          </descriptorRefs>-->
-<!--        </configuration>-->
+<!--        <groupId>org.jacoco</groupId>-->
+<!--        <artifactId>jacoco-maven-plugin</artifactId>-->
+<!--        <version>${jacoco.version}</version>-->
 <!--        <executions>-->
 <!--          <execution>-->
-<!--            <id>make-assembly</id>-->
-<!--            <phase>package</phase>-->
+<!--            <id>prepare-agent</id>-->
 <!--            <goals>-->
-<!--              <goal>single</goal>-->
+<!--              <goal>prepare-agent</goal>-->
 <!--            </goals>-->
+<!--          </execution>-->
+<!--          <execution>-->
+<!--            <id>report</id>-->
+<!--            <phase>verify</phase>-->
+<!--            <goals>-->
+<!--              <goal>report</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--          <execution>-->
+<!--            <id>check</id>-->
+<!--            <goals>-->
+<!--              <goal>check</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <rules>-->
+<!--                <rule>-->
+<!--                  <element>CLASS</element>-->
+<!--                  <excludes>-->
+<!--                    <exclude>*Test</exclude>-->
+<!--                  </excludes>-->
+<!--                  <limits>-->
+<!--                    <limit>-->
+<!--                      <counter>LINE</counter>-->
+<!--                      <value>COVEREDRATIO</value>-->
+<!--                      <minimum>0.25</minimum>-->
+<!--                    </limit>-->
+<!--                    <limit>-->
+<!--                      <counter>CLASS</counter>-->
+<!--                      <value>COVEREDRATIO</value>-->
+<!--                      <minimum>0.25</minimum>-->
+<!--                    </limit>-->
+<!--                    <limit>-->
+<!--                      <counter>COMPLEXITY</counter>-->
+<!--                      <value>COVEREDRATIO</value>-->
+<!--                      <minimum>0.25</minimum>-->
+<!--                    </limit>-->
+<!--                  </limits>-->
+<!--                </rule>-->
+<!--              </rules>-->
+<!--            </configuration>-->
 <!--          </execution>-->
 <!--        </executions>-->
 <!--      </plugin>-->
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
-        <executions>
-          <execution>
-            <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>report</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>check</id>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <rule>
-                  <element>CLASS</element>
-                  <excludes>
-                    <exclude>*Test</exclude>
-                  </excludes>
-                  <limits>
-                    <limit>
-                      <counter>LINE</counter>
-                      <value>COVEREDRATIO</value>
-                      <minimum>0.25</minimum>
-                    </limit>
-                    <limit>
-                      <counter>CLASS</counter>
-                      <value>COVEREDRATIO</value>
-                      <minimum>0.25</minimum>
-                    </limit>
-                    <limit>
-                      <counter>COMPLEXITY</counter>
-                      <value>COVEREDRATIO</value>
-                      <minimum>0.25</minimum>
-                    </limit>
-                  </limits>
-                </rule>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>com.spotify.fmt</groupId>
         <artifactId>fmt-maven-plugin</artifactId>

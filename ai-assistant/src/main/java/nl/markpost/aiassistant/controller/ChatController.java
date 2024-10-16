@@ -1,4 +1,4 @@
-package nl.markpost.aiassistant.controllers;
+package nl.markpost.aiassistant.controller;
 
 import nl.markpost.aiassistant.api.controller.ChatApi;
 import nl.markpost.aiassistant.api.model.ChatInput;
@@ -6,8 +6,8 @@ import nl.markpost.aiassistant.api.model.ChatOutput;
 import nl.markpost.aiassistant.common.interfaces.ChatService;
 import nl.markpost.aiassistant.common.models.ChatInputDTO;
 import nl.markpost.aiassistant.common.models.ChatOutputDTO;
-import nl.markpost.aiassistant.mappers.ChatInputDTOMapper;
-import nl.markpost.aiassistant.mappers.ChatOutputMapper;
+import nl.markpost.aiassistant.mapper.ChatInputDTOMapper;
+import nl.markpost.aiassistant.mapper.ChatOutputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

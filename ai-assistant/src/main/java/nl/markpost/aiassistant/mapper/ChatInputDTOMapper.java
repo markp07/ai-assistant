@@ -1,4 +1,4 @@
-package nl.markpost.aiassistant.mappers;
+package nl.markpost.aiassistant.mapper;
 
 import nl.markpost.aiassistant.api.model.ChatInput;
 import nl.markpost.aiassistant.common.models.ChatInputDTO;

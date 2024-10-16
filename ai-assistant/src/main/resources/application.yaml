@@ -6,6 +6,8 @@ server:
 
 openai:
   api-key: ${OPENAI_API_KEY}
+ns:
+  api-key: ${NS_API_KEY}
 
 logging:
   level:

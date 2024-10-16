@@ -3,6 +3,7 @@ package nl.markpost.aiassistant;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * The main class of the application.
@@ -20,6 +21,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  */
 @SpringBootApplication
 @ServletComponentScan
+@EnableFeignClients
 public class AiAssistant {
 
   public static void main(String[] args) {

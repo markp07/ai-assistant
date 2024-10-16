@@ -1,4 +1,4 @@
-package nl.markpost.aiassistant.controllers;
+package nl.markpost.aiassistant.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,10 +9,10 @@ import nl.markpost.aiassistant.api.model.ChatOutput;
 import nl.markpost.aiassistant.common.interfaces.ChatService;
 import nl.markpost.aiassistant.common.models.ChatInputDTO;
 import nl.markpost.aiassistant.common.models.ChatOutputDTO;
-import nl.markpost.aiassistant.mappers.ChatInputDTOMapper;
-import nl.markpost.aiassistant.mappers.ChatInputDTOMapperImpl;
-import nl.markpost.aiassistant.mappers.ChatOutputMapper;
-import nl.markpost.aiassistant.mappers.ChatOutputMapperImpl;
+import nl.markpost.aiassistant.mapper.ChatInputDTOMapper;
+import nl.markpost.aiassistant.mapper.ChatInputDTOMapperImpl;
+import nl.markpost.aiassistant.mapper.ChatOutputMapper;
+import nl.markpost.aiassistant.mapper.ChatOutputMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -17,6 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Dependency versions -->
     <spring.boot.version>3.3.3</spring.boot.version>
+    <spring.cloud.version>2023.0.3</spring.cloud.version>
     <lombok.version>1.18.34</lombok.version>
     <mapstruct.version>1.6.0</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
@@ -48,6 +49,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring.cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -112,6 +120,7 @@
       <id>openai</id>
       <modules>
         <module>ai-assistant-api</module>
+        <module>ai-assistant-external-api</module>
         <module>ai-assistant</module>
         <module>ai-assistant-common</module>
         <module>ai-assistant-openai</module>
@@ -124,6 +133,7 @@
       <id>hugging-face</id>
       <modules>
         <module>ai-assistant-api</module>
+        <module>ai-assistant-external-api</module>
         <module>ai-assistant</module>
         <module>ai-assistant-common</module>
         <module>ai-assistant-hugging-face</module>
@@ -133,6 +143,7 @@
       <id>ollama</id>
       <modules>
         <module>ai-assistant-api</module>
+        <module>ai-assistant-external-api</module>
         <module>ai-assistant</module>
         <module>ai-assistant-common</module>
         <module>ai-assistant-ollama</module>

@@ -8,6 +8,7 @@ COPY .mvn .mvn
 COPY pom.xml .
 COPY ai-assistant ai-assistant
 COPY ai-assistant-api ai-assistant-api
+COPY ai-assistant-external-api ai-assistant-external-api
 COPY ai-assistant-hugging-face ai-assistant-hugging-face
 COPY ai-assistant-common ai-assistant-common
 COPY ai-assistant-ollama ai-assistant-ollama
@@ -33,9 +34,11 @@ COPY --from=build /workspace/app/ai-assistant/target/ai-assistant-*.jar app.jar
 
 # Set the argument for the OpenAI API key
 ARG OPENAI_API_KEY_FILE=/run/secrets/openai_api_key
+ARG NS_API_KEY_FILE=/run/secrets/ns_api_key
 
 # Set the environment variable for the OpenAI API key using Docker secrets
 RUN echo "OPENAI_API_KEY=$(cat ${OPENAI_API_KEY_FILE})" > /etc/environment
+RUN echo "NS_API_KEY=$(cat ${NS_API_KEY_FILE})" > /etc/environment
 
 # Set the entry point to run the JAR file
 ENTRYPOINT ["java","-jar","/app.jar"]

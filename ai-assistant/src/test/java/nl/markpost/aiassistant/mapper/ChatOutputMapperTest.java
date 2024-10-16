@@ -1,4 +1,4 @@
-package nl.markpost.aiassistant.mappers;
+package nl.markpost.aiassistant.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
