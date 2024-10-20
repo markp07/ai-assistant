@@ -11,5 +11,6 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NS_API_KEY=${NS_API_KEY}
 volumes:
   ai_assistant:

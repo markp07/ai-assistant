@@ -37,8 +37,8 @@ ARG OPENAI_API_KEY_FILE=/run/secrets/openai_api_key
 ARG NS_API_KEY_FILE=/run/secrets/ns_api_key
 
 # Set the environment variable for the OpenAI API key using Docker secrets
-RUN echo "OPENAI_API_KEY=$(cat ${OPENAI_API_KEY_FILE})" > /etc/environment
-RUN echo "NS_API_KEY=$(cat ${NS_API_KEY_FILE})" > /etc/environment
+ENV OPENAI_API_KEY=${OPENAI_API_KEY_FILE}
+ENV NS_API_KEY=${NS_API_KEY_FILE}
 
 # Set the entry point to run the JAR file
 ENTRYPOINT ["java","-jar","/app.jar"]

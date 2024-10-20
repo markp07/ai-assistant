@@ -6,7 +6,11 @@ import reactor.core.publisher.Flux;
 
 public interface ChatService {
 
-  ChatOutputDTO chat(ChatInputDTO input);
+  void addSystemMessage(ChatInputDTO message);
+
+  ChatOutputDTO sendUserMessage(ChatInputDTO input);
 
   Flux<String> chatStream(ChatInputDTO input);
+
+  void clearHistory();
 }

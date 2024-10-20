@@ -26,6 +26,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ChatOutput'
+    delete:
+      tags:
+        - chat
+      summary: Delete chat endpoint
+      responses:
+        '204':
+          description: Successful response
+  /travel/departures:
+    get:
+      tags:
+        - travel
+      summary: Travel endpoint
+      parameters:
+        - name: station
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: departureTime
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Departures'
+        '400':
+          description: Invalid request
 components:
   schemas:
     ChatInput:
@@ -42,3 +75,28 @@ components:
           type: string
       required:
         - chat
+    Departure:
+      type: object
+      properties:
+        direction:
+          type: string
+        departureTime:
+          type: string
+          format: date-time
+        delay:
+          type: integer
+          format: int64
+        track:
+          type: string
+        category:
+          type: string
+        cancelled:
+          type: boolean
+        via:
+          type: array
+          items:
+            type: string
+    Departures:
+      type: array
+      items:
+        $ref: '#/components/schemas/Departure'

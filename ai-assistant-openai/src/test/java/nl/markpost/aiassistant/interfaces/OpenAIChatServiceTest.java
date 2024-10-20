@@ -1,7 +1,9 @@
 package nl.markpost.aiassistant.interfaces;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.memory.ChatMemory;
 import java.util.Collections;
 import nl.markpost.aiassistant.common.models.ChatInputDTO;
@@ -28,7 +30,7 @@ class OpenAIChatServiceTest {
 
     String input = "World";
     String expectedOutput = "Hello, World!";
-    ChatOutputDTO actualOutput = openAIChatService.chat(new ChatInputDTO(input));
+    ChatOutputDTO actualOutput = openAIChatService.sendUserMessage(new ChatInputDTO(input));
     Assertions.assertEquals(expectedOutput, actualOutput.chat());
   }
 
@@ -41,5 +43,20 @@ class OpenAIChatServiceTest {
         () -> {
           openAIChatService.chatStream(input);
         });
+  }
+
+  @Test
+  void testAddSystemMessage() {
+    ChatInputDTO input = new ChatInputDTO("System message");
+    openAIChatService.addSystemMessage(input);
+
+    verify(chatMemory).add(ArgumentMatchers.any(SystemMessage.class));
+  }
+
+  @Test
+  void testClearHistory() {
+    openAIChatService.clearHistory();
+
+    verify(chatMemory).clear();
   }
 }

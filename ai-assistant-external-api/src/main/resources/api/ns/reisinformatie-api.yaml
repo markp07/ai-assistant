@@ -3952,7 +3952,6 @@ components:
               $ref: '#/components/schemas/NesProperties'
     ProductInterface:
       required:
-        - productType
         - type
       type: object
       properties:
@@ -3989,8 +3988,6 @@ components:
           format: int32
         productType:
           type: string
-      discriminator:
-        propertyName: productType
     RegistrationAvailability:
       required:
         - bicycle

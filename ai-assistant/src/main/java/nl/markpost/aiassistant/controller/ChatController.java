@@ -36,9 +36,15 @@ public class ChatController implements ChatApi {
   @Override
   public ResponseEntity<ChatOutput> chatPost(ChatInput chatInput) {
     ChatInputDTO chatInputDTO = chatInputDTOMapper.from(chatInput);
-    ChatOutputDTO chatOutputDTO = chatService.chat(chatInputDTO);
+    ChatOutputDTO chatOutputDTO = chatService.sendUserMessage(chatInputDTO);
     ChatOutput chatOutput = chatOutputMapper.from(chatOutputDTO);
 
     return ResponseEntity.ok(chatOutput);
+  }
+
+  @Override
+  public ResponseEntity<Void> chatDelete() {
+    chatService.clearHistory();
+    return ResponseEntity.noContent().build();
   }
 }

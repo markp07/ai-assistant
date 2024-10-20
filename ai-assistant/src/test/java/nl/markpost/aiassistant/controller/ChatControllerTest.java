@@ -46,7 +46,7 @@ public class ChatControllerTest {
 
     ChatOutputDTO chatOutputDto = new ChatOutputDTO("Hello, world!");
 
-    when(chatService.chat(any(ChatInputDTO.class))).thenReturn(chatOutputDto);
+    when(chatService.sendUserMessage(any(ChatInputDTO.class))).thenReturn(chatOutputDto);
 
     ResponseEntity<ChatOutput> response = chatController.chatPost(chatInput);
 

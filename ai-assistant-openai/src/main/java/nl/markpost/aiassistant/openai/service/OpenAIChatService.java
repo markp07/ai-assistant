@@ -21,20 +21,24 @@ public class OpenAIChatService implements ChatService {
     this.chatMemory = chatMemory;
   }
 
-  public ChatOutputDTO chat(ChatInputDTO chatInputDTO) {
-    if (chatMemory.messages().isEmpty()) {
-      chatMemory.add(
-          SystemMessage.systemMessage(
-              "You are a personal assistant. You are here to help answering questions and retrieve information. Keep your answers short and to the point unless asked otherwise.If asked for the weather, don't make up a response, but search it online."));
-    }
-
+  @Override
+  public ChatOutputDTO sendUserMessage(ChatInputDTO chatInputDTO) {
     String response = assistant.chat(chatInputDTO.chat());
-
     return new ChatOutputDTO(response);
+  }
+
+  @Override
+  public void addSystemMessage(ChatInputDTO message) {
+    chatMemory.add(SystemMessage.systemMessage(message.chat()));
   }
 
   @Override
   public Flux<String> chatStream(ChatInputDTO input) {
     throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
+  public void clearHistory() {
+    chatMemory.clear();
   }
 }

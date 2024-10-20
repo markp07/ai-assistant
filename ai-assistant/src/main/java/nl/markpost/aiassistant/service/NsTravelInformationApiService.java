@@ -1,10 +1,14 @@
 package nl.markpost.aiassistant.service;
 
-import java.time.LocalDate;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import nl.markpost.aiassistant.api.model.Departure;
 import nl.markpost.aiassistant.client.NsTravelInformationClient;
-import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure;
+import nl.markpost.aiassistant.constant.NSStationCode;
+import nl.markpost.aiassistant.mapper.DepartureMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,12 +17,18 @@ public class NsTravelInformationApiService {
 
   private final NsTravelInformationClient nsTravelInformationClient;
 
-  public List<Departure> getDepartures(String station) {
-    // TODO: add error handling
-    // TODO: add mappers
-    return nsTravelInformationClient
-        .getDepartures("nl", station, null, LocalDate.now().toString(), 5)
-        .getPayload()
-        .getDepartures();
+  private final DepartureMapper departureMapper;
+
+  public @NotNull @Valid List<@Valid Departure> getDepartures(
+      String station, OffsetDateTime departureTime) {
+    String stationCode = NSStationCode.getByName(station).getCode();
+
+    List<nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure> departures =
+        nsTravelInformationClient
+            .getDepartures("nl", stationCode, departureTime.toString(), null, 15)
+            .getPayload()
+            .getDepartures();
+
+    return departureMapper.from(departures);
   }
 }
