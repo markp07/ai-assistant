@@ -4,10 +4,14 @@ server:
   servlet:
     context-path: /api
 
+spring:
+  config:
+    import: "optional:configtree:/run/secrets/"
+
 openai:
-  api-key: ${OPENAI_API_KEY}
+  api-key: ${openai_api_key}
 ns:
-  api-key: ${NS_API_KEY}
+  api-key: ${ns_api_key}
 
 logging:
   level:
