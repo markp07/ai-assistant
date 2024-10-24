@@ -44,6 +44,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: count
+          in: query
+          required: false
+          schema:
+            type: integer
         - name: departureTime
           in: query
           required: false

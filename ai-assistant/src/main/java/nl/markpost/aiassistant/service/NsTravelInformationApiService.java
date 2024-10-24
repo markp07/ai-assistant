@@ -20,12 +20,12 @@ public class NsTravelInformationApiService {
   private final DepartureMapper departureMapper;
 
   public @NotNull @Valid List<@Valid Departure> getDepartures(
-      String station, OffsetDateTime departureTime) {
+      String station, Integer count, OffsetDateTime departureTime) {
     String stationCode = NSStationCode.getByName(station).getCode();
 
     List<nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure> departures =
         nsTravelInformationClient
-            .getDepartures("nl", stationCode, departureTime.toString(), null, 15)
+            .getDepartures("nl", stationCode, departureTime.toString(), null, count)
             .getPayload()
             .getDepartures();
 

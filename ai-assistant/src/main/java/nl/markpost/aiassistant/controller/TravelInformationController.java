@@ -19,12 +19,20 @@ public class TravelInformationController implements TravelApi {
 
   @Override
   public ResponseEntity<List<Departure>> travelDeparturesGet(
-      String station, OffsetDateTime departureTime) {
+      String station,
+      Integer count,
+      OffsetDateTime departureTime
+  ) {
+
+    if (count == null) {
+      count = 5;
+    }
 
     if (departureTime == null) {
       departureTime = OffsetDateTime.now();
     }
 
-    return ResponseEntity.ok(nsTravelInformationApiService.getDepartures(station, departureTime));
+    return ResponseEntity.ok(
+        nsTravelInformationApiService.getDepartures(station, count, departureTime));
   }
 }

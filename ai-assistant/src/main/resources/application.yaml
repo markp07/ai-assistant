@@ -19,3 +19,21 @@ logging:
     nl:
       markpost:
         aiassistant: info
+
+---
+# Local environment profile
+spring:
+  config:
+    activate:
+      on-profile: local
+server:
+  port: 8000
+
+---
+# Test environment profile
+spring:
+  config:
+    activate:
+      on-profile: test
+server:
+  port: 7000
