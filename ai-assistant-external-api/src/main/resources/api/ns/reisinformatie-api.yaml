@@ -3719,6 +3719,8 @@ components:
           type: string
         head:
           type: string
+        message:
+          type: string
         text:
           type: string
         lead:

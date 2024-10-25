@@ -17,8 +17,9 @@ public interface DepartureMapper {
           "java(java.time.Duration.between(externalDeparture.getPlannedDateTime(), externalDeparture.getActualDateTime()).toMinutes())",
       target = "delay")
   @Mapping(source = "actualTrack", target = "track")
-  @Mapping(source = "product.longCategoryName", target = "category")
+  @Mapping(source = "product.shortCategoryName", target = "category")
   @Mapping(source = "routeStations", target = "via", qualifiedByName = "mapRouteStationsToVia")
+  @Mapping(expression = "java(externalDeparture.getMessages().isEmpty() ? null : externalDeparture.getMessages().get(0).getMessage())", target = "message")
   Departure from(
       nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure externalDeparture);
 

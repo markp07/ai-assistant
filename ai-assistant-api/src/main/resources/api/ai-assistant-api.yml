@@ -101,6 +101,17 @@ components:
           type: array
           items:
             type: string
+        departureStatus:
+          $ref: '#/components/schemas/DepartureStatusEnum'
+        message:
+          type: string
+    DepartureStatusEnum:
+      type: string
+      enum:
+        - ON_STATION
+        - INCOMING
+        - DEPARTED
+        - UNKNOWN
     Departures:
       type: array
       items:
