@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import nl.markpost.aiassistant.api.controller.TravelApi;
 import nl.markpost.aiassistant.api.model.Departure;
+import nl.markpost.aiassistant.api.model.Journey;
 import nl.markpost.aiassistant.service.NsTravelInformationApiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,5 +35,11 @@ public class TravelInformationController implements TravelApi {
 
     return ResponseEntity.ok(
         nsTravelInformationApiService.getDepartures(station, count, departureTime));
+  }
+
+  @Override
+  public ResponseEntity<Journey> travelJourneyGet(String station, Integer trainNumber) {
+    return ResponseEntity.ok(
+        nsTravelInformationApiService.getJourney(trainNumber, station));
   }
 }

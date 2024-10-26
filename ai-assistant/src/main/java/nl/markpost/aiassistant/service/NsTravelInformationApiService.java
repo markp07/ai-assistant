@@ -1,14 +1,15 @@
 package nl.markpost.aiassistant.service;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import nl.markpost.aiassistant.api.model.Departure;
+import nl.markpost.aiassistant.api.model.Journey;
 import nl.markpost.aiassistant.client.NsTravelInformationClient;
 import nl.markpost.aiassistant.constant.NSStationCode;
+import nl.markpost.aiassistant.external.api.ns.travelinformation.model.RepresentationResponseJourney;
 import nl.markpost.aiassistant.mapper.DepartureMapper;
+import nl.markpost.aiassistant.mapper.JourneyMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +20,9 @@ public class NsTravelInformationApiService {
 
   private final DepartureMapper departureMapper;
 
-  public @NotNull @Valid List<@Valid Departure> getDepartures(
+  private final JourneyMapper journeyMapper;
+
+  public List<Departure> getDepartures(
       String station, Integer count, OffsetDateTime departureTime) {
     String stationCode = NSStationCode.getByName(station).getCode();
 
@@ -30,5 +33,14 @@ public class NsTravelInformationApiService {
             .getDepartures();
 
     return departureMapper.from(departures);
+  }
+
+  public Journey getJourney(Integer train, String station) {
+    RepresentationResponseJourney nsJourney = nsTravelInformationClient.getJourney(train);
+
+    return journeyMapper.from(nsJourney.getPayload().getStops().stream()
+        .filter(stop -> stop.getStop().getName().equals(station))
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Station not found: " + station)), nsJourney.getPayload());
   }
 }

@@ -37,7 +37,7 @@ paths:
     get:
       tags:
         - travel
-      summary: Travel endpoint
+      summary: Departures endpoint
       parameters:
         - name: station
           in: query
@@ -62,6 +62,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Departures'
+        '400':
+          description: Invalid request
+  /travel/journey:
+    get:
+      tags:
+        - travel
+      summary: Journey endpoint
+      parameters:
+        - name: station
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: trainNumber
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Journey'
         '400':
           description: Invalid request
 components:
@@ -116,3 +141,40 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Departure'
+    Journey:
+      type: object
+      properties:
+        origin:
+          type: string
+        destination:
+          type: string
+        category:
+          type: string
+        cancelled:
+          type: boolean
+        trainType:
+          type: string
+        trainLength:
+          type: integer
+          format: int64
+        numberOfSeats:
+          type: integer
+          format: int64
+        stockIdentifiers:
+          type: array
+          items:
+            type: string
+        stockImageUris:
+          type: array
+          items:
+            type: string
+        crowdForecast:
+          type: string
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+        stops:
+          type: array
+          items:
+            type: string

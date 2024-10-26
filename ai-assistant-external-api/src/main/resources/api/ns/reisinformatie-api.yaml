@@ -4811,14 +4811,11 @@ components:
     Station:
       required:
         - UICCode
-        - heeftFaciliteiten
-        - heeftReisassistentie
-        - heeftVertrektijden
-        - sporen
-        - stationType
-        - synoniemen
+        - name
       type: object
       properties:
+        name:
+          type: string
         UICCode:
           type: string
         stationType:
