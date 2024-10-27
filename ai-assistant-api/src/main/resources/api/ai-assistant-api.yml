@@ -55,6 +55,11 @@ paths:
           schema:
             type: string
             format: date-time
+        - name: addJourneys
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: Successful response
@@ -79,7 +84,7 @@ paths:
           in: query
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: Successful response
@@ -108,6 +113,8 @@ components:
     Departure:
       type: object
       properties:
+        trainNumber:
+          type: string
         direction:
           type: string
         departureTime:
@@ -130,6 +137,8 @@ components:
           $ref: '#/components/schemas/DepartureStatusEnum'
         message:
           type: string
+        journey:
+          $ref: '#/components/schemas/Journey'
     DepartureStatusEnum:
       type: string
       enum:
@@ -171,6 +180,7 @@ components:
         crowdForecast:
           type: string
           enum:
+            - UNKNOWN
             - LOW
             - MEDIUM
             - HIGH

@@ -8,29 +8,91 @@ import nl.markpost.aiassistant.api.model.Journey.CrowdForecastEnum;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.JourneyStop;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.JourneyStop.StatusEnum;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Part;
+import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Stock;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
-public interface JourneyMapper {
+public class JourneyMapper {
 
-  @Mapping(expression = "java(externalJourneyStop.getArrivals().get(0).getOrigin().getName())", target = "origin")
-  @Mapping(source = "externalJourneyStop.destination", target = "destination")
-  @Mapping(expression = "java(externalJourneyStop.getArrivals().get(0).getProduct().getShortCategoryName())", target = "category")
-  @Mapping(expression = "java(externalJourneyStop.getArrivals().get(0).getCancelled())", target = "cancelled")
-  @Mapping(source = "externalJourneyStop.actualStock.trainType", target = "trainType")
-  @Mapping(source = "externalJourneyStop.actualStock.numberOfParts", target = "trainLength")
-  @Mapping(source = "externalJourneyStop.actualStock.numberOfSeats", target = "numberOfSeats")
-  @Mapping(expression = "java(externalJourneyStop.getArrivals().get(0).getStockIdentifiers())", target = "stockIdentifiers")
-  @Mapping(source = "externalJourneyStop.actualStock.trainParts", target = "stockImageUris", qualifiedByName = "mapTrainPartsToImageUris")
-  @Mapping(source = "externalJourneyStop", target = "crowdForecast", qualifiedByName = "mapCrowdForecastToCrowdForecastEnum")
-  @Mapping(source = "externalJourney", target = "stops", qualifiedByName = "mapStops")
-  Journey from(JourneyStop externalJourneyStop,
-      nl.markpost.aiassistant.external.api.ns.travelinformation.model.Journey externalJourney);
+  public Journey from(JourneyStop externalJourneyStop,
+      nl.markpost.aiassistant.external.api.ns.travelinformation.model.Journey externalJourney) {
+    if (externalJourneyStop == null && externalJourney == null) {
+      return null;
+    }
 
-  @Named("mapTrainPartsToImageUris")
-  default List<String> mapTrainPartsToImageUris(List<Part> trainParts) {
+    Journey journey = new Journey();
+
+    if (externalJourneyStop != null) {
+      journey.setDestination(externalJourneyStop.getDestination());
+      journey.setTrainType(externalJourneyStopActualStockTrainType(externalJourneyStop));
+      Integer numberOfParts = externalJourneyStopActualStockNumberOfParts(externalJourneyStop);
+      if (numberOfParts != null) {
+        journey.setTrainLength(numberOfParts.longValue());
+      }
+      Integer numberOfSeats = externalJourneyStopActualStockNumberOfSeats(externalJourneyStop);
+      if (numberOfSeats != null) {
+        journey.setNumberOfSeats(numberOfSeats.longValue());
+      }
+      List<Part> trainParts = externalJourneyStopActualStockTrainParts(externalJourneyStop);
+      journey.setStockImageUris(mapTrainPartsToImageUris(trainParts));
+      journey.setCrowdForecast(mapCrowdForecastToCrowdForecastEnum(externalJourneyStop));
+    }
+    journey.setStops(mapStops(externalJourney));
+
+    var arrival = externalJourneyStop.getArrivals().isEmpty() ? null : externalJourneyStop.getArrivals().getFirst();
+    var departure = externalJourneyStop.getDepartures().isEmpty() ? null : externalJourneyStop.getDepartures().getFirst();
+
+    if (arrival != null) {
+      journey.setOrigin(arrival.getOrigin().getName());
+      journey.setCategory(arrival.getProduct().getShortCategoryName());
+      journey.setCancelled(arrival.getCancelled());
+      journey.setStockIdentifiers(arrival.getStockIdentifiers());
+    } else if (departure != null) {
+      journey.setOrigin(departure.getOrigin().getName());
+      journey.setCategory(departure.getProduct().getShortCategoryName());
+      journey.setCancelled(departure.getCancelled());
+      journey.setStockIdentifiers(departure.getStockIdentifiers());
+    }
+
+    if (departure != null) {
+    }
+
+    return journey;
+  }
+
+  private String externalJourneyStopActualStockTrainType(JourneyStop journeyStop) {
+    Stock actualStock = journeyStop.getActualStock();
+    if (actualStock == null) {
+      return null;
+    }
+    return actualStock.getTrainType();
+  }
+
+  private Integer externalJourneyStopActualStockNumberOfParts(JourneyStop journeyStop) {
+    Stock actualStock = journeyStop.getActualStock();
+    if (actualStock == null) {
+      return null;
+    }
+    return actualStock.getNumberOfParts();
+  }
+
+  private Integer externalJourneyStopActualStockNumberOfSeats(JourneyStop journeyStop) {
+    Stock actualStock = journeyStop.getActualStock();
+    if (actualStock == null) {
+      return null;
+    }
+    return actualStock.getNumberOfSeats();
+  }
+
+  private List<Part> externalJourneyStopActualStockTrainParts(JourneyStop journeyStop) {
+    Stock actualStock = journeyStop.getActualStock();
+    if (actualStock == null) {
+      return null;
+    }
+    return actualStock.getTrainParts();
+  }
+
+  private List<String> mapTrainPartsToImageUris(List<Part> trainParts) {
     if (trainParts == null) {
       return Collections.emptyList();
     }
@@ -39,14 +101,15 @@ public interface JourneyMapper {
         .collect(Collectors.toList());
   }
 
-  @Named("mapCrowdForecastToCrowdForecastEnum")
-  default CrowdForecastEnum mapCrowdForecastToCrowdForecastEnum(JourneyStop externalJourney) {
+  private CrowdForecastEnum mapCrowdForecastToCrowdForecastEnum(JourneyStop externalJourney) {
+    if (externalJourney.getArrivals().isEmpty()) {
+      return CrowdForecastEnum.UNKNOWN;
+    }
     return CrowdForecastEnum.fromValue(
         externalJourney.getArrivals().getFirst().getCrowdForecast().getValue());
   }
 
-  @Named("mapStops")
-  default List<String> mapStops(
+  private List<String> mapStops(
       nl.markpost.aiassistant.external.api.ns.travelinformation.model.Journey externalJourney) {
     return externalJourney.getStops().stream()
         .filter(stop -> !stop.getStatus().equals(StatusEnum.PASSING))

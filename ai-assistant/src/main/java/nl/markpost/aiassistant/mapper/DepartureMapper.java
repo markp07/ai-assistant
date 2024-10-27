@@ -11,6 +11,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface DepartureMapper {
 
+  @Mapping(source = "product.number", target = "trainNumber")
   @Mapping(source = "plannedDateTime", target = "departureTime")
   @Mapping(
       expression =

@@ -22,7 +22,8 @@ public class TravelInformationController implements TravelApi {
   public ResponseEntity<List<Departure>> travelDeparturesGet(
       String station,
       Integer count,
-      OffsetDateTime departureTime
+      OffsetDateTime departureTime,
+      Boolean addJourneys
   ) {
 
     if (count == null) {
@@ -38,7 +39,7 @@ public class TravelInformationController implements TravelApi {
   }
 
   @Override
-  public ResponseEntity<Journey> travelJourneyGet(String station, Integer trainNumber) {
+  public ResponseEntity<Journey> travelJourneyGet(String station, String trainNumber) {
     return ResponseEntity.ok(
         nsTravelInformationApiService.getJourney(trainNumber, station));
   }

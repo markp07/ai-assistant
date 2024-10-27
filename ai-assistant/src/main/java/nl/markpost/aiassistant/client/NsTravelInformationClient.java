@@ -22,6 +22,6 @@ public interface NsTravelInformationClient {
       @RequestParam("maxJourneys") Integer maxJourneys);
 
   @GetMapping("/api/v2/journey")
-  RepresentationResponseJourney getJourney(@RequestParam("train") Integer train);
+  RepresentationResponseJourney getJourney(@RequestParam("train") String trainNumber);
 }
 
