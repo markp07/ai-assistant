@@ -23,7 +23,7 @@ spring:
     activate:
       on-profile: local
 server:
-  port: 8000
+  port: 7075
 
 ---
 # Test environment profile
