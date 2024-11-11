@@ -14,7 +14,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public class JourneyMapper {
 
-  public Journey from(JourneyStop externalJourneyStop,
+  public Journey from(
+      JourneyStop externalJourneyStop,
       nl.markpost.aiassistant.external.api.ns.travelinformation.model.Journey externalJourney) {
     if (externalJourneyStop == null && externalJourney == null) {
       return null;
@@ -39,8 +40,14 @@ public class JourneyMapper {
     }
     journey.setStops(mapStops(externalJourney));
 
-    var arrival = externalJourneyStop.getArrivals().isEmpty() ? null : externalJourneyStop.getArrivals().getFirst();
-    var departure = externalJourneyStop.getDepartures().isEmpty() ? null : externalJourneyStop.getDepartures().getFirst();
+    var arrival =
+        externalJourneyStop.getArrivals().isEmpty()
+            ? null
+            : externalJourneyStop.getArrivals().getFirst();
+    var departure =
+        externalJourneyStop.getDepartures().isEmpty()
+            ? null
+            : externalJourneyStop.getDepartures().getFirst();
 
     if (arrival != null) {
       journey.setOrigin(arrival.getOrigin().getName());
@@ -54,8 +61,7 @@ public class JourneyMapper {
       journey.setStockIdentifiers(departure.getStockIdentifiers());
     }
 
-    if (departure != null) {
-    }
+    if (departure != null) {}
 
     return journey;
   }
@@ -96,9 +102,7 @@ public class JourneyMapper {
     if (trainParts == null) {
       return Collections.emptyList();
     }
-    return trainParts.stream()
-        .map(part -> part.getImage().getUri())
-        .collect(Collectors.toList());
+    return trainParts.stream().map(part -> part.getImage().getUri()).collect(Collectors.toList());
   }
 
   private CrowdForecastEnum mapCrowdForecastToCrowdForecastEnum(JourneyStop externalJourney) {
@@ -113,6 +117,7 @@ public class JourneyMapper {
       nl.markpost.aiassistant.external.api.ns.travelinformation.model.Journey externalJourney) {
     return externalJourney.getStops().stream()
         .filter(stop -> !stop.getStatus().equals(StatusEnum.PASSING))
-        .map(stop -> stop.getStop().getName()).toList();
+        .map(stop -> stop.getStop().getName())
+        .toList();
   }
 }

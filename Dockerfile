@@ -26,11 +26,15 @@ LABEL maintainer="mark@markpost.nl"
 # Define a volume for temporary files
 VOLUME /tmp
 
-# Expose port 9000
-EXPOSE 9000
+# Expose port 7075
+EXPOSE 7075
 
 # Copy the JAR file from the build stage using the extracted version
 COPY --from=build /workspace/app/ai-assistant/target/ai-assistant-*.jar app.jar
+
+# Set environment variables
+ENV OPENAI_API_KEY=${OPENAI_API_KEY}
+ENV NS_API_KEY=${NS_API_KEY}
 
 # Set the entry point to run the JAR file
 ENTRYPOINT ["java","-jar","/app.jar"]

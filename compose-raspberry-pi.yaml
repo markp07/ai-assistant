@@ -4,7 +4,7 @@ services:
   ai-assistant:
     image: markpost/ai-assistant:latest
     ports:
-      - "9000:9000"
+      - "7075:7075"
     volumes:
       - /data/ai_assistant_data:/data/ai_assistant
     secrets:

@@ -1,7 +1,7 @@
 import requests
 import json
 
-API_URL = "http://localhost:9000/api/v1/chat"
+API_URL = "http://localhost:7075/api/v1/chat"
 HEADERS = {"Content-Type": "application/json"}
 
 def send_chat(message):

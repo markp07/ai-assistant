@@ -26,11 +26,12 @@ public class NsTravelInformationApiService {
       String station, Integer count, OffsetDateTime departureTime) {
     String stationCode = NSStationCode.getByName(station).getCode();
 
-    List<nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure> externalDepartures =
-        nsTravelInformationClient
-            .getDepartures("nl", stationCode, departureTime.toString(), null, count)
-            .getPayload()
-            .getDepartures();
+    List<nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure>
+        externalDepartures =
+            nsTravelInformationClient
+                .getDepartures("nl", stationCode, departureTime.toString(), null, count)
+                .getPayload()
+                .getDepartures();
 
     List<Departure> departures = departureMapper.from(externalDepartures);
 
@@ -46,9 +47,11 @@ public class NsTravelInformationApiService {
   public Journey getJourney(String trainNumber, String station) {
     RepresentationResponseJourney nsJourney = nsTravelInformationClient.getJourney(trainNumber);
 
-    return journeyMapper.from(nsJourney.getPayload().getStops().stream()
-        .filter(stop -> stop.getStop().getName().equals(station))
-        .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("Station not found: " + station)), nsJourney.getPayload());
+    return journeyMapper.from(
+        nsJourney.getPayload().getStops().stream()
+            .filter(stop -> stop.getStop().getName().equals(station))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Station not found: " + station)),
+        nsJourney.getPayload());
   }
 }

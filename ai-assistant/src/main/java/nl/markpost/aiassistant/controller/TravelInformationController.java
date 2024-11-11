@@ -20,11 +20,7 @@ public class TravelInformationController implements TravelApi {
 
   @Override
   public ResponseEntity<List<Departure>> travelDeparturesGet(
-      String station,
-      Integer count,
-      OffsetDateTime departureTime,
-      Boolean addJourneys
-  ) {
+      String station, Integer count, OffsetDateTime departureTime, Boolean addJourneys) {
 
     if (count == null) {
       count = 5;
@@ -40,7 +36,6 @@ public class TravelInformationController implements TravelApi {
 
   @Override
   public ResponseEntity<Journey> travelJourneyGet(String station, String trainNumber) {
-    return ResponseEntity.ok(
-        nsTravelInformationApiService.getJourney(trainNumber, station));
+    return ResponseEntity.ok(nsTravelInformationApiService.getJourney(trainNumber, station));
   }
 }

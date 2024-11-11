@@ -24,4 +24,3 @@ public interface NsTravelInformationClient {
   @GetMapping("/api/v2/journey")
   RepresentationResponseJourney getJourney(@RequestParam("train") String trainNumber);
 }
-

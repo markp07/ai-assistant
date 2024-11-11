@@ -20,7 +20,10 @@ public interface DepartureMapper {
   @Mapping(source = "actualTrack", target = "track")
   @Mapping(source = "product.shortCategoryName", target = "category")
   @Mapping(source = "routeStations", target = "via", qualifiedByName = "mapRouteStationsToVia")
-  @Mapping(expression = "java(externalDeparture.getMessages().isEmpty() ? null : externalDeparture.getMessages().get(0).getMessage())", target = "message")
+  @Mapping(
+      expression =
+          "java(externalDeparture.getMessages().isEmpty() ? null : externalDeparture.getMessages().get(0).getMessage())",
+      target = "message")
   Departure from(
       nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure externalDeparture);
 
@@ -30,8 +33,6 @@ public interface DepartureMapper {
 
   @Named("mapRouteStationsToVia")
   default List<String> mapRouteStationsToVia(List<RouteStation> routeStations) {
-    return routeStations.stream()
-        .map(RouteStation::getMediumName)
-        .collect(Collectors.toList());
+    return routeStations.stream().map(RouteStation::getMediumName).collect(Collectors.toList());
   }
 }
