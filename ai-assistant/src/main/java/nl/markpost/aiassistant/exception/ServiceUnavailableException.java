@@ -11,5 +11,4 @@ public class ServiceUnavailableException extends GenericException {
   public ServiceUnavailableException(String message, Exception exception) {
     super(message, GenericErrorCodes.SERVICE_UNAVAILABLE, exception);
   }
-
 }

@@ -11,5 +11,4 @@ public class BadRequestException extends GenericException {
   public BadRequestException(String message, Exception exception) {
     super(message, GenericErrorCodes.BAD_REQUEST, exception);
   }
-
 }

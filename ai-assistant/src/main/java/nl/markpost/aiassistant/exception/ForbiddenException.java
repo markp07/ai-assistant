@@ -11,5 +11,4 @@ public class ForbiddenException extends GenericException {
   public ForbiddenException(String message, Exception exception) {
     super(message, GenericErrorCodes.FORBIDDEN, exception);
   }
-
 }

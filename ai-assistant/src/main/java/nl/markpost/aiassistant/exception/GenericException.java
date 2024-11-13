@@ -27,5 +27,4 @@ public class GenericException extends RuntimeException {
     this.httpStatus = errorCode.getHttpStatus();
     this.exception = exception;
   }
-
 }

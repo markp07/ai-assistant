@@ -11,5 +11,4 @@ public class InternalServerErrorException extends GenericException {
   public InternalServerErrorException(String message, Exception exception) {
     super(message, GenericErrorCodes.INTERNAL_SERVER_ERROR, exception);
   }
-
 }

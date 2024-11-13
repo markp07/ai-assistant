@@ -32,7 +32,6 @@ public interface DepartureMapper {
       List<nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure>
           externalDepartures);
 
-
   @Named("mapRouteStationsToVia")
   default List<String> mapRouteStationsToVia(List<RouteStation> routeStations) {
     return routeStations.stream().map(RouteStation::getMediumName).collect(Collectors.toList());

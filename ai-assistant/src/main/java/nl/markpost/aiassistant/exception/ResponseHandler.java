@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class ResponseHandler  implements ErrorDecoder {
+public class ResponseHandler implements ErrorDecoder {
 
   @Override
   public Exception decode(String methodKey, Response response) {

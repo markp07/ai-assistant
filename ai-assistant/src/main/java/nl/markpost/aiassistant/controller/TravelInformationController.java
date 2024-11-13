@@ -22,7 +22,11 @@ public class TravelInformationController implements TravelApi {
 
   @Override
   public ResponseEntity<List<Departure>> travelDeparturesGet(
-      String station, Integer count, OffsetDateTime departureTime, Boolean addJourneys, String country) {
+      String station,
+      Integer count,
+      OffsetDateTime departureTime,
+      Boolean addJourneys,
+      String country) {
 
     if (count == null) {
       count = 5;
@@ -32,11 +36,12 @@ public class TravelInformationController implements TravelApi {
       departureTime = OffsetDateTime.now();
     }
 
-    List<Departure> departures = switch (country) {
-      case "be" -> beRailApiService.getDepartures(station);
-      case "nl" -> nsTravelInformationApiService.getDepartures(station, count, departureTime);
-      default -> throw new IllegalArgumentException("Country not found: " + country);
-    };
+    List<Departure> departures =
+        switch (country) {
+          case "be" -> beRailApiService.getDepartures(station);
+          case "nl" -> nsTravelInformationApiService.getDepartures(station, count, departureTime);
+          default -> throw new IllegalArgumentException("Country not found: " + country);
+        };
 
     return ResponseEntity.ok(departures);
   }

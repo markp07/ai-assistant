@@ -43,5 +43,4 @@ public class CustomExceptionHandler {
         .message(errorCode.getMessage())
         .traceId(UUID.randomUUID().toString());
   }
-
 }

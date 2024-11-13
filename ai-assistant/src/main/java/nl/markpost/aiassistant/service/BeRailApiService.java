@@ -27,19 +27,23 @@ public class BeRailApiService {
   public List<Departure> getDepartures(String station) {
     station = station.replace(" ", "+");
 
-    List<LiveboardResponseDeparturesDepartureInner>
-        nmbsDepartures =
-        beRailClient.getLiveBoard(station, "departure", true, "json", "nl").getDepartures()
+    List<LiveboardResponseDeparturesDepartureInner> nmbsDepartures =
+        beRailClient
+            .getLiveBoard(station, "departure", true, "json", "nl")
+            .getDepartures()
             .getDeparture();
 
     nmbsDepartures = nmbsDepartures.size() > 10 ? nmbsDepartures.subList(0, 9) : nmbsDepartures;
     List<Departure> departures = new ArrayList<>();
 
     for (LiveboardResponseDeparturesDepartureInner nmbsDeparture : nmbsDepartures) {
-      VehicleResponse vehicleResponse = beRailClient.getVehicle(nmbsDeparture.getVehicle(), "json", "nl");
-      CompositionResponse compositionResponse = beRailClient.getComposition(nmbsDeparture.getVehicle(), "json", "nl", "");
+      VehicleResponse vehicleResponse =
+          beRailClient.getVehicle(nmbsDeparture.getVehicle(), "json", "nl");
+      CompositionResponse compositionResponse =
+          beRailClient.getComposition(nmbsDeparture.getVehicle(), "json", "nl", "");
 
-      Departure departure = beRailMapper.mapDeparture(station, nmbsDeparture, vehicleResponse, compositionResponse);
+      Departure departure =
+          beRailMapper.mapDeparture(station, nmbsDeparture, vehicleResponse, compositionResponse);
       departures.add(departure);
 
       Thread.sleep(1000);
@@ -47,5 +51,4 @@ public class BeRailApiService {
 
     return departures;
   }
-
 }

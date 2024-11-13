@@ -11,5 +11,4 @@ public class NotFoundException extends GenericException {
   public NotFoundException(String message, Exception exception) {
     super(message, GenericErrorCodes.NOT_FOUND, exception);
   }
-
 }

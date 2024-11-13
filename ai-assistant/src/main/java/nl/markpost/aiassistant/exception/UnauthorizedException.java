@@ -11,5 +11,4 @@ public class UnauthorizedException extends GenericException {
   public UnauthorizedException(String message, Exception exception) {
     super(message, GenericErrorCodes.UNAUTHORIZED, exception);
   }
-
 }

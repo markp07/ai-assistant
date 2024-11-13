@@ -9,7 +9,6 @@ import nl.markpost.aiassistant.external.api.ns.travelinformation.model.JourneySt
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.JourneyStop.StatusEnum;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Part;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Stock;
-import org.mapstruct.Mapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -104,8 +103,8 @@ public class JourneyMapper {
       return Collections.emptyList();
     }
     return trainParts.stream()
-    .map(part -> part.getImage() != null ? part.getImage().getUri() : null)
-    .collect(Collectors.toList());
+        .map(part -> part.getImage() != null ? part.getImage().getUri() : null)
+        .collect(Collectors.toList());
   }
 
   private CrowdForecastEnum mapCrowdForecastToCrowdForecastEnum(JourneyStop externalJourney) {

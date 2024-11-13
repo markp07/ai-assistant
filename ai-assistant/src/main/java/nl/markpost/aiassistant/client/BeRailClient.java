@@ -10,9 +10,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(
-    name = "BeRailClient",
-    url = "https://api.irail.be")
+@FeignClient(name = "BeRailClient", url = "https://api.irail.be")
 public interface BeRailClient {
 
   @GetMapping("/v1/liveboard/")
@@ -31,7 +29,8 @@ public interface BeRailClient {
       @RequestParam(value = "lang", defaultValue = "nl") String lang);
 
   @SneakyThrows
-  default VehicleResponse fallbackGetVehicle(String id, String format, String lang, Exception exception) {
+  default VehicleResponse fallbackGetVehicle(
+      String id, String format, String lang, Exception exception) {
     if (exception instanceof NotFoundException) {
       return null;
     } else {
@@ -48,7 +47,8 @@ public interface BeRailClient {
       @RequestParam(value = "data", defaultValue = "") String data);
 
   @SneakyThrows
-  default VehicleResponse fallbackGetComposition(String id, String format, String lang, String data, Exception exception) {
+  default VehicleResponse fallbackGetComposition(
+      String id, String format, String lang, String data, Exception exception) {
     if (exception instanceof NotFoundException) {
       return null;
     } else {
