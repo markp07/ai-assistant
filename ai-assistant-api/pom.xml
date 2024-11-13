@@ -68,9 +68,11 @@
                 <useSpringBoot3>true</useSpringBoot3>
                 <useTags>true</useTags>
                 <serializeModel>true</serializeModel>
+                <openApiNullable>false</openApiNullable>
                 <generateConstructorWithRequiredArgs>false</generateConstructorWithRequiredArgs>
                 <addiionalModelTypeAnnotations>
-                  <annotation>@lombok.Builder</annotation>
+                  @lombok.Builder
+                  @lombok.NoArgsConstructor
                 </addiionalModelTypeAnnotations>
               </configOptions>
             </configuration>

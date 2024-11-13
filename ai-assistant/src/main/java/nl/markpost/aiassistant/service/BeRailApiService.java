@@ -32,7 +32,7 @@ public class BeRailApiService {
         beRailClient.getLiveBoard(station, "departure", true, "json", "nl").getDepartures()
             .getDeparture();
 
-    nmbsDepartures = nmbsDepartures.subList(0,9);
+    nmbsDepartures = nmbsDepartures.size() > 10 ? nmbsDepartures.subList(0, 9) : nmbsDepartures;
     List<Departure> departures = new ArrayList<>();
 
     for (LiveboardResponseDeparturesDepartureInner nmbsDeparture : nmbsDepartures) {

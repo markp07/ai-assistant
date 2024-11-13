@@ -16,6 +16,23 @@ logging:
       markpost:
         aiassistant: info
 
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 100
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+    instances:
+      beRailClientGetVehicle:
+        baseConfig: default
+      beRailClientGetComposition:
+        baseConfig: default
+
 ---
 # Local environment profile
 spring:

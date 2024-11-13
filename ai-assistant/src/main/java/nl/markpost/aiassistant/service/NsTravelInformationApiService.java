@@ -38,7 +38,7 @@ public class NsTravelInformationApiService {
     for (Departure departure : departures) {
       String trainNumber = departure.getTrainNumber();
       Journey journey = getJourney(trainNumber, station);
-      departure.setJourney(journey);
+//      departure.setJourney(journey);
     }
 
     return departures;

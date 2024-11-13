@@ -488,8 +488,7 @@ components:
                       '@id':
                         type: string
                   platform:
-                    type: integer
-                    format: int32
+                    type: string
                   platforminfo:
                     type: object
                     properties:
@@ -809,8 +808,7 @@ components:
                     type: integer
                     format: int64
                   platform:
-                    type: integer
-                    format: int32
+                    type: string
                   platforminfo:
                     type: object
                     properties:
@@ -966,23 +964,30 @@ components:
                                         orientation:
                                           type: string
                                     hasToilets:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasTables:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasSecondClassOutlets:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasFirstClassOutlets:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasHeating:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasAirco:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     materialNumber:
                                       type: string
                                     tractionType:
                                       type: string
                                     canPassToNextUnit:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     standingPlacesSecondClass:
                                       type: integer
                                       format: int32
@@ -1004,17 +1009,22 @@ components:
                                     lengthInMeter:
                                       type: number
                                     hasSemiAutomaticInteriorDoors:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasLuggageSection:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     materialSubTypeName:
                                       type: string
                                     tractionPosition:
                                       type: integer
                                       format: int32
                                     hasPrmSection:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasPriorityPlaces:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
                                     hasBikeSection:
-                                      type: boolean
+                                      type: integer
+                                      format: int32
