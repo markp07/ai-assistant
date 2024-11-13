@@ -45,6 +45,7 @@
         <version>${openapi-generator-maven-plugin.version}</version>
         <executions>
           <execution>
+            <id>generate-ns-reisinformatie-api</id>
             <goals>
               <goal>generate</goal>
             </goals>
@@ -57,6 +58,38 @@
               <supportingFilesToGenerate>false</supportingFilesToGenerate>
               <configOptions>
                 <title>NS Reisinformatie API</title>
+                <delegatePattern>false</delegatePattern>
+                <interfaceOnly>true</interfaceOnly>
+                <skipDefaultInterface>true</skipDefaultInterface>
+                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                <useBeanValidation>true</useBeanValidation>
+                <performBeanValidation>true</performBeanValidation>
+                <useGenericResponse>true</useGenericResponse>
+                <library>spring-boot</library>
+                <useSpringBoot3>true</useSpringBoot3>
+                <useTags>true</useTags>
+                <serializeModel>true</serializeModel>
+                <generateConstructorWithRequiredArgs>false</generateConstructorWithRequiredArgs>
+                <addiionalModelTypeAnnotations>
+                  <annotation>@lombok.Builder</annotation>
+                </addiionalModelTypeAnnotations>
+              </configOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-berail-api</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/src/main/resources/api/berail/berail-api.yaml</inputSpec>
+              <generatorName>spring</generatorName>
+              <output>${project.build.directory}/generated-sources</output>
+              <apiPackage>nl.markpost.aiassistant.external.api.berail.controller</apiPackage>
+              <modelPackage>nl.markpost.aiassistant.external.api.berail.model</modelPackage>
+              <supportingFilesToGenerate>false</supportingFilesToGenerate>
+              <configOptions>
+                <title>BE Rail API</title>
                 <delegatePattern>false</delegatePattern>
                 <interfaceOnly>true</interfaceOnly>
                 <skipDefaultInterface>true</skipDefaultInterface>

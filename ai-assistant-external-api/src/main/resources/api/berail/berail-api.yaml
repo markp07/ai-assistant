@@ -1,0 +1,745 @@
+openapi: 3.0.1
+info:
+  title: Liveboard API
+  version: 1.0.0
+servers:
+  - url: https://api.irail.be
+paths:
+  /liveboard:
+    get:
+      summary: A liveboard for a specified station.
+      parameters:
+        - name: station
+          in: query
+          required: true
+          schema:
+            type: string
+          example: Gent-Sint-Pieters
+        - name: id
+          in: query
+          schema:
+            type: string
+          example: BE.NMBS.008892007
+        - name: arrdep
+          in: query
+          schema:
+            type: string
+            default: departure
+            enum:
+              - departure
+              - arrival
+          example: departure
+        - name: alerts
+          in: query
+          schema:
+            type: boolean
+          example: false
+        - name: time
+          in: query
+          schema:
+            type: string
+            pattern: '^[0-2][0-9][0-5][0-9]$'
+          example: 1230
+        - name: date
+          in: query
+          schema:
+            type: string
+            pattern: '^[0-3][0-9][0-9][0-9][0-9]$'
+          example: 300917
+        - name: format
+          in: query
+          schema:
+            type: string
+            default: xml
+            enum:
+              - xml
+              - json
+              - jsonp
+          example: json
+        - name: lang
+          in: query
+          schema:
+            type: string
+            default: en
+            enum:
+              - nl
+              - fr
+              - en
+              - de
+          example: en
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveboardResponse'
+  /connections:
+    get:
+      summary: Get connections between two stations.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+          example: Gent-Sint-Pieters
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+          example: Mechelen
+        - name: timesel
+          in: query
+          schema:
+            type: string
+            default: departure
+            enum:
+              - departure
+              - arrival
+          example: departure
+        - name: typeOfTransport
+          in: query
+          schema:
+            type: string
+            default: automatic
+            enum:
+              - automatic
+              - trains
+              - nointernationaltrains
+              - all
+          example: automatic
+        - name: alerts
+          in: query
+          schema:
+            type: boolean
+          example: false
+        - name: results
+          in: query
+          schema:
+            type: integer
+            format: int32
+          example: 6
+        - name: time
+          in: query
+          schema:
+            type: string
+            pattern: '^[0-2][0-9][0-5][0-9]$'
+          example: 1230
+        - name: date
+          in: query
+          schema:
+            type: string
+            pattern: '^[0-3][0-9][0-9][0-9][0-9]$'
+          example: 300917
+        - name: format
+          in: query
+          schema:
+            type: string
+            default: xml
+            enum:
+              - xml
+              - json
+              - jsonp
+          example: json
+        - name: lang
+          in: query
+          schema:
+            type: string
+            default: en
+            enum:
+              - nl
+              - fr
+              - en
+              - de
+          example: en
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionsResponse'
+components:
+  schemas:
+    LiveboardResponse:
+      type: object
+      properties:
+        version:
+          type: string
+        timestamp:
+          type: integer
+          format: int32
+        station:
+          type: string
+        stationinfo:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The (iRail) id of the station. The NMBS id can be deducted by removing the leading 'BE.NMBS.00'
+            '@id':
+              type: string
+            locationX:
+              type: number
+              description: The longitude of the station
+            locationY:
+              type: number
+              description: The latitude of the station
+            standardname:
+              type: string
+              description: The consistent name of this station
+            name:
+              type: string
+              description: The default name of this station
+          required:
+            - id
+            - '@id'
+            - locationX
+            - locationY
+            - standardname
+            - name
+        departures:
+          type: object
+          properties:
+            number:
+              type: integer
+              format: int32
+            departure:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  delay:
+                    type: integer
+                    format: int64
+                  station:
+                    type: string
+                  stationinfo:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      '@id':
+                        type: string
+                      locationX:
+                        type: number
+                      locationY:
+                        type: number
+                      standardname:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - '@id'
+                      - locationX
+                      - locationY
+                      - standardname
+                      - name
+                  time:
+                    type: integer
+                    format: int32
+                  vehicle:
+                    type: string
+                  vehicleinfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      shortname:
+                        type: string
+                      '@id':
+                        type: string
+                  platform:
+                    type: string
+                  platforminfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      normal:
+                        type: string
+                  canceled:
+                     type: integer
+                     format: int32
+                  left:
+                    type: integer
+                    format: int32
+                  departureConnection:
+                    type: string
+                  occupancy:
+                    type: object
+                    properties:
+                      '@id':
+                        type: string
+                      name:
+                        type: string
+          required:
+            - number
+      required:
+        - version
+        - timestamp
+        - station
+        - stationinfo
+        - departures
+    ConnectionsResponse:
+      type: object
+      properties:
+        version:
+          type: string
+        timestamp:
+          type: integer
+          format: int32
+        connection:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int32
+              departure:
+                type: object
+                properties:
+                  delay:
+                    type: integer
+                    format: int64
+                  station:
+                    type: string
+                  stationinfo:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      '@id':
+                        type: string
+                      locationX:
+                        type: number
+                      locationY:
+                        type: number
+                      standardname:
+                        type: string
+                      name:
+                        type: string
+                  time:
+                    type: integer
+                    format: int32
+                  vehicle:
+                    type: string
+                  vehicleinfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      shortname:
+                        type: string
+                      '@id':
+                        type: string
+                  platform:
+                    type: string
+                  platforminfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      normal:
+                        type: string
+                  left:
+                    type: integer
+                    format: int32
+                  canceled:
+                    type: integer
+                    format: int32
+                  direction:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                  stops:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                        format: int32
+                      stop:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int32
+                            station:
+                              type: string
+                            stationinfo:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                '@id':
+                                  type: string
+                                locationX:
+                                  type: number
+                                locationY:
+                                  type: number
+                                standardname:
+                                  type: string
+                                name:
+                                  type: string
+                            time:
+                              type: integer
+                              format: int32
+                            delay:
+                              type: integer
+                              format: int64
+                            canceled:
+                              type: integer
+                              format: int32
+                            departureDelay:
+                              type: integer
+                              format: int64
+                            departureCanceled:
+                              type: integer
+                              format: int32
+                            scheduledDepartureTime:
+                              type: integer
+                              format: int32
+                            arrivalDelay:
+                              type: integer
+                              format: int64
+                            arrivalCanceled:
+                              type: integer
+                              format: int32
+                            isExtraStop:
+                              type: integer
+                              format: int32
+                            scheduledArrivalTime:
+                              type: integer
+                              format: int32
+                            departureConnection:
+                              type: string
+                  alerts:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                        format: int32
+                      alert:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int32
+                            header:
+                              type: string
+                            lead:
+                              type: string
+                            link:
+                              type: string
+                            startTime:
+                              type: integer
+                              format: int32
+                            endTime:
+                              type: integer
+                              format: int32
+                  walking:
+                    type: integer
+                    format: int32
+                  departureConnection:
+                    type: string
+              arrival:
+                type: object
+                properties:
+                  delay:
+                    type: integer
+                    format: int64
+                  station:
+                    type: string
+                  stationinfo:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      '@id':
+                        type: string
+                      locationX:
+                        type: number
+                      locationY:
+                        type: number
+                      standardname:
+                        type: string
+                      name:
+                        type: string
+                  time:
+                    type: integer
+                    format: int32
+                  vehicle:
+                    type: string
+                  vehicleinfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      shortname:
+                        type: string
+                      '@id':
+                        type: string
+                  platform:
+                    type: integer
+                    format: int32
+                  platforminfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      normal:
+                        type: string
+                  arrived:
+                    type: integer
+                    format: int32
+                  canceled:
+                    type: integer
+                    format: int32
+                  walking:
+                    type: integer
+                    format: int32
+                  direction:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+              duration:
+                type: integer
+                format: int32
+              alerts:
+                type: object
+                properties:
+                  number:
+                    type: integer
+                    format: int32
+                  alert:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int32
+                        header:
+                          type: string
+                        lead:
+                          type: string
+                        link:
+                          type: string
+                        startTime:
+                          type: integer
+                          format: int32
+                        endTime:
+                          type: integer
+                          format: int32
+              vias:
+                type: object
+                properties:
+                  number:
+                    type: integer
+                    format: int32
+                  via:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        arrival:
+                          type: object
+                          properties:
+                            time:
+                              type: integer
+                              format: int32
+                            platform:
+                              type: string
+                            platforminfo:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                normal:
+                                  type: string
+                            arrived:
+                              type: integer
+                              format: int32
+                            delay:
+                              type: integer
+                              format: int64
+                            canceled:
+                              type: integer
+                              format: int32
+                            vehicle:
+                              type: string
+                            walking:
+                              type: integer
+                              format: int32
+                            direction:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                        departure:
+                          type: object
+                          properties:
+                            time:
+                              type: integer
+                              format: int32
+                            platform:
+                              type: string
+                            platforminfo:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                normal:
+                                  type: string
+                            left:
+                              type: integer
+                              format: int32
+                            delay:
+                              type: integer
+                              format: int64
+                            canceled:
+                              type: integer
+                              format: int32
+                            departureConnection:
+                              type: string
+                            vehicle:
+                              type: string
+                            walking:
+                              type: integer
+                              format: int32
+                            alerts:
+                              type: object
+                              properties:
+                                number:
+                                  type: integer
+                                  format: int32
+                                alert:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: integer
+                                        format: int32
+                                      header:
+                                        type: string
+                                      lead:
+                                        type: string
+                                      link:
+                                        type: string
+                                      startTime:
+                                        type: integer
+                                        format: int32
+                                      endTime:
+                                        type: integer
+                                        format: int32
+                            direction:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                            stops:
+                              type: object
+                              properties:
+                                number:
+                                  type: integer
+                                  format: int32
+                                stop:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: integer
+                                        format: int32
+                                      station:
+                                        type: string
+                                      stationinfo:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                          '@id':
+                                            type: string
+                                          locationX:
+                                            type: number
+                                          locationY:
+                                            type: number
+                                          standardname:
+                                            type: string
+                                          name:
+                                            type: string
+                                      time:
+                                        type: integer
+                                        format: int32
+                                      delay:
+                                        type: integer
+                                        format: int64
+                                      canceled:
+                                        type: integer
+                                        format: int32
+                                      departureDelay:
+                                        type: integer
+                                        format: int64
+                                      departureCanceled:
+                                        type: integer
+                                        format: int32
+                                      scheduledDepartureTime:
+                                        type: integer
+                                        format: int32
+                                      arrivalDelay:
+                                        type: integer
+                                        format: int64
+                                      arrivalCanceled:
+                                        type: integer
+                                        format: int32
+                                      isExtraStop:
+                                        type: integer
+                                        format: int32
+                                      scheduledArrivalTime:
+                                        type: integer
+                                        format: int32
+                                      departureConnection:
+                                        type: string
+                        timeBetween:
+                          type: integer
+                          format: int32
+                        station:
+                          type: string
+                        stationinfo:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            '@id':
+                              type: string
+                            locationX:
+                              type: number
+                            locationY:
+                              type: number
+                            standardname:
+                              type: string
+                            name:
+                              type: string
+                        vehicle:
+                          type: string
+                        direction:
+                          type: object
+                          properties:
+                            name:
+                              type: string

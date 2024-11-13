@@ -102,7 +102,9 @@ public class JourneyMapper {
     if (trainParts == null) {
       return Collections.emptyList();
     }
-    return trainParts.stream().map(part -> part.getImage().getUri()).collect(Collectors.toList());
+    return trainParts.stream()
+    .map(part -> part.getImage() != null ? part.getImage().getUri() : null)
+    .collect(Collectors.toList());
   }
 
   private CrowdForecastEnum mapCrowdForecastToCrowdForecastEnum(JourneyStop externalJourney) {

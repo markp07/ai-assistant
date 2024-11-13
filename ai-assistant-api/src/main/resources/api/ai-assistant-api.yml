@@ -60,6 +60,14 @@ paths:
           required: false
           schema:
             type: boolean
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - nl
+              - be
       responses:
         '200':
           description: Successful response

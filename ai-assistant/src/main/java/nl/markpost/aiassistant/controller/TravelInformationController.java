@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import nl.markpost.aiassistant.api.controller.TravelApi;
 import nl.markpost.aiassistant.api.model.Departure;
 import nl.markpost.aiassistant.api.model.Journey;
+import nl.markpost.aiassistant.service.BeRailApiService;
 import nl.markpost.aiassistant.service.NsTravelInformationApiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TravelInformationController implements TravelApi {
 
   private final NsTravelInformationApiService nsTravelInformationApiService;
+  private final BeRailApiService beRailApiService;
 
   @Override
   public ResponseEntity<List<Departure>> travelDeparturesGet(
-      String station, Integer count, OffsetDateTime departureTime, Boolean addJourneys) {
+      String station, Integer count, OffsetDateTime departureTime, Boolean addJourneys, String country) {
 
     if (count == null) {
       count = 5;
@@ -30,8 +32,13 @@ public class TravelInformationController implements TravelApi {
       departureTime = OffsetDateTime.now();
     }
 
-    return ResponseEntity.ok(
-        nsTravelInformationApiService.getDepartures(station, count, departureTime));
+    List<Departure> departures = switch (country) {
+      case "be" -> beRailApiService.getDepartures(station);
+      case "nl" -> nsTravelInformationApiService.getDepartures(station, count, departureTime);
+      default -> throw new IllegalArgumentException("Country not found: " + country);
+    };
+
+    return ResponseEntity.ok(departures);
   }
 
   @Override
