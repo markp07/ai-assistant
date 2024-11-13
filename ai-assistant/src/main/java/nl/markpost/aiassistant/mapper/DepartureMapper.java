@@ -42,7 +42,7 @@ public interface DepartureMapper {
   @Mapping(expression = "java(externalDeparture.getDelay() / 60)", target = "delay")
   @Mapping(source = "platform", target = "track")
   @Mapping(expression = "java(externalDeparture.getCanceled() == 1)", target = "cancelled")
-  @Mapping(expression = "java(externalDeparture.getVehicleinfo().getShortname().split(\" \")[0])", target = "category")
+  @Mapping(source = "vehicleinfo.shortname", target = "category", qualifiedByName = "mapCategory")
 //  @Mapping(source = "routeStations", target = "via", qualifiedByName = "mapRouteStationsToVia")
 //  @Mapping(
 //      expression =
@@ -62,5 +62,23 @@ public interface DepartureMapper {
   @Named("mapBigDecimalToOffsetDateTime")
   default OffsetDateTime mapBigDecimalToOffsetDateTime(BigDecimal timestamp) {
     return OffsetDateTime.ofInstant(Instant.ofEpochSecond(timestamp.longValue()), ZoneOffset.ofHours(1));
+  }
+
+  @Named("mapCategory")
+  default String mapCategory(String shortName) {
+    String category = shortName.split(" ")[0];
+
+    switch (category) {
+      case "IC":
+        return "InterCity";
+      case "L":
+        return "Lokale Trein";
+      default:
+        if (shortName.startsWith("S")) {
+          return "S-trein "+ category;
+        } else {
+          return shortName;
+        }
+    }
   }
 }

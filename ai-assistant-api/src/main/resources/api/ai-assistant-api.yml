@@ -123,20 +123,43 @@ components:
       properties:
         trainNumber:
           type: string
-        direction:
+        destination:
           type: string
         departureTime:
           type: string
           format: date-time
         delay:
           type: integer
-          format: int64
+          format: int32
         track:
           type: string
         category:
           type: string
         cancelled:
           type: boolean
+        trainType:
+            type: string
+        trainLength:
+          type: integer
+          format: int32
+        numberOfSeats:
+          type: integer
+          format: int32
+        stockIdentifiers:
+          type: array
+          items:
+            type: string
+        stockImageUris:
+          type: array
+          items:
+            type: string
+        crowdForecast:
+          type: string
+          enum:
+            - UNKNOWN
+            - LOW
+            - MEDIUM
+            - HIGH
         via:
           type: array
           items:
@@ -145,8 +168,6 @@ components:
           $ref: '#/components/schemas/DepartureStatusEnum'
         message:
           type: string
-        journey:
-          $ref: '#/components/schemas/Journey'
     DepartureStatusEnum:
       type: string
       enum:

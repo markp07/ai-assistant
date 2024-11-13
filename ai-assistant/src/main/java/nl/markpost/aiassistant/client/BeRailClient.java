@@ -1,7 +1,8 @@
 package nl.markpost.aiassistant.client;
 
+import nl.markpost.aiassistant.external.api.berail.model.CompositionResponse;
 import nl.markpost.aiassistant.external.api.berail.model.LiveboardResponse;
-import nl.markpost.aiassistant.external.api.ns.travelinformation.model.RepresentationResponseJourney;
+import nl.markpost.aiassistant.external.api.berail.model.VehicleResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,16 @@ public interface BeRailClient {
       @RequestParam(value = "format", defaultValue = "json") String format,
       @RequestParam(value = "lang", defaultValue = "nl") String lang);
 
-  @GetMapping("/api/v2/journey")
-  RepresentationResponseJourney getJourney(@RequestParam("train") String trainNumber);
+  @GetMapping("/vehicle")
+  VehicleResponse getVehicle(
+      @RequestParam("id") String id,
+      @RequestParam(value = "format", defaultValue = "json") String format,
+      @RequestParam(value = "lang", defaultValue = "nl") String lang);
+
+  @GetMapping("/composition")
+  CompositionResponse getComposition(
+      @RequestParam("id") String id,
+      @RequestParam(value = "format", defaultValue = "json") String format,
+      @RequestParam(value = "lang", defaultValue = "nl") String lang,
+      @RequestParam(value = "data", defaultValue = "") String data);
 }

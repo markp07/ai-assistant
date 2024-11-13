@@ -212,8 +212,7 @@ components:
                 type: object
                 properties:
                   id:
-                    type: integer
-                    format: int32
+                    type: string
                   delay:
                     type: integer
                     format: int64
@@ -301,8 +300,7 @@ components:
             type: object
             properties:
               id:
-                type: integer
-                format: int32
+                type: string
               departure:
                 type: object
                 properties:
@@ -372,8 +370,7 @@ components:
                           type: object
                           properties:
                             id:
-                              type: integer
-                              format: int32
+                              type: string
                             station:
                               type: string
                             stationinfo:
@@ -435,8 +432,7 @@ components:
                           type: object
                           properties:
                             id:
-                              type: integer
-                              format: int32
+                              type: string
                             header:
                               type: string
                             lead:
@@ -530,8 +526,7 @@ components:
                       type: object
                       properties:
                         id:
-                          type: integer
-                          format: int32
+                          type: string
                         header:
                           type: string
                         lead:
@@ -634,8 +629,7 @@ components:
                                     type: object
                                     properties:
                                       id:
-                                        type: integer
-                                        format: int32
+                                        type: string
                                       header:
                                         type: string
                                       lead:
@@ -665,8 +659,7 @@ components:
                                     type: object
                                     properties:
                                       id:
-                                        type: integer
-                                        format: int32
+                                        type: string
                                       station:
                                         type: string
                                       stationinfo:
@@ -743,3 +736,285 @@ components:
                           properties:
                             name:
                               type: string
+    VehicleResponse:
+      type: object
+      properties:
+        version:
+          type: string
+        timestamp:
+          type: integer
+          format: int32
+        vehicle:
+          type: string
+        vehicleinfo:
+          type: object
+          properties:
+            name:
+              type: string
+            locationX:
+              type: number
+            locationY:
+              type: number
+            shortname:
+              type: string
+            '@id':
+              type: string
+          required:
+            - name
+            - locationX
+            - locationY
+            - shortname
+            - '@id'
+        stops:
+          type: object
+          properties:
+            number:
+              type: integer
+              format: int32
+            stop:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  station:
+                    type: string
+                  stationinfo:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      '@id':
+                        type: string
+                      locationX:
+                        type: number
+                      locationY:
+                        type: number
+                      standardname:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - '@id'
+                      - locationX
+                      - locationY
+                      - standardname
+                      - name
+                  time:
+                    type: integer
+                    format: int32
+                  delay:
+                    type: integer
+                    format: int64
+                  platform:
+                    type: integer
+                    format: int32
+                  platforminfo:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      normal:
+                        type: string
+                  canceled:
+                    type: integer
+                    format: int32
+                  departureDelay:
+                    type: integer
+                    format: int64
+                  departureCanceled:
+                    type: integer
+                    format: int32
+                  scheduledDepartureTime:
+                    type: integer
+                    format: int32
+                  arrivalDelay:
+                    type: integer
+                    format: int64
+                  arrivalCanceled:
+                    type: integer
+                    format: int32
+                  left:
+                    type: integer
+                    format: int32
+                  arrived:
+                    type: integer
+                    format: int32
+                  isExtraStop:
+                    type: integer
+                    format: int32
+                  scheduledArrivalTime:
+                    type: integer
+                    format: int32
+                  departureConnection:
+                    type: string
+                  occupancy:
+                    type: object
+                    properties:
+                      '@id':
+                        type: string
+                      name:
+                        type: string
+                required:
+                  - id
+                  - station
+                  - stationinfo
+                  - time
+                  - delay
+                  - platform
+                  - platforminfo
+                  - canceled
+                  - departureDelay
+                  - departureCanceled
+                  - scheduledDepartureTime
+                  - arrivalDelay
+                  - arrivalCanceled
+                  - isExtraStop
+                  - scheduledArrivalTime
+                  - departureConnection
+                  - occupancy
+          required:
+            - number
+            - stop
+      required:
+        - version
+        - timestamp
+        - vehicle
+        - vehicleinfo
+        - stops
+    CompositionResponse:
+      type: object
+      properties:
+        version:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        composition:
+          type: object
+          properties:
+            segments:
+              type: object
+              properties:
+                number:
+                  type: integer
+                  format: int32
+                segment:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      origin:
+                        type: object
+                        properties:
+                          locationX:
+                            type: number
+                          locationY:
+                            type: number
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          '@id':
+                            type: string
+                          standardname:
+                            type: string
+                      destination:
+                        type: object
+                        properties:
+                          locationX:
+                            type: number
+                          locationY:
+                            type: number
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          '@id':
+                            type: string
+                          standardname:
+                            type: string
+                      composition:
+                        type: object
+                        properties:
+                          source:
+                            type: string
+                          units:
+                            type: object
+                            properties:
+                              number:
+                                type: integer
+                                format: int32
+                              unit:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                    materialType:
+                                      type: object
+                                      properties:
+                                        parent_type:
+                                          type: string
+                                        sub_type:
+                                          type: string
+                                        orientation:
+                                          type: string
+                                    hasToilets:
+                                      type: boolean
+                                    hasTables:
+                                      type: boolean
+                                    hasSecondClassOutlets:
+                                      type: boolean
+                                    hasFirstClassOutlets:
+                                      type: boolean
+                                    hasHeating:
+                                      type: boolean
+                                    hasAirco:
+                                      type: boolean
+                                    materialNumber:
+                                      type: string
+                                    tractionType:
+                                      type: string
+                                    canPassToNextUnit:
+                                      type: boolean
+                                    standingPlacesSecondClass:
+                                      type: integer
+                                      format: int32
+                                    standingPlacesFirstClass:
+                                      type: integer
+                                      format: int32
+                                    seatsCoupeSecondClass:
+                                      type: integer
+                                      format: int32
+                                    seatsCoupeFirstClass:
+                                      type: integer
+                                      format: int32
+                                    seatsSecondClass:
+                                      type: integer
+                                      format: int32
+                                    seatsFirstClass:
+                                      type: integer
+                                      format: int32
+                                    lengthInMeter:
+                                      type: number
+                                    hasSemiAutomaticInteriorDoors:
+                                      type: boolean
+                                    hasLuggageSection:
+                                      type: boolean
+                                    materialSubTypeName:
+                                      type: string
+                                    tractionPosition:
+                                      type: integer
+                                      format: int32
+                                    hasPrmSection:
+                                      type: boolean
+                                    hasPriorityPlaces:
+                                      type: boolean
+                                    hasBikeSection:
+                                      type: boolean

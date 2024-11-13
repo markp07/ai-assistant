@@ -10,8 +10,9 @@ import nl.markpost.aiassistant.external.api.ns.travelinformation.model.JourneySt
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Part;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Stock;
 import org.mapstruct.Mapper;
+import org.springframework.stereotype.Service;
 
-@Mapper(componentModel = "spring")
+@Service
 public class JourneyMapper {
 
   public Journey from(
