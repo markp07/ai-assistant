@@ -19,7 +19,7 @@ import nl.markpost.aiassistant.external.api.berail.model.VehicleResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BeRailMapper {
+public class BelgianRailDeparturesMapper {
 
   public Departure mapDeparture(
       String station,
@@ -102,17 +102,20 @@ public class BeRailMapper {
                 })
             .orElse(List.of()));
     departure.setCrowdForecast(CrowdForecastEnum.UNKNOWN);
-    // TODO: seems too high sometimes
+    // TODO: seems too high sometimes-- Using first segment only now
     departure.setTrainLength(
         segments.stream()
+            .findFirst()
             .map(segment -> segment.getComposition().getUnits().getNumber())
-            .reduce(0, Integer::sum));
-    // TODO: seems too high sometimes
+            .orElse(0));
+    // TODO: seems too high sometimes -- Using first segment only now
     departure.setNumberOfSeats(
         segments.stream()
-            .flatMap(segment -> segment.getComposition().getUnits().getUnit().stream())
-            .mapToInt(unit -> unit.getSeatsSecondClass() + unit.getSeatsFirstClass())
-            .reduce(0, Integer::sum));
+            .findFirst()
+            .map(segment -> segment.getComposition().getUnits().getUnit().stream()
+                .mapToInt(unit -> unit.getSeatsSecondClass() + unit.getSeatsFirstClass())
+                .sum())
+            .orElse(0));
     departure.setDepartureStatus(
         Optional.ofNullable(vehicleResponse.getStops())
             .map(

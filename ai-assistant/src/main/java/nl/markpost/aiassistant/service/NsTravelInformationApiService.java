@@ -1,6 +1,7 @@
 package nl.markpost.aiassistant.service;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import nl.markpost.aiassistant.api.model.Departure;
@@ -28,17 +29,18 @@ public class NsTravelInformationApiService {
 
     List<nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure>
         externalDepartures =
-            nsTravelInformationClient
-                .getDepartures("nl", stationCode, departureTime.toString(), null, count)
-                .getPayload()
-                .getDepartures();
+        nsTravelInformationClient
+            .getDepartures("nl", stationCode, departureTime.toString(), null, count)
+            .getPayload()
+            .getDepartures();
 
-    List<Departure> departures = departureMapper.from(externalDepartures);
+    List<Departure> departures = new ArrayList<>();
 
-    for (Departure departure : departures) {
-      String trainNumber = departure.getTrainNumber();
+    for (nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure externalDeparture : externalDepartures) {
+      String trainNumber = externalDeparture.getProduct().getNumber();
       Journey journey = getJourney(trainNumber, station);
-      //      departure.setJourney(journey);
+      Departure departure = departureMapper.from(externalDeparture, journey);
+      departures.add(departure);
     }
 
     return departures;

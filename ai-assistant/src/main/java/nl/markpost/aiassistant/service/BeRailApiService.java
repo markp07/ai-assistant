@@ -9,7 +9,7 @@ import nl.markpost.aiassistant.client.BeRailClient;
 import nl.markpost.aiassistant.external.api.berail.model.CompositionResponse;
 import nl.markpost.aiassistant.external.api.berail.model.LiveboardResponseDeparturesDepartureInner;
 import nl.markpost.aiassistant.external.api.berail.model.VehicleResponse;
-import nl.markpost.aiassistant.mapper.BeRailMapper;
+import nl.markpost.aiassistant.mapper.BelgianRailDeparturesMapper;
 import nl.markpost.aiassistant.mapper.JourneyMapper;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class BeRailApiService {
 
   private final BeRailClient beRailClient;
 
-  private final BeRailMapper beRailMapper;
+  private final BelgianRailDeparturesMapper belgianRailDeparturesMapper;
 
   private final JourneyMapper journeyMapper;
 
@@ -43,7 +43,7 @@ public class BeRailApiService {
           beRailClient.getComposition(nmbsDeparture.getVehicle(), "json", "nl", "");
 
       Departure departure =
-          beRailMapper.mapDeparture(station, nmbsDeparture, vehicleResponse, compositionResponse);
+          belgianRailDeparturesMapper.mapDeparture(station, nmbsDeparture, vehicleResponse, compositionResponse);
       departures.add(departure);
 
       Thread.sleep(1000);
