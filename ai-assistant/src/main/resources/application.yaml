@@ -2,7 +2,13 @@
 server:
   port: 7075
   servlet:
-    context-path: /api
+    context-path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 openai:
   api-key: ${OPENAI_API_KEY}

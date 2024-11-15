@@ -62,7 +62,7 @@ public class BelgianRailDeparturesMapper {
             .map(
                 vehicleInfo -> {
                   String shortName = vehicleInfo.getShortname().split(" ")[0];
-                  //TODO: change into ENUM
+                  // TODO: change into ENUM
                   switch (shortName) {
                     case "EUR":
                       return "Eurostar";
@@ -105,8 +105,7 @@ public class BelgianRailDeparturesMapper {
                             if (foundCurrentStation.get()) {
                               return true;
                             }
-                            if (stop.getStation()
-                                .equals(station.replace("%20", "-"))) {
+                            if (stop.getStation().equals(station.replace("%20", "-"))) {
                               foundCurrentStation.set(true);
                             }
                             return false;
@@ -137,10 +136,7 @@ public class BelgianRailDeparturesMapper {
             .map(
                 stops ->
                     stops.getStop().stream()
-                        .filter(
-                            stop ->
-                                stop.getStation()
-                                    .equals(station.replace("%20", "-")))
+                        .filter(stop -> stop.getStation().equals(station.replace("%20", "-")))
                         .findFirst()
                         .map(
                             stop -> {

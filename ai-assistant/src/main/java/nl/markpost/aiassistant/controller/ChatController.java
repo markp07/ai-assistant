@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/v1")
+@RequestMapping("/api/v1")
 public class ChatController implements ChatApi {
 
   private final ChatService chatService;

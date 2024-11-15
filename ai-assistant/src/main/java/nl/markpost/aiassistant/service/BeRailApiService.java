@@ -33,7 +33,8 @@ public class BeRailApiService {
             .getDepartures()
             .getDeparture();
 
-    nmbsDepartures = nmbsDepartures.size() > count ? nmbsDepartures.subList(0, count - 1) : nmbsDepartures;
+    nmbsDepartures =
+        nmbsDepartures.size() > count ? nmbsDepartures.subList(0, count - 1) : nmbsDepartures;
     List<Departure> departures = new ArrayList<>();
 
     for (LiveboardResponseDeparturesDepartureInner nmbsDeparture : nmbsDepartures) {

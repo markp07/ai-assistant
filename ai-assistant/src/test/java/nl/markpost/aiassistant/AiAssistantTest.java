@@ -24,7 +24,9 @@ class AiAssistantTest {
   void applicationStartsSuccessfully() {
     String response =
         this.restTemplate.getForObject("http://localhost:" + port + "/", String.class);
-    assertThat(response).contains("<h1>HTTP Status 404 – Not Found</h1>");
+    assertThat(response)
+        .contains(
+            "\",\"status\":500,\"code\":\"INTERNAL_SERVER_ERROR\",\"message\":\"Internal server error\",\"");
   }
 
   @Test

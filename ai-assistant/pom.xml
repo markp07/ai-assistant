@@ -66,6 +66,12 @@
 
     <!-- Other dependencies -->
     <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <version>1.14.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>io.github.openfeign</groupId>
       <artifactId>feign-jackson</artifactId>
       <version>11.8</version>
