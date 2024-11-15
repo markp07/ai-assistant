@@ -62,11 +62,28 @@ public class BelgianRailDeparturesMapper {
             .map(
                 vehicleInfo -> {
                   String shortName = vehicleInfo.getShortname().split(" ")[0];
+                  //TODO: change into ENUM
                   switch (shortName) {
+                    case "EUR":
+                      return "Eurostar";
+                    case "TGV":
+                      return "TGV";
+                    case "ICE":
+                      return "ICE";
                     case "IC":
                       return "InterCity";
+                    case "EC":
+                      return "EuroCity";
                     case "L":
-                      return "Lokale Trein";
+                      return "Lokaal";
+                    case "P":
+                      return "Piekuur";
+                    case "EXTRA":
+                      return "EXTRA";
+                    case "T":
+                      return "Toerist";
+                    case "EXP":
+                      return "Kust-Express";
                     default:
                       if (shortName.startsWith("S")) {
                         return "S-trein " + shortName;
@@ -88,8 +105,7 @@ public class BelgianRailDeparturesMapper {
                             if (foundCurrentStation.get()) {
                               return true;
                             }
-                            if (stop.getStationinfo()
-                                .getStandardname()
+                            if (stop.getStation()
                                 .equals(station.replace("%20", "-"))) {
                               foundCurrentStation.set(true);
                             }
@@ -102,19 +118,19 @@ public class BelgianRailDeparturesMapper {
                 })
             .orElse(List.of()));
     departure.setCrowdForecast(CrowdForecastEnum.UNKNOWN);
-    // TODO: seems too high sometimes-- Using first segment only now
     departure.setTrainLength(
         segments.stream()
             .findFirst()
             .map(segment -> segment.getComposition().getUnits().getNumber())
             .orElse(0));
-    // TODO: seems too high sometimes -- Using first segment only now
     departure.setNumberOfSeats(
         segments.stream()
             .findFirst()
-            .map(segment -> segment.getComposition().getUnits().getUnit().stream()
-                .mapToInt(unit -> unit.getSeatsSecondClass() + unit.getSeatsFirstClass())
-                .sum())
+            .map(
+                segment ->
+                    segment.getComposition().getUnits().getUnit().stream()
+                        .mapToInt(unit -> unit.getSeatsSecondClass() + unit.getSeatsFirstClass())
+                        .sum())
             .orElse(0));
     departure.setDepartureStatus(
         Optional.ofNullable(vehicleResponse.getStops())
@@ -123,8 +139,7 @@ public class BelgianRailDeparturesMapper {
                     stops.getStop().stream()
                         .filter(
                             stop ->
-                                stop.getStationinfo()
-                                    .getStandardname()
+                                stop.getStation()
                                     .equals(station.replace("%20", "-")))
                         .findFirst()
                         .map(

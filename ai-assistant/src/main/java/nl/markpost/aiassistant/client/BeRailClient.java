@@ -10,6 +10,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+//TODO: add user agent header
 @FeignClient(name = "BeRailClient", url = "https://api.irail.be")
 public interface BeRailClient {
 
@@ -29,10 +30,9 @@ public interface BeRailClient {
       @RequestParam(value = "lang", defaultValue = "nl") String lang);
 
   @SneakyThrows
-  default VehicleResponse fallbackGetVehicle(
-      String id, String format, String lang, Exception exception) {
+  default VehicleResponse fallbackGetVehicle(Throwable exception) {
     if (exception instanceof NotFoundException) {
-      return null;
+      return new VehicleResponse();
     } else {
       throw exception;
     }
@@ -47,10 +47,9 @@ public interface BeRailClient {
       @RequestParam(value = "data", defaultValue = "") String data);
 
   @SneakyThrows
-  default VehicleResponse fallbackGetComposition(
-      String id, String format, String lang, String data, Exception exception) {
+  default CompositionResponse fallbackGetComposition(Exception exception) {
     if (exception instanceof NotFoundException) {
-      return null;
+      return new CompositionResponse();
     } else {
       throw exception;
     }

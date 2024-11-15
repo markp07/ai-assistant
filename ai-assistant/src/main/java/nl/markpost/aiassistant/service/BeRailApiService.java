@@ -24,7 +24,7 @@ public class BeRailApiService {
   private final JourneyMapper journeyMapper;
 
   @SneakyThrows
-  public List<Departure> getDepartures(String station) {
+  public List<Departure> getDepartures(String station, Integer count) {
     station = station.replace(" ", "+");
 
     List<LiveboardResponseDeparturesDepartureInner> nmbsDepartures =
@@ -33,7 +33,7 @@ public class BeRailApiService {
             .getDepartures()
             .getDeparture();
 
-    nmbsDepartures = nmbsDepartures.size() > 10 ? nmbsDepartures.subList(0, 9) : nmbsDepartures;
+    nmbsDepartures = nmbsDepartures.size() > count ? nmbsDepartures.subList(0, count - 1) : nmbsDepartures;
     List<Departure> departures = new ArrayList<>();
 
     for (LiveboardResponseDeparturesDepartureInner nmbsDeparture : nmbsDepartures) {
@@ -43,10 +43,11 @@ public class BeRailApiService {
           beRailClient.getComposition(nmbsDeparture.getVehicle(), "json", "nl", "");
 
       Departure departure =
-          belgianRailDeparturesMapper.mapDeparture(station, nmbsDeparture, vehicleResponse, compositionResponse);
+          belgianRailDeparturesMapper.mapDeparture(
+              station, nmbsDeparture, vehicleResponse, compositionResponse);
       departures.add(departure);
 
-      Thread.sleep(1000);
+      Thread.sleep(650);
     }
 
     return departures;

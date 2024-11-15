@@ -29,14 +29,15 @@ public class NsTravelInformationApiService {
 
     List<nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure>
         externalDepartures =
-        nsTravelInformationClient
-            .getDepartures("nl", stationCode, departureTime.toString(), null, count)
-            .getPayload()
-            .getDepartures();
+            nsTravelInformationClient
+                .getDepartures("nl", stationCode, departureTime.toString(), null, count)
+                .getPayload()
+                .getDepartures();
 
     List<Departure> departures = new ArrayList<>();
 
-    for (nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure externalDeparture : externalDepartures) {
+    for (nl.markpost.aiassistant.external.api.ns.travelinformation.model.Departure
+        externalDeparture : externalDepartures) {
       String trainNumber = externalDeparture.getProduct().getNumber();
       Journey journey = getJourney(trainNumber, station);
       Departure departure = departureMapper.from(externalDeparture, journey);

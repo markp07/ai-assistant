@@ -2,6 +2,7 @@ package nl.markpost.aiassistant.mapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import nl.markpost.aiassistant.api.model.Journey;
 import nl.markpost.aiassistant.api.model.Journey.CrowdForecastEnum;
@@ -9,9 +10,9 @@ import nl.markpost.aiassistant.external.api.ns.travelinformation.model.JourneySt
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.JourneyStop.StatusEnum;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Part;
 import nl.markpost.aiassistant.external.api.ns.travelinformation.model.Stock;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class JourneyMapper {
 
   public Journey from(
@@ -40,28 +41,26 @@ public class JourneyMapper {
     }
     journey.setStops(mapStops(externalJourney));
 
-    var arrival =
-        externalJourneyStop.getArrivals().isEmpty()
-            ? null
-            : externalJourneyStop.getArrivals().getFirst();
-    var departure =
-        externalJourneyStop.getDepartures().isEmpty()
-            ? null
-            : externalJourneyStop.getDepartures().getFirst();
+    var arrival = externalJourneyStop.getArrivals().stream().findFirst().orElse(null);
+    var departure = externalJourneyStop.getDepartures().stream().findFirst().orElse(null);
 
     if (arrival != null) {
       journey.setOrigin(arrival.getOrigin().getName());
       journey.setCategory(arrival.getProduct().getShortCategoryName());
       journey.setCancelled(arrival.getCancelled());
-      journey.setStockIdentifiers(arrival.getStockIdentifiers());
+      journey.setStockIdentifiers(
+          arrival.getStockIdentifiers().stream()
+              .filter(identifier -> identifier != null && !identifier.equals("0"))
+              .collect(Collectors.toList()));
     } else if (departure != null) {
       journey.setOrigin(departure.getOrigin().getName());
       journey.setCategory(departure.getProduct().getShortCategoryName());
       journey.setCancelled(departure.getCancelled());
-      journey.setStockIdentifiers(departure.getStockIdentifiers());
+      journey.setStockIdentifiers(
+          departure.getStockIdentifiers().stream()
+              .filter(identifier -> identifier != null && !identifier.equals("0"))
+              .collect(Collectors.toList()));
     }
-
-    if (departure != null) {}
 
     return journey;
   }
@@ -104,6 +103,7 @@ public class JourneyMapper {
     }
     return trainParts.stream()
         .map(part -> part.getImage() != null ? part.getImage().getUri() : null)
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 

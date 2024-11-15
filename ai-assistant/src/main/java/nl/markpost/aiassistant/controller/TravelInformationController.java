@@ -38,7 +38,7 @@ public class TravelInformationController implements TravelApi {
 
     List<Departure> departures =
         switch (country) {
-          case "be" -> beRailApiService.getDepartures(station);
+          case "be" -> beRailApiService.getDepartures(station, count);
           case "nl" -> nsTravelInformationApiService.getDepartures(station, count, departureTime);
           default -> throw new IllegalArgumentException("Country not found: " + country);
         };
