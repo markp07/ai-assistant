@@ -1,5 +1,17 @@
 # Release Notes
 
+## Version 0.9.0 - 2025-11-15
+
+## Updated
+- Refactored project structure to remove all modules since there is so little code. 
+- Updated README.md to reflect new project structure and usage instructions.
+- Updated Dockerfile to build the single-module project.
+
+## Removed
+- Removed all multi-module related files and configurations.
+- Remove train-information code since it is moved to a separate project.
+- Removed train-information API spec code.
+
 ## Version 0.0.8 - 2025-11-02
 
 ### Added
@@ -15,7 +27,6 @@
 - Updated github-actions-dependencies group with 2 updates
 - Updated README.md to include Belgium/BeRail API information and ai-assistant-external-api module
 - Updated CHANGELOG.md with comprehensive release notes
-
 
 ## Version 0.0.7 - 2023-10-16
 

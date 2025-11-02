@@ -4,32 +4,40 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nl.markpost</groupId>
-  <artifactId>ai-assistant-parent</artifactId>
+  <artifactId>ai-assistant</artifactId>
   <version>${revision}</version>
-  <packaging>pom</packaging>
-  <name>AI Assistant Parent</name>
+  <name>AI Assistant</name>
   <description>AI Assistant application</description>
 
   <properties>
     <!-- Generic properties -->
-    <revision>0.0.7</revision>
+    <revision>1.0.0</revision>
     <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- Dependency versions -->
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+
+    <!-- Spring Framework versions -->
     <spring.boot.version>3.5.7</spring.boot.version>
     <spring.cloud.version>2025.0.0</spring.cloud.version>
+
+    <!-- Core dependency versions -->
     <lombok.version>1.18.42</lombok.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
     <langchain4j.version>1.8.0</langchain4j.version>
     <hibernate-validator.version>9.0.1.Final</hibernate-validator.version>
     <mapdb.version>3.1.0</mapdb.version>
-    <!-- Generated API versions -->
+
+    <!-- API and validation versions -->
     <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
     <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
-    <springdoc-openapi-webmvc-core.version>2.8.13</springdoc-openapi-webmvc-core.version>
+    <springdoc-openapi.version>2.8.13</springdoc-openapi.version>
+
     <!-- Test dependency versions -->
     <assertj.version>3.27.6</assertj.version>
+    <mockito.version>5.20.0</mockito.version>
+
     <!-- Plugin versions -->
     <jacoco.version>0.8.14</jacoco.version>
     <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
@@ -37,9 +45,8 @@
     <flatten.maven.version>1.7.3</flatten.maven.version>
     <maven.compiler.version>3.14.1</maven.compiler.version>
     <maven.resources.version>3.3.1</maven.resources.version>
-    <maven.jar.version>3.4.2</maven.jar.version>
-    <maven.assembly.version>3.7.1</maven.assembly.version>
     <openapi-generator-maven-plugin.version>7.17.0</openapi-generator-maven-plugin.version>
+    <versions-maven-plugin.version>2.19.1</versions-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -61,92 +68,364 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <!-- Spring Boot dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- Spring Cloud dependencies -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-openfeign</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+    </dependency>
+
+    <!-- OpenFeign and HTTP dependencies -->
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-jackson</artifactId>
+      <version>11.8</version>
+    </dependency>
+
+    <!-- Jackson dependencies -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.20.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>jackson-databind-nullable</artifactId>
+      <version>${jackson-databind-nullable.version}</version>
+    </dependency>
+
+    <!-- Reactive dependencies -->
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-core</artifactId>
+    </dependency>
+
+    <!-- Code generation dependencies -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok-mapstruct-binding</artifactId>
+      <version>${lombok-mapstruct-bindings.version}</version>
+    </dependency>
+
+    <!-- OpenAPI and documentation dependencies -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc-openapi.version}</version>
+    </dependency>
+
+    <!-- AI/ML dependencies -->
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+      <version>${langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-open-ai</artifactId>
+      <version>${langchain4j.version}</version>
+    </dependency>
+
+    <!-- Database and validation dependencies -->
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>${hibernate-validator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapdb</groupId>
+      <artifactId>mapdb</artifactId>
+      <version>${mapdb.version}</version>
+    </dependency>
+
+    <!-- Monitoring dependencies -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven.failsafe.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>flatten-maven-plugin</artifactId>
-          <version>${flatten.maven.version}</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>flatten</goal>
-              </goals>
-              <phase>process-resources</phase>
-            </execution>
-          </executions>
-          <configuration>
-            <updatePomFile>true</updatePomFile>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven.compiler.version}</version>
-          <configuration>
-            <compilerArgs>
-              <arg>-parameters</arg>
-            </compilerArgs>
-            <parameters>true</parameters>
-            <source>${java.version}</source>
-            <target>${java.version}</target>
-            <release>${java.version}</release>
-            <encoding>${project.build.sourceEncoding}</encoding>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>${maven.resources.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <plugins>
+      <!-- Compiler plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.version}</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <release>${java.version}</release>
+          <parameters>true</parameters>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${mapstruct.version}</version>
+            </path>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok-mapstruct-binding</artifactId>
+              <version>${lombok-mapstruct-bindings.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-Amapstruct.defaultComponentModel=spring</arg>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <!-- Spring Boot plugin -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- OpenAPI Generator plugin -->
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi-generator-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/src/main/resources/api/ai-assistant-api.yml</inputSpec>
+              <generatorName>spring</generatorName>
+              <output>${project.build.directory}/generated-sources</output>
+              <apiPackage>nl.markpost.aiassistant.api.controller</apiPackage>
+              <modelPackage>nl.markpost.aiassistant.api.model</modelPackage>
+              <supportingFilesToGenerate>false</supportingFilesToGenerate>
+              <configOptions>
+                <title>AI Assistant API</title>
+                <delegatePattern>false</delegatePattern>
+                <interfaceOnly>true</interfaceOnly>
+                <skipDefaultInterface>true</skipDefaultInterface>
+                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                <useBeanValidation>true</useBeanValidation>
+                <performBeanValidation>true</performBeanValidation>
+                <useGenericResponse>true</useGenericResponse>
+                <library>spring-boot</library>
+                <useSpringBoot3>true</useSpringBoot3>
+                <useTags>true</useTags>
+                <serializeModel>true</serializeModel>
+                <openApiNullable>false</openApiNullable>
+                <generateConstructorWithRequiredArgs>false</generateConstructorWithRequiredArgs>
+                <generateConstructorWithAllArgs>false</generateConstructorWithAllArgs>
+                <additionalModelTypeAnnotations>
+                  @lombok.Data
+                  @lombok.Builder
+                  @lombok.AllArgsConstructor
+                  @lombok.NoArgsConstructor
+                </additionalModelTypeAnnotations>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- JaCoCo plugin -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <element>CLASS</element>
+                  <excludes>
+                    <exclude>*Test</exclude>
+                    <exclude>nl.markpost.aiassistant.api.model.*</exclude>
+                    <exclude>nl.markpost.aiassistant.config.*</exclude>
+                    <exclude>nl.markpost.aiassistant.constant.*</exclude>
+                    <exclude>nl.markpost.aiassistant.exception.*</exclude>
+                    <exclude>nl.markpost.aiassistant.AiAssistant</exclude>
+                  </excludes>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.25</minimum>
+                    </limit>
+                    <limit>
+                      <counter>CLASS</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.25</minimum>
+                    </limit>
+                    <limit>
+                      <counter>COMPLEXITY</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.25</minimum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Code formatting plugin -->
+      <plugin>
+        <groupId>com.spotify.fmt</groupId>
+        <artifactId>fmt-maven-plugin</artifactId>
+        <version>${fmt-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Versions plugin -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>display-dependency-updates</goal>
+              <goal>display-plugin-updates</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Flatten plugin -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>${flatten.maven.version}</version>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
-  <profiles>
-    <profile>
-      <id>openai</id>
-      <modules>
-        <module>ai-assistant-api</module>
-        <module>ai-assistant-external-api</module>
-        <module>ai-assistant</module>
-        <module>ai-assistant-common</module>
-        <module>ai-assistant-openai</module>
-      </modules>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-    </profile>
-    <profile>
-      <id>hugging-face</id>
-      <modules>
-        <module>ai-assistant-api</module>
-        <module>ai-assistant-external-api</module>
-        <module>ai-assistant</module>
-        <module>ai-assistant-common</module>
-        <module>ai-assistant-hugging-face</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>ollama</id>
-      <modules>
-        <module>ai-assistant-api</module>
-        <module>ai-assistant-external-api</module>
-        <module>ai-assistant</module>
-        <module>ai-assistant-common</module>
-        <module>ai-assistant-ollama</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>

@@ -1,6 +1,6 @@
 # AI Assistant
 
-AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model and external APIs (NS and BeRail) to provide real-time railway information in the Netherlands and Belgium.
+AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model.
 
 ## Table of Contents
 
@@ -13,134 +13,68 @@ AI Assistant is a Java project built with Maven and Docker. It integrates with t
 
 ## Project Structure
 
-The project is organized into multiple modules:
+The project is organized as follows:
 
-1. **ai-assistant-api**: This module holds the API specification and generates the API interfaces and models.
-2. **ai-assistant**: This module contains the main application logic.
-3. **ai-assistant-common**: This module contains common interfaces and models.
-4. **ai-assistant-openai**: This module integrates with the OpenAI API.
-5. **ai-assistant-hugging-face**: This module integrates with the Hugging Face API.
-6. **ai-assistant-ollama**: This module integrates with the Ollama API.
-7. **ai-assistant-external-api**: This module provides external API specifications and client interfaces for NS (Dutch Railways) and BeRail (Belgian Railways) APIs.
+1. **ai-assistant**: Contains the main application logic, including API integration and service layers.
+2. **config**: Holds configuration files for the application.
+3. **constant**: Defines constants used across the application.
+4. **controller**: Contains REST controllers for handling API requests.
+5. **service**: Implements the core business logic and integrations with external APIs.
+6. **models**: Defines data models used throughout the application.
+7. **exception**: Handles custom exceptions and error responses.
+8. **mapper**: Provides mapping utilities between DTOs and domain models.
 
 ## Features
 
 - **Natural Language Processing**: Understands and processes user inputs in natural language.
-- **Task Automation**: Automates repetitive tasks to save time and increase efficiency.
-- **Machine Learning**: Utilizes machine learning models to continuously improve performance.
-- **Customizable**: Easily customizable to suit different use cases and industries.
+- **Customizable**: Easily extendable to integrate with additional APIs or services.
 
 ## Docker Setup
 
 ### Dockerfile
 
-A Dockerfile is a script that contains a series of instructions on how to build a Docker image. Each instruction in a Dockerfile creates a layer in the image, and these layers are cached to speed up the build process. Here is a brief explanation of a typical Dockerfile setup:
+The project includes a Dockerfile for containerization. The Dockerfile builds the application and packages it into a lightweight image. Key steps include:
 
-1. **Base Image**: Specifies the starting point for the image, usually an official image from Docker Hub.
+1. **Base Image**: Uses an official OpenJDK image as the base.
    ```dockerfile
    FROM openjdk:11-jre-slim
    ```
 
-2. **Maintainer**: (Optional) Specifies the author of the Dockerfile.
+2. **Build and Package**: Runs Maven to build the application and package it as a JAR file.
    ```dockerfile
-   LABEL maintainer="your-email@example.com"
+   RUN ./mvnw -B -DskipTests clean package
    ```
 
-3. **Working Directory**: Sets the working directory inside the container.
+3. **Copy Artifact**: Copies the built JAR file into the final image.
    ```dockerfile
-   WORKDIR /app
+   COPY --from=build /workspace/app/target/ai-assistant-*.jar /app.jar
    ```
 
-4. **Copy Files**: Copies files from the host machine to the container.
+4. **Run Command**: Specifies the default command to run the application.
    ```dockerfile
-   COPY target/your-app.jar /app/your-app.jar
+   CMD ["java", "-jar", "/app.jar"]
    ```
-
-5. **Run Commands**: Executes commands in the container, such as installing dependencies.
-   ```dockerfile
-   RUN apt-get update && apt-get install -y some-package
-   ```
-
-6. **Expose Ports**: Informs Docker that the container listens on the specified network ports at runtime.
-   ```dockerfile
-   EXPOSE 8080
-   ```
-
-7. **Entry Point**: Specifies the command to run within the container when it starts.
-   ```dockerfile
-   ENTRYPOINT ["java", "-jar", "your-app.jar"]
-   ```
-
-### Docker Compose
-
-`docker-compose` is a tool for defining and running multi-container Docker applications. It uses a `docker-compose.yml` file to configure the application's services, networks, and volumes. Here is a brief explanation of a typical `docker-compose.yml` setup:
-
-1. **Version**: Specifies the version of the Docker Compose file format.
-   ```yaml
-   version: '3.8'
-   ```
-
-2. **Services**: Defines the services (containers) that make up the application.
-   ```yaml
-   services:
-     app:
-       image: your-app-image
-       build:
-         context: .
-         dockerfile: Dockerfile
-       ports:
-         - "8080:8080"
-       environment:
-         - ENV_VAR=value
-   ```
-
-3. **Networks**: (Optional) Defines custom networks for the services.
-   ```yaml
-   networks:
-     app-network:
-       driver: bridge
-   ```
-
-4. **Volumes**: (Optional) Defines volumes to persist data.
-   ```yaml
-   volumes:
-     app-data:
-   ```
-
-In summary, a Dockerfile is used to build a Docker image by specifying a series of instructions, while `docker-compose` is used to manage multi-container applications by defining services, networks, and volumes in a `docker-compose.yml` file.
 
 ## Installation
 
-To install and run the AI Assistant locally, follow these steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/ai-assistant.git
+   ```
 
-1. **Clone the repository**
-    ```sh
-    git clone https://github.com/mark3970/ai-assistant.git
-    cd ai-assistant
-    ```
+2. Build the Docker image:
+   ```bash
+   docker build -t ai-assistant:local .
+   ```
 
-2. **Build the project using Maven**
-    ```sh
-    mvn clean install
-    ```
-
-3. **Run Docker Compose to build and deploy the application**
-    ```sh
-    ./start.sh
-    ```
+3. Run the container:
+   ```bash
+   docker run -e OPENAI_API_KEY="your-key" -p 8080:8080 --rm ai-assistant:local
+   ```
 
 ## Usage
 
-Once the application is running, you can interact with the AI Assistant through the `/api/v1/chat` endpoint. This is a POST endpoint that accepts a model with a `chat` field.
-
-Example CURL command:
-```sh
-curl -X POST http://localhost:8080/api/v1/chat -H "Content-Type: application/json" -d '{"chat": "Hello, AI Assistant!"}'
-```
-
-## Changes
-
-Please read the [CHANGELOG.md](CHANGELOG.md) for the changes to this project.
+- Access the API documentation at `http://localhost:8080/swagger-ui.html`.
 
 ## License
 
