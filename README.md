@@ -1,6 +1,6 @@
 # AI Assistant
 
-AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model and external APIs to provide real-time railway information in the Netherlands and Belgium.
+AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model.
 
 ## Table of Contents
 
@@ -27,7 +27,6 @@ The project is organized as follows:
 ## Features
 
 - **Natural Language Processing**: Understands and processes user inputs in natural language.
-- **Real-Time Railway Information**: Fetches and displays real-time data for Dutch and Belgian railways.
 - **Customizable**: Easily extendable to integrate with additional APIs or services.
 
 ## Docker Setup
@@ -76,11 +75,6 @@ The project includes a Dockerfile for containerization. The Dockerfile builds th
 ## Usage
 
 - Access the API documentation at `http://localhost:8080/swagger-ui.html`.
-- Use the endpoints to fetch real-time railway information or interact with the AI assistant.
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
 
 ## License
 

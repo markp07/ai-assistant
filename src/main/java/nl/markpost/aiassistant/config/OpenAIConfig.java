@@ -16,8 +16,7 @@ public class OpenAIConfig {
   public OpenAiChatModel openAiChatModel() {
     return OpenAiChatModel.builder()
         .apiKey(apiKey)
-        .modelName(OpenAiChatModelName.GPT_5_MINI)
-        .temperature(0.5)
+        .modelName(OpenAiChatModelName.GPT_5_NANO)
         .build();
   }
 }

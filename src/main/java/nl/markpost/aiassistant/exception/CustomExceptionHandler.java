@@ -36,11 +36,12 @@ public class CustomExceptionHandler {
   }
 
   private Error createError(GenericErrorCodes errorCode, HttpStatus status) {
-    return new Error()
+    return Error.builder()
         .timestamp(Instant.now().atOffset(ZoneOffset.UTC))
         .status(status.value())
         .code(errorCode.getCode())
         .message(errorCode.getMessage())
-        .traceId(UUID.randomUUID().toString());
+        .traceId(UUID.randomUUID().toString())
+        .build();
   }
 }
