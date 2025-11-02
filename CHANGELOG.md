@@ -1,5 +1,22 @@
 # Release Notes
 
+## Version 0.0.8 - 2025-11-02
+
+### Added
+- Dependabot configuration with grouped dependency updates for automated dependency management
+
+### Updated
+- Bumped langchain4j dependency from version 0.35.0 to 1.8.0
+- Bumped org.springframework.cloud:spring-cloud-dependencies to latest version
+- Bumped org.mockito:mockito-junit-jupiter from version 4.0.0 to 5.20.0
+- Bumped org.hibernate.validator:hibernate-validator to latest version
+- Updated maven-dependencies group with 15 dependency updates
+- Updated openjdk in the docker-dependencies group
+- Updated github-actions-dependencies group with 2 updates
+- Updated README.md to include Belgium/BeRail API information and ai-assistant-external-api module
+- Updated CHANGELOG.md with comprehensive release notes
+
+
 ## Version 0.0.7 - 2023-10-16
 
 ### Updated
