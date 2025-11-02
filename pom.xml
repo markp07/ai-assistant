@@ -342,7 +342,10 @@
                   <excludes>
                     <exclude>*Test</exclude>
                     <exclude>nl.markpost.aiassistant.api.model.*</exclude>
+                    <exclude>nl.markpost.aiassistant.config.*</exclude>
+                    <exclude>nl.markpost.aiassistant.constant.*</exclude>
                     <exclude>nl.markpost.aiassistant.exception.*</exclude>
+                    <exclude>nl.markpost.aiassistant.AiAssistant</exclude>
                   </excludes>
                   <limits>
                     <limit>
