@@ -1,5 +1,11 @@
 # Release Notes
 
+## Version 0.0.8 - 2025-11-02
+
+### Updated
+- Bumped langchain4j dependency from version 0.35.0 to 1.8.0
+
+
 ## Version 0.0.7 - 2023-10-16
 
 ### Updated

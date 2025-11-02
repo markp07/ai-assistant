@@ -1,6 +1,6 @@
 # AI Assistant
 
-AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model and the NS API to provide real-time railway information in the Netherlands.
+AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model and external APIs (NS and BeRail) to provide real-time railway information in the Netherlands and Belgium.
 
 ## Table of Contents
 
@@ -21,6 +21,7 @@ The project is organized into multiple modules:
 4. **ai-assistant-openai**: This module integrates with the OpenAI API.
 5. **ai-assistant-hugging-face**: This module integrates with the Hugging Face API.
 6. **ai-assistant-ollama**: This module integrates with the Ollama API.
+7. **ai-assistant-external-api**: This module provides external API specifications and client interfaces for NS (Dutch Railways) and BeRail (Belgian Railways) APIs.
 
 ## Features
 
