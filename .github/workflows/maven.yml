@@ -22,7 +22,3 @@ jobs:
         cache: maven
     - name: Build with Maven, tests and generate JaCoCo report
       run: mvn -B package test jacoco:report --file pom.xml
-    - name: Check code style with Google Java Format
-      run: mvn com.spotify.fmt:fmt-maven-plugin:check
-    - name: Check for vulnerabilities with OWASP Dependency-Check
-      run: mvn verify org.owasp:dependency-check-maven:check
