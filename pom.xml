@@ -22,7 +22,7 @@
     <mapstruct.version>1.6.3</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
     <langchain4j.version>0.35.0</langchain4j.version>
-    <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+    <hibernate-validator.version>9.0.1.Final</hibernate-validator.version>
     <mapdb.version>3.1.0</mapdb.version>
     <!-- Generated API versions -->
     <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
