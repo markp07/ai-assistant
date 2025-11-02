@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Dependency versions -->
     <spring.boot.version>3.5.7</spring.boot.version>
-    <spring.cloud.version>2023.0.3</spring.cloud.version>
+    <spring.cloud.version>2025.0.0</spring.cloud.version>
     <lombok.version>1.18.42</lombok.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
