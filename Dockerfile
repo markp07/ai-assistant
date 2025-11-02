@@ -1,5 +1,5 @@
 # Use OpenJDK 21 with Alpine Linux as the base image for the build stage
-FROM openjdk:21-jdk AS build
+FROM openjdk:26-jdk AS build
 WORKDIR /workspace/app
 
 # Copy Maven wrapper and project files to the container
@@ -18,7 +18,7 @@ COPY ai-assistant-openai ai-assistant-openai
 RUN ./mvnw clean package
 
 # Use OpenJDK 21 with a slim base image for the final stage
-FROM openjdk:21-jdk-slim
+FROM openjdk:26-jdk-slim
 
 # Set the maintainer label
 LABEL maintainer="mark@markpost.nl"
