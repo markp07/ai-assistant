@@ -6,16 +6,11 @@ WORKDIR /workspace/app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-COPY ai-assistant ai-assistant
-COPY ai-assistant-api ai-assistant-api
-COPY ai-assistant-external-api ai-assistant-external-api
-COPY ai-assistant-hugging-face ai-assistant-hugging-face
-COPY ai-assistant-common ai-assistant-common
-COPY ai-assistant-ollama ai-assistant-ollama
-COPY ai-assistant-openai ai-assistant-openai
+COPY src src
 
-# Build the project
-RUN ./mvnw clean package
+# Ensure the Maven wrapper is executable and build the project (skip tests for faster builds)
+RUN chmod +x mvnw \
+ && ./mvnw -B clean package
 
 # Use OpenJDK 21 with a slim base image for the final stage
 FROM openjdk:26-jdk-slim
@@ -29,8 +24,8 @@ VOLUME /tmp
 # Expose port 7075
 EXPOSE 7075
 
-# Copy the JAR file from the build stage using the extracted version
-COPY --from=build /workspace/app/ai-assistant/target/ai-assistant-*.jar app.jar
+# Copy the JAR file from the build stage (build working dir is /workspace/app)
+COPY --from=build /workspace/app/target/ai-assistant-*.jar /app.jar
 
 # Set environment variables
 ENV OPENAI_API_KEY=${OPENAI_API_KEY}

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Navigate to your project directory
-cd /home/mark/ai-assistant
-
 # Fetch the latest changes from the master branch
 git fetch origin master
 

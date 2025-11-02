@@ -10,6 +10,5 @@ services:
       - /data/ai_assistant
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - NS_API_KEY=${NS_API_KEY}
 volumes:
   ai_assistant:
