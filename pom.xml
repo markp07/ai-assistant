@@ -19,13 +19,13 @@
 
     <!-- Spring Framework versions -->
     <spring.boot.version>3.5.7</spring.boot.version>
-    <spring.cloud.version>2025.0.0</spring.cloud.version>
+    <spring.cloud.version>2025.1.0</spring.cloud.version>
 
     <!-- Core dependency versions -->
     <lombok.version>1.18.42</lombok.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
-    <langchain4j.version>1.8.0</langchain4j.version>
+    <langchain4j.version>1.9.1</langchain4j.version>
     <hibernate-validator.version>9.1.0.Final</hibernate-validator.version>
     <mapdb.version>3.1.0</mapdb.version>
 
@@ -46,7 +46,7 @@
     <maven.compiler.version>3.14.1</maven.compiler.version>
     <maven.resources.version>3.3.1</maven.resources.version>
     <openapi-generator-maven-plugin.version>7.17.0</openapi-generator-maven-plugin.version>
-    <versions-maven-plugin.version>2.19.1</versions-maven-plugin.version>
+    <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
