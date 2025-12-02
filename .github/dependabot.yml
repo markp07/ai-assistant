@@ -8,8 +8,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday"
       time: "07:00"
+    reviewers:
+      - "markp07"
     groups:
       maven-dependencies:
         patterns:
@@ -28,8 +30,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday"
       time: "07:00"
+    reviewers:
+      - "markp07"
     groups:
       docker-dependencies:
         patterns:
@@ -40,8 +44,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday"
       time: "07:00"
+    reviewers:
+      - "markp07"
     groups:
       github-actions-dependencies:
         patterns:
