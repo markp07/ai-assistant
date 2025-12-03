@@ -1,5 +1,36 @@
 # Release Notes
 
+## Version 1.0.0 - 2025-12-03
+
+### Migration to Java 25 and Spring Boot 4
+
+#### Updated
+- Migrated from Java 21 to Java 25
+- Upgraded Spring Boot from 3.5.7 to 4.0.0
+- Upgraded AssertJ from 3.27.6 to 4.0.0-M1
+- Replaced `spring-boot-starter-aop` with `spring-boot-starter-aspectj` (Spring Boot 4 breaking change)
+- Removed `ServletComponentScan` annotation (removed in Spring Boot 4)
+
+#### Maintained Latest Versions
+- Spring Cloud: 2025.1.0
+- Lombok: 1.18.42
+- MapStruct: 1.6.3
+- Langchain4j: 1.9.1
+- Hibernate Validator: 9.1.0.Final
+- Jackson: 2.20.1
+- OpenFeign: 13.6
+- SpringDoc OpenAPI: 3.0.0
+- Mockito: 5.20.0
+- JaCoCo: 0.8.14
+- Maven Compiler Plugin: 3.14.1
+- OpenAPI Generator Maven Plugin: 7.17.0
+
+#### Technical Notes
+- Build and tests verified with Java 25
+- All code formatting checks pass
+- No security vulnerabilities detected
+- Application successfully packages as executable JAR
+
 ## Version 0.9.0 - 2025-11-15
 
 ## Updated
