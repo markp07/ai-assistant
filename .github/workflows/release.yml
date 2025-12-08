@@ -113,13 +113,6 @@ jobs:
           sed -i "s/<revision>.*<\/revision>/<revision>$NEW_VERSION<\/revision>/" pom.xml
           echo "Updated pom.xml to version $NEW_VERSION"
 
-      - name: Update version in package.json
-        run: |
-          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
-          cd frontend
-          sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" package.json
-          echo "Updated package.json to version $NEW_VERSION"
-
       - name: Generate changelog entry
         id: changelog
         run: |
@@ -174,7 +167,7 @@ jobs:
       - name: Commit version updates
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
-          git add pom.xml frontend/package.json CHANGELOG.md
+          git add pom.xml CHANGELOG.md
           git commit -m "chore: bump version to $NEW_VERSION [skip ci]" || echo "No changes to commit"
           git push origin ${{ github.ref_name }}
 
