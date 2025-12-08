@@ -10,7 +10,7 @@ COPY src src
 
 # Ensure the Maven wrapper is executable and build the project (skip tests for faster builds)
 RUN chmod +x mvnw \
- && ./mvnw -B clean package
+ && MAVEN_CONFIG= ./mvnw -B -DskipTests clean package
 
 # Use OpenJDK 21 with a slim base image for the final stage
 FROM eclipse-temurin:21-jre-jammy
