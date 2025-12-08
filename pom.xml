@@ -47,6 +47,8 @@
     <maven.resources.version>3.3.1</maven.resources.version>
     <openapi-generator-maven-plugin.version>7.17.0</openapi-generator-maven-plugin.version>
     <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
+    <!-- Controls whether OWASP dependency-check should be skipped -->
+    <skipDependencyCheck>false</skipDependencyCheck>
   </properties>
 
   <dependencyManagement>
@@ -273,6 +275,8 @@
         <version>${openapi-generator-maven-plugin.version}</version>
         <executions>
           <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
             <goals>
               <goal>generate</goal>
             </goals>
@@ -306,6 +310,29 @@
                   @lombok.NoArgsConstructor
                 </additionalModelTypeAnnotations>
               </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- OWASP Dependency-Check plugin: scans dependencies for known vulnerabilities -->
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>8.3.1</version>
+        <executions>
+          <execution>
+            <id>check-dependencies</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>verify</phase>
+            <configuration>
+              <!-- NVD API key is recommended via environment variable NVD_API_KEY for faster updates -->
+              <failBuildOnCVSS>0.0</failBuildOnCVSS>
+              <format>ALL</format>
+              <!-- If you want to skip the check in CI, set -DskipDependencyCheck=true -->
+              <skip>${skipDependencyCheck}</skip>
             </configuration>
           </execution>
         </executions>

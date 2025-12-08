@@ -1,6 +1,3 @@
-# Dependabot configuration for grouping dependency upgrades
-# See: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
   # Maven dependencies
@@ -9,31 +6,31 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "07:00"
+      time: "09:00"
     reviewers:
       - "markp07"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(maven)"
+      include: "scope"
     groups:
       maven-dependencies:
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
-      maven-major:
-        patterns:
-          - "*"
-        update-types:
-          - "major"
 
-  # Docker dependencies
+  # Docker images in docker-compose.yml
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "07:00"
+      time: "09:00"
     reviewers:
       - "markp07"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(docker)"
+      include: "scope"
     groups:
       docker-dependencies:
         patterns:
@@ -45,10 +42,12 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "07:00"
-    reviewers:
-      - "markp07"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(github-actions)"
+      include: "scope"
     groups:
-      github-actions-dependencies:
+      github-actions:
         patterns:
           - "*"
