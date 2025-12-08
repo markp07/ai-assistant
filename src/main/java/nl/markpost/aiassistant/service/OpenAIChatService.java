@@ -4,7 +4,6 @@ import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.memory.ChatMemory;
 import nl.markpost.aiassistant.models.ChatInputDTO;
 import nl.markpost.aiassistant.models.ChatOutputDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -14,7 +13,6 @@ public class OpenAIChatService implements ChatService {
   private final Assistant assistant;
   private final ChatMemory chatMemory;
 
-  @Autowired
   public OpenAIChatService(Assistant assistant, ChatMemory chatMemory) {
     this.assistant = assistant;
     this.chatMemory = chatMemory;
