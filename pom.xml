@@ -301,9 +301,8 @@
                 <useTags>true</useTags>
                 <serializeModel>true</serializeModel>
                 <openApiNullable>false</openApiNullable>
-                <!-- Generate explicit constructors in generated models so compilation doesn't rely solely on Lombok annotation processing -->
                 <generateConstructorWithRequiredArgs>false</generateConstructorWithRequiredArgs>
-                <generateConstructorWithAllArgs>true</generateConstructorWithAllArgs>
+                <generateConstructorWithAllArgs>false</generateConstructorWithAllArgs>
                 <additionalModelTypeAnnotations>
                   @lombok.Data
                   @lombok.Builder
