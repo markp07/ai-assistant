@@ -18,7 +18,7 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
     <!-- Spring Framework versions -->
-    <spring.boot.version>3.5.7</spring.boot.version>
+    <spring.boot.version>4.0.0</spring.boot.version>
     <spring.cloud.version>2025.1.0</spring.cloud.version>
 
     <!-- Core dependency versions -->
@@ -74,7 +74,7 @@
     <!-- Spring Boot dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -86,7 +86,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
+      <artifactId>spring-boot-starter-aspectj</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -107,14 +107,12 @@
     <dependency>
       <groupId>io.github.openfeign</groupId>
       <artifactId>feign-jackson</artifactId>
-      <version>13.6</version>
     </dependency>
 
     <!-- Jackson dependencies -->
     <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.20.1</version>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
     </dependency>
     <dependency>
       <groupId>org.openapitools</groupId>
@@ -217,8 +215,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven.compiler.version}</version>
         <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
           <release>${java.version}</release>
           <parameters>true</parameters>
           <encoding>${project.build.sourceEncoding}</encoding>
@@ -451,6 +447,25 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.openrewrite.maven</groupId>
+        <artifactId>rewrite-maven-plugin</artifactId>
+        <version>6.25.0</version>
+        <configuration>
+          <exportDatatables>true</exportDatatables>
+          <activeRecipes>
+            <recipe>org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0</recipe>
+          </activeRecipes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-spring</artifactId>
+            <version>6.20.0</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

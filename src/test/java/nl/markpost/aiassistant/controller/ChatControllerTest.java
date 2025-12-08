@@ -13,31 +13,27 @@ import nl.markpost.aiassistant.mapper.ChatOutputMapperImpl;
 import nl.markpost.aiassistant.models.ChatInputDTO;
 import nl.markpost.aiassistant.models.ChatOutputDTO;
 import nl.markpost.aiassistant.service.ChatService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+@ExtendWith(MockitoExtension.class)
 public class ChatControllerTest {
 
   @Mock private ChatService chatService;
 
   @Spy private ChatInputDTOMapper chatInputDTOMapper = new ChatInputDTOMapperImpl();
 
-  @Spy private ChatOutputMapper chatOutputDTOMapper = new ChatOutputMapperImpl();
+  @Spy private ChatOutputMapper chatOutputMapper = new ChatOutputMapperImpl();
 
   @InjectMocks private ChatController chatController;
 
-  @BeforeEach
-  public void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
-
   @Test
-  void testChatPost() {
+  void testChatPost() throws Exception {
     ChatInput chatInput = new ChatInput();
     chatInput.setChat("Hello");
 

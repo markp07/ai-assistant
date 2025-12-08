@@ -8,7 +8,6 @@ import nl.markpost.aiassistant.mapper.ChatOutputMapper;
 import nl.markpost.aiassistant.models.ChatInputDTO;
 import nl.markpost.aiassistant.models.ChatOutputDTO;
 import nl.markpost.aiassistant.service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,6 @@ public class ChatController implements ChatApi {
 
   private final ChatOutputMapper chatOutputMapper;
 
-  @Autowired
   public ChatController(
       ChatService chatService,
       ChatInputDTOMapper chatInputDTOMapper,
