@@ -4,6 +4,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    container_name: ai-assistant
+    restart: unless-stopped
     ports:
       - "7075:7075"
     volumes:
