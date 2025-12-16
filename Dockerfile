@@ -1,5 +1,5 @@
 # Use OpenJDK 21 with Alpine Linux as the base image for the build stage
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+FROM maven:3.9.11-eclipse-temurin-25-alpine AS build
 WORKDIR /workspace/app
 
 # Copy Maven wrapper and project files to the container
@@ -13,10 +13,13 @@ RUN chmod +x mvnw \
  && MAVEN_CONFIG= ./mvnw -B clean package -DskipDependencyCheck=true
 
 # Use OpenJDK 21 with a slim base image for the final stage
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:25-jre-jammy
 
 # Set the maintainer label
 LABEL maintainer="mark@markpost.nl"
+
+# Install curl for health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Define a volume for temporary files
 VOLUME /tmp

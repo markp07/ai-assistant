@@ -4,11 +4,19 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    container_name: ai-assistant
+    restart: unless-stopped
     ports:
       - "7075:7075"
     volumes:
       - /data/ai_assistant
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7075/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 volumes:
   ai_assistant:

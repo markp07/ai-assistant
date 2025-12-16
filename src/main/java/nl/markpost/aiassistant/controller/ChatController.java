@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ChatController implements ChatApi {
 
   private final ChatService chatService;
-
   private final ChatInputDTOMapper chatInputDTOMapper;
 
   private final ChatOutputMapper chatOutputMapper;

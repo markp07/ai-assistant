@@ -9,11 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenAIConfig {
 
-  @Value("${openai.api-key}")
-  private String apiKey;
-
   @Bean
-  public OpenAiChatModel openAiChatModel() {
+  public OpenAiChatModel openAiChatModel(@Value("${openai.api-key}") String apiKey) {
     return OpenAiChatModel.builder()
         .apiKey(apiKey)
         .modelName(OpenAiChatModelName.GPT_5_NANO)

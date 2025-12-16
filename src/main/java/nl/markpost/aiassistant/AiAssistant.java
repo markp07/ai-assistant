@@ -5,22 +5,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
- * The main class of the application.
+ * The main class of the AI Assistant application.
  *
- * <p>This class is responsible for starting the Spring Boot application.
- *
- * <p>The {@link SpringBootApplication} annotation is used to enable the auto-configuration of the
- * Spring application context.
- *
- * <p>The main method starts the Spring Boot application.
+ * <p>The {@link SpringBootApplication} annotation enables auto-configuration of the Spring
+ * application context, and {@link EnableFeignClients} enables Feign client support.
  *
  * @see SpringBootApplication
+ * @see EnableFeignClients
  */
 @SpringBootApplication
 @EnableFeignClients
 public class AiAssistant {
 
-  public static void main(String[] args) {
-    SpringApplication.run(AiAssistant.class, args);
+  static void main() {
+    SpringApplication.run(AiAssistant.class).getEnvironment();
   }
 }

@@ -19,20 +19,44 @@ public class CustomChatMemoryStore implements ChatMemoryStore {
 
   @Override
   public List<ChatMessage> getMessages(Object memoryId) {
-    String json = map.get((String) memoryId);
+    var id =
+        switch (memoryId) {
+          case String s -> s;
+          case null -> throw new IllegalArgumentException("Memory ID cannot be null");
+          default ->
+              throw new IllegalArgumentException(
+                  "Unsupported memory ID type: " + memoryId.getClass());
+        };
+    var json = map.get(id);
     return messagesFromJson(json);
   }
 
   @Override
   public void updateMessages(Object memoryId, List<ChatMessage> messages) {
-    String json = messagesToJson(messages);
-    map.put((String) memoryId, json);
+    var id =
+        switch (memoryId) {
+          case String s -> s;
+          case null -> throw new IllegalArgumentException("Memory ID cannot be null");
+          default ->
+              throw new IllegalArgumentException(
+                  "Unsupported memory ID type: " + memoryId.getClass());
+        };
+    var json = messagesToJson(messages);
+    map.put(id, json);
     db.commit();
   }
 
   @Override
   public void deleteMessages(Object memoryId) {
-    map.remove((String) memoryId);
+    var id =
+        switch (memoryId) {
+          case String s -> s;
+          case null -> throw new IllegalArgumentException("Memory ID cannot be null");
+          default ->
+              throw new IllegalArgumentException(
+                  "Unsupported memory ID type: " + memoryId.getClass());
+        };
+    map.remove(id);
     db.commit();
   }
 }
