@@ -33,18 +33,18 @@ public class ChatControllerTest {
   @InjectMocks private ChatController chatController;
 
   @Test
-  void testChatPost() throws Exception {
-    ChatInput chatInput = new ChatInput();
+  void testChatPost() {
+    var chatInput = new ChatInput();
     chatInput.setChat("Hello");
 
-    ChatOutput chatOutput = new ChatOutput();
+    var chatOutput = new ChatOutput();
     chatOutput.setChat("Hello, world!");
 
-    ChatOutputDTO chatOutputDto = new ChatOutputDTO("Hello, world!");
+    var chatOutputDto = new ChatOutputDTO("Hello, world!");
 
     when(chatService.sendUserMessage(any(ChatInputDTO.class))).thenReturn(chatOutputDto);
 
-    ResponseEntity<ChatOutput> response = chatController.chatPost(chatInput);
+    var response = chatController.chatPost(chatInput);
 
     assertEquals(ResponseEntity.ok(chatOutput), response);
   }

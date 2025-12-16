@@ -36,12 +36,15 @@ public class CustomExceptionHandler {
   }
 
   private Error createError(GenericErrorCodes errorCode, HttpStatus status) {
+    var timestamp = Instant.now().atOffset(ZoneOffset.UTC);
+    var traceId = UUID.randomUUID().toString();
+
     return Error.builder()
-        .timestamp(Instant.now().atOffset(ZoneOffset.UTC))
+        .timestamp(timestamp)
         .status(status.value())
         .code(errorCode.getCode())
         .message(errorCode.getMessage())
-        .traceId(UUID.randomUUID().toString())
+        .traceId(traceId)
         .build();
   }
 }
