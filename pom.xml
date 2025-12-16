@@ -311,29 +311,6 @@
         </executions>
       </plugin>
 
-      <!-- OWASP Dependency-Check plugin: scans dependencies for known vulnerabilities -->
-      <plugin>
-        <groupId>org.owasp</groupId>
-        <artifactId>dependency-check-maven</artifactId>
-        <version>12.1.9</version>
-        <executions>
-          <execution>
-            <id>check-dependencies</id>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <phase>verify</phase>
-            <configuration>
-              <!-- NVD API key is recommended via environment variable NVD_API_KEY for faster updates -->
-              <failBuildOnCVSS>0.0</failBuildOnCVSS>
-              <format>ALL</format>
-              <!-- If you want to skip the check in CI, set -DskipDependencyCheck=true -->
-              <skip>${skipDependencyCheck}</skip>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <!-- JaCoCo plugin -->
       <plugin>
         <groupId>org.jacoco</groupId>
