@@ -4,6 +4,9 @@ set -e
 echo "Pulling latest changes..."
 git pull
 
+echo "Building backend application..."
+mvn clean package -DskipTests
+
 echo "Building frontend application..."
 cd frontend
 
