@@ -28,7 +28,7 @@ npm install
 2. Create a `.env.local` file (optional):
 
 ```bash
-cp .env.local.example .env.local
+cp .env.example .env.local
 ```
 
 Edit the `.env.local` file if you need to change the API URL (default is `http://localhost:7075`).

@@ -142,7 +142,7 @@ The easiest way to run both backend and frontend together:
 
 3. (Optional) Create `.env.local` file:
    ```bash
-   cp .env.local.example .env.local
+   cp .env.example .env.local
    ```
 
 4. Start the development server:
