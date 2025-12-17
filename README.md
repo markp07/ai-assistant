@@ -86,27 +86,27 @@ The easiest way to run both backend and frontend together:
    echo "OPENAI_API_KEY=your-key-here" > .env
    ```
 
-3. Build the frontend application:
+3. Build and start all services:
    ```bash
-   ./build-frontend.sh
+   ./build-and-up.sh
    ```
    
-   Or manually:
+   Or use the start script (includes Docker cleanup):
    ```bash
-   cd frontend && npm install && npm run build && cd ..
+   ./start.sh
    ```
 
-4. Start all services with Docker Compose:
-   ```bash
-   docker compose up -d --build
-   ```
-
-5. Access the application:
+4. Access the application:
    - **Frontend**: http://localhost:12502
    - **Backend API**: http://localhost:12501
    - **API Documentation**: http://localhost:12501/swagger-ui.html
 
-6. Stop all services:
+5. Stop all services:
+   ```bash
+   ./stop.sh
+   ```
+   
+   Or manually:
    ```bash
    docker compose down
    ```
