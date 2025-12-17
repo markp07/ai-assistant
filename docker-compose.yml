@@ -18,5 +18,34 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - ai-assistant-network
+
+  frontend:
+    image: ai-assistant-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai-assistant-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://ai-assistant:7075
+    depends_on:
+      - ai-assistant
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - ai-assistant-network
+
+networks:
+  ai-assistant-network:
+    driver: bridge
+
 volumes:
   ai_assistant:

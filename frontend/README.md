@@ -57,6 +57,40 @@ Start the production server:
 npm start
 ```
 
+### Docker Deployment
+
+#### Using Docker Compose (with backend)
+
+From the project root directory:
+
+```bash
+docker compose up -d
+```
+
+This will start both the backend and frontend services. The frontend will be available at http://localhost:3000.
+
+#### Standalone Docker Container
+
+Build the application first, then build and run the frontend container:
+
+```bash
+# Build the Next.js application
+npm run build
+
+# Build the Docker image
+docker build -t ai-assistant-frontend:latest .
+
+# Run the container
+docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:7075 ai-assistant-frontend:latest
+```
+
+**Note:** The Dockerfile expects the `.next` build output to be present. Make sure to run `npm run build` before building the Docker image.
+
+**Environment Variables for Docker:**
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: `http://localhost:7075`)
+- `PORT`: Port to run the server on (default: `3000`)
+- `HOSTNAME`: Hostname to bind to (default: `0.0.0.0`)
+
 ## Architecture
 
 - **Next.js 16**: React framework with App Router

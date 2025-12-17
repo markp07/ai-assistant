@@ -71,7 +71,47 @@ The project includes a Dockerfile for containerization. The Dockerfile builds th
 
 ## Installation
 
-### Backend Setup
+### Docker Deployment (Recommended)
+
+The easiest way to run both backend and frontend together:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/ai-assistant.git
+   cd ai-assistant
+   ```
+
+2. Set your OpenAI API key in `.env` file:
+   ```bash
+   echo "OPENAI_API_KEY=your-key-here" > .env
+   ```
+
+3. Build the frontend application:
+   ```bash
+   ./build-frontend.sh
+   ```
+   
+   Or manually:
+   ```bash
+   cd frontend && npm install && npm run build && cd ..
+   ```
+
+4. Start all services with Docker Compose:
+   ```bash
+   docker compose up -d --build
+   ```
+
+5. Access the application:
+   - **Frontend**: http://localhost:3000
+   - **Backend API**: http://localhost:7075
+   - **API Documentation**: http://localhost:7075/swagger-ui.html
+
+6. Stop all services:
+   ```bash
+   docker compose down
+   ```
+
+### Backend Setup (Manual)
 
 1. Clone the repository:
    ```bash
@@ -88,7 +128,7 @@ The project includes a Dockerfile for containerization. The Dockerfile builds th
    docker run -e OPENAI_API_KEY="your-key" -p 7075:7075 --rm ai-assistant:local
    ```
 
-### Frontend Setup
+### Frontend Setup (Manual)
 
 1. Navigate to the frontend directory:
    ```bash
@@ -116,6 +156,16 @@ For production builds:
 ```bash
 npm run build
 npm start
+```
+
+### Frontend Docker Deployment (Standalone)
+
+To build and run only the frontend container:
+
+```bash
+cd frontend
+docker build -t ai-assistant-frontend:latest .
+docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:7075 ai-assistant-frontend:latest
 ```
 
 ## Usage
