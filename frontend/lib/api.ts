@@ -3,7 +3,7 @@ import { ChatInput, ChatOutput } from '@/types/chat';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7075';
 
 export async function sendMessage(message: string): Promise<string> {
-  const response = await fetch(`${API_BASE_URL}/api/chat`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export async function sendMessage(message: string): Promise<string> {
 }
 
 export async function clearChatHistory(): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/chat`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/chat`, {
     method: 'DELETE',
   });
 
