@@ -67,7 +67,7 @@ From the project root directory:
 docker compose up -d
 ```
 
-This will start both the backend and frontend services. The frontend will be available at http://localhost:3000.
+This will start both the backend and frontend services. The frontend will be available at http://localhost:12502.
 
 #### Standalone Docker Container
 

@@ -102,9 +102,9 @@ The easiest way to run both backend and frontend together:
    ```
 
 5. Access the application:
-   - **Frontend**: http://localhost:3000
-   - **Backend API**: http://localhost:7075
-   - **API Documentation**: http://localhost:7075/swagger-ui.html
+   - **Frontend**: http://localhost:12502
+   - **Backend API**: http://localhost:12501
+   - **API Documentation**: http://localhost:12501/swagger-ui.html
 
 6. Stop all services:
    ```bash
@@ -170,6 +170,11 @@ docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:7075 ai-assistan
 
 ## Usage
 
+### With Docker Compose
+- **Frontend**: Access the chat interface at `http://localhost:12502`
+- **Backend API**: Access the API documentation at `http://localhost:12501/swagger-ui.html`
+
+### Development Mode (without Docker)
 - **Frontend**: Access the chat interface at `http://localhost:3000`
 - **Backend API**: Access the API documentation at `http://localhost:7075/swagger-ui.html`
 
