@@ -27,13 +27,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:http://localhost:7075}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:7075}
     container_name: ai-assistant-frontend
     restart: unless-stopped
     ports:
       - "12502:3000"
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:http://localhost:7075}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:7075}
     depends_on:
       - ai-assistant
     healthcheck:
