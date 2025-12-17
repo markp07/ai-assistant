@@ -29,7 +29,7 @@ export function Chat() {
     }
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       content: input,
       role: 'user',
       timestamp: new Date(),
@@ -44,7 +44,7 @@ export function Chat() {
       const response = await sendMessage(input);
       
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: crypto.randomUUID(),
         content: response,
         role: 'assistant',
         timestamp: new Date(),

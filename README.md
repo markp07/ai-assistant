@@ -1,6 +1,6 @@
 # AI Assistant
 
-AI Assistant is a Java project built with Maven and Docker. It integrates with the OpenAI model.
+AI Assistant is a full-stack application with a Java backend and Next.js frontend. It integrates with the OpenAI model to provide an interactive chat experience.
 
 ## Table of Contents
 
@@ -15,6 +15,7 @@ AI Assistant is a Java project built with Maven and Docker. It integrates with t
 
 The project is organized as follows:
 
+### Backend (Java/Spring Boot)
 1. **ai-assistant**: Contains the main application logic, including API integration and service layers.
 2. **config**: Holds configuration files for the application.
 3. **constant**: Defines constants used across the application.
@@ -24,9 +25,22 @@ The project is organized as follows:
 7. **exception**: Handles custom exceptions and error responses.
 8. **mapper**: Provides mapping utilities between DTOs and domain models.
 
+### Frontend (Next.js)
+The `frontend` folder contains a responsive Next.js application with:
+- Modern React 19 and Next.js 16 architecture
+- TypeScript for type safety
+- Tailwind CSS for styling
+- Light and dark mode support
+- Responsive design for desktop, tablet, and mobile devices
+
+See [frontend/README.md](frontend/README.md) for detailed frontend documentation.
+
 ## Features
 
 - **Natural Language Processing**: Understands and processes user inputs in natural language.
+- **Interactive Chat Interface**: Modern, responsive UI that works across all devices.
+- **Theme Support**: Toggle between light and dark modes.
+- **Real-time Communication**: Seamless interaction with the AI backend.
 - **Customizable**: Easily extendable to integrate with additional APIs or services.
 
 ## Docker Setup
@@ -57,6 +71,8 @@ The project includes a Dockerfile for containerization. The Dockerfile builds th
 
 ## Installation
 
+### Backend Setup
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-repo/ai-assistant.git
@@ -69,12 +85,48 @@ The project includes a Dockerfile for containerization. The Dockerfile builds th
 
 3. Run the container:
    ```bash
-   docker run -e OPENAI_API_KEY="your-key" -p 8080:8080 --rm ai-assistant:local
+   docker run -e OPENAI_API_KEY="your-key" -p 7075:7075 --rm ai-assistant:local
    ```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. (Optional) Create `.env.local` file:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+For production builds:
+```bash
+npm run build
+npm start
+```
 
 ## Usage
 
-- Access the API documentation at `http://localhost:8080/swagger-ui.html`.
+- **Frontend**: Access the chat interface at `http://localhost:3000`
+- **Backend API**: Access the API documentation at `http://localhost:7075/swagger-ui.html`
+
+### API Endpoints
+
+- `POST /api/chat` - Send a message to the AI assistant
+- `DELETE /api/chat` - Clear chat history
 
 ## License
 

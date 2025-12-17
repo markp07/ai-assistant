@@ -59,7 +59,7 @@ npm start
 
 ## Architecture
 
-- **Next.js 15**: React framework with App Router
+- **Next.js 16**: React framework with App Router
 - **TypeScript**: Type-safe development
 - **Tailwind CSS**: Utility-first CSS framework
 - **next-themes**: Theme management for light/dark mode
@@ -82,3 +82,7 @@ The application is fully responsive and works seamlessly on:
 - 📱 Mobile phones (320px+)
 - 📱 Tablets (768px+)
 - 💻 Desktops (1024px+)
+
+## Building the Application
+
+The application uses Next.js 16 with Turbopack for fast builds.
