@@ -1,5 +1,27 @@
 # Release Notes
 
+## Version 0.10.0 - 2025-12-18
+
+### Added
+- Unified environment configuration: Single `.env` file at project root for both backend and frontend
+- `ENVIRONMENT_SETUP.md`: Comprehensive guide for environment configuration
+- Dynamic CORS configuration: `ALLOWED_ORIGINS` environment variable with default fallback
+- Frontend build-time configuration: `NEXT_PUBLIC_API_URL` build argument support in Docker
+
+### Changed
+- Updated `docker-compose.yml`: Pass environment variables to frontend as build args
+- Updated `frontend/Dockerfile`: Multi-stage build with environment variable support
+- Updated all deployment scripts (`build-and-up.sh`, `start.sh`, `restart.sh`, `stop.sh`) to load from root `.env`
+- Updated `WebConfig.java`: Read CORS origins from application properties
+- Updated `application.yaml`: Added configurable `cors.allowed-origins` property
+- Updated `.env.example`: Merged backend and frontend environment variables with documentation
+- Updated `README.md`: Documented unified environment configuration approach
+
+### Improved
+- Simplified deployment process with single configuration file
+- Better separation of concerns between development and production configurations
+- Enhanced documentation with troubleshooting guides and environment-specific examples
+
 ## Version 0.9.0 - 2025-11-15
 
 ## Updated

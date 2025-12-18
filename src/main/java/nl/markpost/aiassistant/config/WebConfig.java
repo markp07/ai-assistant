@@ -1,17 +1,24 @@
 package nl.markpost.aiassistant.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@Slf4j
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+  @Value("${cors.allowed-origins}")
+  private String allowedOrigins;
+
   @Override
   public void addCorsMappings(CorsRegistry registry) {
+    log.info("Configuring CORS with allowed origins: {}", allowedOrigins);
     registry
         .addMapping("/**")
-        .allowedOrigins("http://localhost:7070")
+        .allowedOrigins(allowedOrigins.split(","))
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
   }
 }

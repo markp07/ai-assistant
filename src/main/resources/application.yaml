@@ -4,6 +4,10 @@ server:
   servlet:
     context-path: /
 
+# CORS configuration
+cors:
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:7070}
+
 management:
   endpoints:
     web:

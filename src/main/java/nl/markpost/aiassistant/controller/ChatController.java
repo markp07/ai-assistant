@@ -1,5 +1,6 @@
 package nl.markpost.aiassistant.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.markpost.aiassistant.api.controller.ChatApi;
 import nl.markpost.aiassistant.api.model.ChatInput;
 import nl.markpost.aiassistant.api.model.ChatOutput;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@Slf4j
 @Controller
 @RequestMapping("/api/v1")
 public class ChatController implements ChatApi {
@@ -32,6 +34,7 @@ public class ChatController implements ChatApi {
 
   @Override
   public ResponseEntity<ChatOutput> chatPost(ChatInput chatInput) {
+    log.info("Received chat message: {}", chatInput.getChat());
     ChatInputDTO chatInputDTO = chatInputDTOMapper.from(chatInput);
     ChatOutputDTO chatOutputDTO = chatService.sendUserMessage(chatInputDTO);
     ChatOutput chatOutput = chatOutputMapper.from(chatOutputDTO);
