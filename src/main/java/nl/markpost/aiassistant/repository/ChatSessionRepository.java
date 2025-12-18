@@ -2,6 +2,9 @@ package nl.markpost.aiassistant.repository;
 
 import nl.markpost.aiassistant.models.entity.ChatSession;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +17,8 @@ public interface ChatSessionRepository extends JpaRepository<ChatSession, String
 
     Optional<ChatSession> findByIdAndUserId(String id, String userId);
 
-    void deleteByIdAndUserId(String id, String userId);
+    @Modifying
+    @Query("DELETE FROM ChatSession cs WHERE cs.id = :id AND cs.userId = :userId")
+    void deleteByIdAndUserId(@Param("id") String id, @Param("userId") String userId);
 }
 

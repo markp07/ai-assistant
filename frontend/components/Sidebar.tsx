@@ -66,6 +66,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
         }
       } catch (error) {
         console.error('Error deleting session:', error);
+        alert('Failed to delete chat session. Please try again.');
       }
     }
   };
@@ -228,32 +229,18 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
             )}
           </div>
 
-          {/* Footer with User Info and Version */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
-            {/* Username and Profile Link */}
-            {userName && (
-              <a
-                href="https://auth.markpost.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                  {userName.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {userName}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    View Profile →
-                  </div>
-                </div>
-              </a>
-            )}
+          {/* Footer with New Chat and Version */}
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
+            {/* New Chat Button */}
+            <button
+              onClick={handleNewChat}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              + New Chat
+            </button>
 
             {/* Version */}
-            <div className="text-xs text-center text-gray-500 dark:text-gray-400 pt-2">
+            <div className="text-xs text-center text-gray-500 dark:text-gray-400">
               Version 1.0.0
             </div>
           </div>
