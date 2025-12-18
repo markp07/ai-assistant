@@ -8,28 +8,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if we have tokens in URL (callback from auth service)
-    const urlParams = new URLSearchParams(window.location.search);
-    const accessToken = urlParams.get('access_token');
-    const refreshToken = urlParams.get('refresh_token');
+    const initAuth = () => {
+      // Check if we have tokens in URL (callback from auth service)
+      const urlParams = new URLSearchParams(window.location.search);
+      const accessToken = urlParams.get('access_token');
+      const refreshToken = urlParams.get('refresh_token');
 
-    if (accessToken && refreshToken) {
-      setTokens({ access_token: accessToken, refresh_token: refreshToken });
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
+      if (accessToken && refreshToken) {
+        setTokens({ access_token: accessToken, refresh_token: refreshToken });
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      // Always mark as authenticated - let the backend verify tokens
+      // If tokens are invalid, backend will return 401 and trigger login
       setIsAuthenticated(true);
       setIsLoading(false);
-      return;
-    }
+    };
 
-    // Check if we have tokens in localStorage
-    const tokens = getTokens();
-    if (tokens) {
-      setIsAuthenticated(true);
-      setIsLoading(false);
-    } else {
-      redirectToLogin();
-    }
+    initAuth();
   }, []);
 
   if (isLoading) {

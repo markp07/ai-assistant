@@ -8,9 +8,9 @@ import { createSession } from '@/lib/api';
 
 function HomeContent() {
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>();
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    // Create initial session
     initializeSession();
   }, []);
 
@@ -20,6 +20,8 @@ function HomeContent() {
       setCurrentSessionId(session.id);
     } catch (error) {
       console.error('Error creating initial session:', error);
+    } finally {
+      setIsInitializing(false);
     }
   };
 

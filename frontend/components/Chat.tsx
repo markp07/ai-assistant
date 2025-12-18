@@ -5,6 +5,7 @@ import { Message } from '@/types/chat';
 import { sendMessage, getSessionHistory } from '@/lib/api';
 import { ChatMessage } from './ChatMessage';
 import { ThemeToggle } from './ThemeToggle';
+import { UserProfile } from './UserProfile';
 
 interface ChatProps {
   sessionId?: string;
@@ -84,7 +85,10 @@ export function Chat({ sessionId }: ChatProps) {
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
             AI Assistant
           </h1>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <UserProfile />
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

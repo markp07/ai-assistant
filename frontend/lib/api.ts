@@ -6,14 +6,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7075';
 async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
   const tokens = getTokens();
 
-  if (!tokens) {
-    redirectToLogin();
-    throw new Error('Not authenticated');
-  }
-
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${tokens.access_token}`,
+    ...(tokens && { 'Authorization': `Bearer ${tokens.access_token}` }),
     ...options.headers,
   };
 
@@ -28,8 +23,6 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
         headers.Authorization = `Bearer ${newTokens.access_token}`;
         response = await fetch(url, { ...options, headers });
       }
-    } else {
-      throw new Error('Authentication failed');
     }
   }
 

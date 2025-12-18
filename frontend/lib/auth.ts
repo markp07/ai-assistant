@@ -30,13 +30,15 @@ export function clearTokens(): void {
 }
 
 export function redirectToLogin(): void {
+
   const callback = encodeURIComponent(window.location.origin);
   window.location.href = `${AUTH_URL}/login?callback=${callback}`;
 }
 
 export async function refreshAccessToken(): Promise<boolean> {
   const tokens = getTokens();
-  if (!tokens) {
+  if (!tokens?.refresh_token) {
+    clearTokens();
     redirectToLogin();
     return false;
   }
@@ -64,6 +66,41 @@ export async function refreshAccessToken(): Promise<boolean> {
     clearTokens();
     redirectToLogin();
     return false;
+  }
+}
+
+export interface UserInfo {
+  email: string;
+  userName: string;
+  twoFactorEnabled: boolean;
+  passkeyEnabled: boolean;
+  emailVerified: boolean;
+  createdAt: string;
+}
+
+export async function fetchUserInfo(): Promise<UserInfo | null> {
+  const tokens = getTokens();
+  if (!tokens) {
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${AUTH_URL}/api/auth/v1/user`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${tokens.access_token}`,
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const userInfo: UserInfo = await response.json();
+    return userInfo;
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+    return null;
   }
 }
 

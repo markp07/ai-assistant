@@ -26,6 +26,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
       setSessions(data);
     } catch (error) {
       console.error('Error loading sessions:', error);
+      // Don't throw, just log - the error might be due to auth still processing
     } finally {
       setIsLoading(false);
     }
