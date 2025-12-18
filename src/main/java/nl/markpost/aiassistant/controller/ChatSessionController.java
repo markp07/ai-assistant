@@ -60,6 +60,16 @@ public class ChatSessionController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{sessionId}")
+    public ResponseEntity<ChatSessionDTO> updateSession(
+            @PathVariable String sessionId,
+            @RequestBody CreateSessionRequest request,
+            Authentication authentication) {
+        String userId = authentication.getName();
+        ChatSessionDTO session = chatSessionService.updateSessionTitle(sessionId, userId, request.getTitle());
+        return ResponseEntity.ok(session);
+    }
+
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<Void> deleteSession(
             @PathVariable String sessionId,

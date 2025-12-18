@@ -85,6 +85,19 @@ export async function sendMessage(sessionId: string, message: string): Promise<M
   return response.json();
 }
 
+export async function updateSession(sessionId: string, title: string): Promise<ChatSession> {
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/v1/sessions/${sessionId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ title } as CreateSessionRequest),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update session: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 export async function deleteSession(sessionId: string): Promise<void> {
   const response = await fetchWithAuth(`${API_BASE_URL}/api/v1/sessions/${sessionId}`, {
     method: 'DELETE',

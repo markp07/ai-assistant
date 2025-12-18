@@ -2,7 +2,8 @@
 
 import { ChatSession } from '@/types/chat';
 import { useEffect, useState } from 'react';
-import { getSessions, createSession, deleteSession } from '@/lib/api';
+import { getSessions, createSession, deleteSession, updateSession } from '@/lib/api';
+import { fetchUserInfo } from '@/lib/auth';
 
 interface SidebarProps {
   currentSessionId?: string;
@@ -14,10 +15,21 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
+  const [userName, setUserName] = useState<string>('');
 
   useEffect(() => {
     loadSessions();
+    loadUserInfo();
   }, []);
+
+  const loadUserInfo = async () => {
+    const info = await fetchUserInfo();
+    if (info) {
+      setUserName(info.userName);
+    }
+  };
 
   const loadSessions = async () => {
     try {
@@ -56,6 +68,33 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
         console.error('Error deleting session:', error);
       }
     }
+  };
+
+  const handleEdit = (sessionId: string, currentTitle: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingSessionId(sessionId);
+    setEditingTitle(currentTitle);
+  };
+
+  const handleSaveEdit = async (sessionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!editingTitle.trim()) {
+      setEditingSessionId(null);
+      return;
+    }
+
+    try {
+      const updatedSession = await updateSession(sessionId, editingTitle);
+      setSessions(sessions.map(s => s.id === sessionId ? updatedSession : s));
+      setEditingSessionId(null);
+    } catch (error) {
+      console.error('Error updating session:', error);
+    }
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingSessionId(null);
   };
 
   return (
@@ -105,7 +144,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
                 {sessions.map((session) => (
                   <div
                     key={session.id}
-                    onClick={() => onSessionSelect(session.id)}
+                    onClick={() => editingSessionId !== session.id && onSessionSelect(session.id)}
                     className={`
                       group flex items-center justify-between p-3 rounded-lg cursor-pointer
                       transition-colors
@@ -115,24 +154,108 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
                       }
                     `}
                   >
-                    <div className="flex-1 truncate">
-                      <div className="text-sm font-medium truncate">{session.title}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(session.updatedAt).toLocaleDateString()}
-                      </div>
+                    <div className="flex-1 truncate min-w-0">
+                      {editingSessionId === session.id ? (
+                        <input
+                          type="text"
+                          value={editingTitle}
+                          onChange={(e) => setEditingTitle(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSaveEdit(session.id, e as any);
+                            if (e.key === 'Escape') handleCancelEdit(e as any);
+                          }}
+                          className="w-full text-sm font-medium px-2 py-1 rounded border border-blue-500 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          autoFocus
+                        />
+                      ) : (
+                        <>
+                          <div className="text-sm font-medium truncate">{session.title}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {new Date(session.updatedAt).toLocaleDateString()}
+                          </div>
+                        </>
+                      )}
                     </div>
-                    <button
-                      onClick={(e) => handleDelete(session.id, e)}
-                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-opacity"
-                    >
-                      <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
+                    <div className="flex items-center gap-1 ml-2">
+                      {editingSessionId === session.id ? (
+                        <>
+                          <button
+                            onClick={(e) => handleSaveEdit(session.id, e)}
+                            className="p-1 hover:bg-green-100 dark:hover:bg-green-900 rounded"
+                            title="Save"
+                          >
+                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                            title="Cancel"
+                          >
+                            <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={(e) => handleEdit(session.id, session.title, e)}
+                            className="opacity-0 group-hover:opacity-100 p-1 hover:bg-blue-100 dark:hover:bg-blue-900 rounded transition-opacity"
+                            title="Edit"
+                          >
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={(e) => handleDelete(session.id, e)}
+                            className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-opacity"
+                            title="Delete"
+                          >
+                            <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Footer with User Info and Version */}
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+            {/* Username and Profile Link */}
+            {userName && (
+              <a
+                href="https://auth.markpost.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    {userName}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    View Profile →
+                  </div>
+                </div>
+              </a>
+            )}
+
+            {/* Version */}
+            <div className="text-xs text-center text-gray-500 dark:text-gray-400 pt-2">
+              Version 1.0.0
+            </div>
           </div>
         </div>
       </div>

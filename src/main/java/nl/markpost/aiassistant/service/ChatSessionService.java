@@ -102,6 +102,17 @@ public class ChatSessionService {
     }
 
     @Transactional
+    public ChatSessionDTO updateSessionTitle(String sessionId, String userId, String newTitle) {
+        ChatSession session = chatSessionRepository.findByIdAndUserId(sessionId, userId)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+
+        session.setTitle(newTitle != null && !newTitle.isBlank() ? newTitle : session.getTitle());
+        session = chatSessionRepository.save(session);
+
+        return mapToDTO(session, false);
+    }
+
+    @Transactional
     public void deleteSession(String sessionId, String userId) {
         ChatSession session = chatSessionRepository.findByIdAndUserId(sessionId, userId)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
