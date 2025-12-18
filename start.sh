@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
+# Load environment variables from .env file if it exists
+if [ -f .env ]; then
+    echo "Loading environment variables from .env file..."
+    export $(cat .env | grep -v '^#' | grep -v '^$' | xargs)
+else
+    echo "Warning: .env file not found. Using default values."
+fi
+
 echo "Cleaning Docker system..."
 docker system prune -f
 
-echo "Building frontend application..."
-cd frontend
-
-# Install dependencies if node_modules doesn't exist
-if [ ! -d "node_modules" ]; then
-    echo "Installing frontend dependencies..."
-    npm install
-fi
-
-# Build the Next.js application
-echo "Building Next.js application..."
-npm run build
-
-cd ..
 
 echo "Building and starting Docker containers..."
 docker compose build --no-cache

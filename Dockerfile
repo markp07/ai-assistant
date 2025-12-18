@@ -32,7 +32,6 @@ COPY --from=build /workspace/app/target/ai-assistant-*.jar /app.jar
 
 # Set environment variables
 ENV OPENAI_API_KEY=${OPENAI_API_KEY}
-ENV NS_API_KEY=${NS_API_KEY}
 
 # Set the entry point to run the JAR file
 ENTRYPOINT ["java","-jar","/app.jar"]

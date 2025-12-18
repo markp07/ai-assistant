@@ -8,8 +8,15 @@ AI Assistant is a full-stack application with a Java backend and Next.js fronten
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Environment Configuration](#environment-variables)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Additional Documentation
+
+- **[Environment Setup Guide](ENVIRONMENT_SETUP.md)**: Comprehensive guide for configuring environment variables
+- **[Migration Guide](MIGRATION.md)**: Instructions for migrating from old configuration system
+- **[Changelog](CHANGELOG.md)**: Release notes and version history
 
 ## Project Structure
 
@@ -81,10 +88,19 @@ The easiest way to run both backend and frontend together:
    cd ai-assistant
    ```
 
-2. Set your OpenAI API key in `.env` file:
+2. Create `.env` file from the example and configure your environment:
    ```bash
-   echo "OPENAI_API_KEY=your-key-here" > .env
+   cp .env.example .env
    ```
+   
+   Then edit `.env` and set your values (minimum required):
+   ```bash
+   OPENAI_API_KEY=your-key-here
+   ALLOWED_ORIGINS=http://localhost:7070
+   NEXT_PUBLIC_API_URL=http://localhost:7075
+   ```
+   
+   **Note:** The `.env` file at the project root contains all environment variables for both backend and frontend services.
 
 3. Build and start all services:
    ```bash
@@ -177,6 +193,36 @@ docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:7075 ai-assistan
 ### Development Mode (without Docker)
 - **Frontend**: Access the chat interface at `http://localhost:3000`
 - **Backend API**: Access the API documentation at `http://localhost:7075/swagger-ui.html`
+
+### Environment Variables
+
+The application uses a single `.env` file at the project root for both backend and frontend configuration.
+
+#### Backend Variables
+
+| Variable | Description | Default Value | Required |
+|----------|-------------|---------------|----------|
+| `OPENAI_API_KEY` | Your OpenAI API key for AI functionality | - | Yes |
+| `NS_API_KEY` | NS API key (if applicable) | - | No |
+| `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | `http://localhost:7070` | No |
+
+#### Frontend Variables
+
+| Variable | Description | Default Value | Required |
+|----------|-------------|---------------|----------|
+| `NEXT_PUBLIC_API_URL` | Backend API URL for the frontend | `http://localhost:7075` | No |
+
+Example `.env` file:
+```bash
+# Backend Configuration
+OPENAI_API_KEY=sk-your-key-here
+ALLOWED_ORIGINS=http://localhost:7070,https://chat.markpost.dev:7070
+
+# Frontend Configuration
+NEXT_PUBLIC_API_URL=http://localhost:7075
+```
+
+**Note:** For Docker deployments, all environment variables are loaded from the root `.env` file and passed to the appropriate services.
 
 ### API Endpoints
 
