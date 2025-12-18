@@ -18,7 +18,7 @@ jwt:
 
 # Security configuration
 security:
-  excluded-paths: /actuator/**
+  excluded-paths: /actuator/health,/actuator/info,/actuator/prometheus,/swagger-ui.html,/swagger-ui/**,/*/api-docs
 
 # Database configuration
 spring:
