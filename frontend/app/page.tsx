@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Chat } from '@/components/Chat';
 import { Sidebar } from '@/components/Sidebar';
 import { AuthProvider } from '@/components/AuthProvider';
-import { createSession } from '@/lib/api';
+import { createSession, getSessions } from '@/lib/api';
 
 function HomeContent() {
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>();
@@ -16,10 +16,19 @@ function HomeContent() {
 
   const initializeSession = async () => {
     try {
-      const session = await createSession('New Chat');
-      setCurrentSessionId(session.id);
+      // Try to get existing sessions first
+      const sessions = await getSessions();
+
+      if (sessions && sessions.length > 0) {
+        // Open the newest session (first one, since they're sorted by updatedAt desc)
+        setCurrentSessionId(sessions[0].id);
+      } else {
+        // No sessions exist, create a new one
+        const session = await createSession('New Chat');
+        setCurrentSessionId(session.id);
+      }
     } catch (error) {
-      console.error('Error creating initial session:', error);
+      console.error('Error initializing session:', error);
     } finally {
       setIsInitializing(false);
     }
