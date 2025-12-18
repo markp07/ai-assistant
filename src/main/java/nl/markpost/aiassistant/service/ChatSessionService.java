@@ -1,10 +1,8 @@
 package nl.markpost.aiassistant.service;
 
 import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.output.Response;
+import dev.langchain4j.memory.ChatMemory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.markpost.aiassistant.models.*;
@@ -15,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +24,8 @@ public class ChatSessionService {
 
     private final ChatSessionRepository chatSessionRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatLanguageModel chatLanguageModel;
+    private final Assistant assistant;
+    private final ChatMemory chatMemory;
 
     @Transactional
     public ChatSessionDTO createSession(String userId, String title) {
@@ -69,6 +67,9 @@ public class ChatSessionService {
                 .build();
         userMessage = chatMessageRepository.save(userMessage);
 
+        // Clear current memory
+        chatMemory.clear();
+
         // Get last 10 messages for context
         List<nl.markpost.aiassistant.models.entity.ChatMessage> recentMessages =
             chatMessageRepository.findLastMessagesBySessionId(sessionId, PageRequest.of(0, 9));
@@ -76,22 +77,17 @@ public class ChatSessionService {
         // Reverse to get chronological order (excluding current message)
         Collections.reverse(recentMessages);
 
-        // Build context messages
-        List<ChatMessage> contextMessages = new ArrayList<>();
+        // Add context messages to memory
         for (nl.markpost.aiassistant.models.entity.ChatMessage msg : recentMessages) {
             if ("user".equals(msg.getRole())) {
-                contextMessages.add(UserMessage.from(msg.getContent()));
+                chatMemory.add(UserMessage.from(msg.getContent()));
             } else {
-                contextMessages.add(AiMessage.from(msg.getContent()));
+                chatMemory.add(AiMessage.from(msg.getContent()));
             }
         }
 
-        // Add current user message
-        contextMessages.add(UserMessage.from(messageContent));
-
-        // Get response from OpenAI
-        Response<AiMessage> response = chatLanguageModel.generate(contextMessages);
-        String assistantResponse = response.content().text();
+        // Get response from OpenAI using Assistant
+        String assistantResponse = assistant.chat(messageContent);
 
         // Save assistant message
         nl.markpost.aiassistant.models.entity.ChatMessage assistantMessage =
