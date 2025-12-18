@@ -1,18 +1,18 @@
 services:
   ai-assistant:
     image: ai-assistant:latest
+    container_name: ai-assistant
+    restart: unless-stopped
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: ai-assistant
-    restart: unless-stopped
     ports:
       - "12501:7075"
     volumes:
       - /data/ai_assistant
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:7070}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:7070}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7075/actuator/health"]
       interval: 30s
@@ -20,35 +20,40 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - ai-assistant-network
+      default-network:
+        aliases:
+          - ai-assistant-service
 
   frontend:
     image: ai-assistant-frontend:latest
+    container_name: ai-assistant-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:7075}
-    container_name: ai-assistant-frontend
     restart: unless-stopped
     ports:
       - "12502:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:7075}
     depends_on:
-      - ai-assistant
+      ai-assistant:
+        condition: service_healthy
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:7075}
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000", "||", "exit", "1"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3030"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 30s
     networks:
-      - ai-assistant-network
+      default-network:
+        aliases:
+          - ai-assistant-frontend
 
 networks:
-  ai-assistant-network:
-    driver: bridge
+  default-network:
+    external: true
 
 volumes:
   ai_assistant:
