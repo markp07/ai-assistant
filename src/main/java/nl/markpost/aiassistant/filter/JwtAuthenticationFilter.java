@@ -109,7 +109,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if (accessToken == null) {
       log.info("No access token found in request - {}", path);
       response.setStatus(401);
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("No access token provided");
     }
     try {
       PublicKey publicKey = getOrFetchPublicKey();
@@ -131,7 +131,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
       if (userId == null) {
         log.warn("JWT claims do not contain userId");
-        throw new UnauthorizedException();
+        throw new UnauthorizedException("JWT token does not contain user ID");
       }
 
       if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -144,7 +144,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throw e;
     } catch (Exception e) {
       log.error("JWT validation failed: {}", e.getMessage(), e);
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("JWT validation failed: " + e.getMessage());
     }
   }
 
