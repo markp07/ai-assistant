@@ -2,11 +2,15 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Message } from '@/types/chat';
-import { sendMessage, clearChatHistory } from '@/lib/api';
+import { sendMessage, getSessionHistory } from '@/lib/api';
 import { ChatMessage } from './ChatMessage';
 import { ThemeToggle } from './ThemeToggle';
 
-export function Chat() {
+interface ChatProps {
+  sessionId?: string;
+}
+
+export function Chat({ sessionId }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,10 +25,30 @@ export function Chat() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (sessionId) {
+      loadHistory();
+    } else {
+      setMessages([]);
+    }
+  }, [sessionId]);
+
+  const loadHistory = async () => {
+    if (!sessionId) return;
+
+    try {
+      const history = await getSessionHistory(sessionId);
+      setMessages(history);
+    } catch (err) {
+      console.error('Error loading history:', err);
+      setError('Failed to load chat history');
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!input.trim() || isLoading) {
+    if (!input.trim() || isLoading || !sessionId) {
       return;
     }
 
@@ -32,43 +56,23 @@ export function Chat() {
       id: crypto.randomUUID(),
       content: input,
       role: 'user',
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const messageContent = input;
     setInput('');
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await sendMessage(input);
-      
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        content: response,
-        role: 'assistant',
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      const response = await sendMessage(sessionId, messageContent);
+      setMessages((prev) => [...prev, response]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
       console.error('Error sending message:', err);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleClearChat = async () => {
-    if (window.confirm('Are you sure you want to clear the chat history?')) {
-      try {
-        await clearChatHistory();
-        setMessages([]);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to clear chat history');
-        console.error('Error clearing chat:', err);
-      }
     }
   };
 
@@ -80,17 +84,7 @@ export function Chat() {
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
             AI Assistant
           </h1>
-          <div className="flex items-center gap-2">
-            {messages.length > 0 && (
-              <button
-                onClick={handleClearChat}
-                className="text-sm px-3 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
-              >
-                Clear
-              </button>
-            )}
-            <ThemeToggle />
-          </div>
+          <ThemeToggle />
         </div>
       </header>
 

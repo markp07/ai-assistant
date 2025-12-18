@@ -2,7 +2,7 @@ export interface Message {
   id: string;
   content: string;
   role: 'user' | 'assistant';
-  timestamp: Date;
+  timestamp: string | Date;
 }
 
 export interface ChatInput {
@@ -12,3 +12,20 @@ export interface ChatInput {
 export interface ChatOutput {
   chat: string;
 }
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages?: Message[];
+}
+
+export interface CreateSessionRequest {
+  title: string;
+}
+
+export interface SendMessageRequest {
+  message: string;
+}
+

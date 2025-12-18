@@ -44,11 +44,21 @@ See [frontend/README.md](frontend/README.md) for detailed frontend documentation
 
 ## Features
 
-- **Natural Language Processing**: Understands and processes user inputs in natural language.
-- **Interactive Chat Interface**: Modern, responsive UI that works across all devices.
-- **Theme Support**: Toggle between light and dark modes.
-- **Real-time Communication**: Seamless interaction with the AI backend.
-- **Customizable**: Easily extendable to integrate with additional APIs or services.
+- **Authentication**: Secure JWT-based authentication with external auth service integration
+  - Login via configurable auth service (default: https://auth.markpost.dev)
+  - Automatic token refresh handling
+  - Session-based access control
+- **Multi-Session Chat**: Create and manage multiple chat conversations
+  - Sidebar for easy navigation between chats
+  - Persistent chat history stored in PostgreSQL
+  - Delete unwanted conversations
+- **Context-Aware AI**: Sends last 10 messages to OpenAI for better context understanding
+- **Natural Language Processing**: Understands and processes user inputs in natural language
+- **Interactive Chat Interface**: Modern, responsive UI that works across all devices
+- **Theme Support**: Toggle between light and dark modes
+- **Real-time Communication**: Seamless interaction with the AI backend
+- **PostgreSQL Database**: Reliable storage for chat sessions and message history
+- **Customizable**: Easily extendable to integrate with additional APIs or services
 
 ## Docker Setup
 

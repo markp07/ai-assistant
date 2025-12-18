@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CustomExceptionHandler {
 
   @ExceptionHandler(GenericException.class)
-  private ResponseEntity<Error> handleGenericExceptionException(GenericException exception) {
+  public ResponseEntity<Error> handleGenericExceptionException(GenericException exception) {
     log.error("An error occurred", exception);
     return ResponseEntity.internalServerError()
         .body(createError(exception.getErrorCode(), exception.getHttpStatus()));
   }
 
   @ExceptionHandler(Exception.class)
-  private ResponseEntity<Error> handleException(Exception e) {
+  public ResponseEntity<Error> handleException(Exception e) {
     log.error("An error occurred", e);
     return ResponseEntity.internalServerError()
         .body(createError(GenericErrorCodes.INTERNAL_SERVER_ERROR));
