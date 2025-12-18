@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: ai_assistant
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ai_assistant -d ai_assistant" ]
       interval: 10s
