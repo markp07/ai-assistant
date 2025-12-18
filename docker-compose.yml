@@ -7,12 +7,12 @@ services:
       - "12503:5432"
     environment:
       POSTGRES_DB: ai_assistant
-      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_USER: ai_assistant
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U weather_service -d weather_service" ]
+      test: [ "CMD-SHELL", "pg_isready -U ai_assistant -d ai_assistant" ]
       interval: 10s
       timeout: 5s
       retries: 5
