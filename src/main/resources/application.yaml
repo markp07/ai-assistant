@@ -23,7 +23,7 @@ security:
 # Database configuration
 spring:
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/ai_assistant}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:13003/ai_assistant}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver

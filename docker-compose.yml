@@ -1,10 +1,10 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:latest
     container_name: ai-assistant-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "12503:5432"
     environment:
       POSTGRES_DB: ai_assistant
       POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
@@ -12,10 +12,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U weather_service -d weather_service" ]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     networks:
       default-network:
         aliases:
