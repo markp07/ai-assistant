@@ -44,7 +44,7 @@ public class ChatControllerTest {
 
     when(chatService.sendUserMessage(any(ChatInputDTO.class))).thenReturn(chatOutputDto);
 
-    var response = chatController.chatPost(chatInput);
+    var response = chatController.sendChatMessage(chatInput);
 
     assertEquals(ResponseEntity.ok(chatOutput), response);
   }

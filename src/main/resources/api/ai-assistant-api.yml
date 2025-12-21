@@ -1,18 +1,25 @@
 openapi: 3.0.0
 info:
-  title: AI Assistant
+  title: AI Assistant API
   version: 1.0.0
+  description: API for managing chat sessions and messages with an AI assistant
 servers:
-  - url: /api
+  - url: /api/v1
+    description: API v1
 tags:
   - name: chat
-    description: Chat endpoint
+    description: Legacy chat endpoint (deprecated)
+  - name: sessions
+    description: Chat session management
 paths:
+  # Legacy chat endpoints (deprecated)
   /chat:
     post:
+      operationId: sendChatMessage
       tags:
         - chat
-      summary: Chat endpoint
+      summary: Send a chat message (deprecated)
+      deprecated: true
       requestBody:
         required: true
         content:
@@ -30,8 +37,126 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    delete:
+      operationId: clearChatHistory
+      tags:
+        - chat
+      summary: Clear chat history (deprecated)
+      deprecated: true
+      responses:
+        '204':
+          description: Chat history cleared successfully
+
+  # Chat session endpoints
+  /sessions:
+    get:
+      operationId: getUserSessions
+      tags:
+        - sessions
+      summary: Get all chat sessions for the authenticated user
+      responses:
+        '200':
+          description: List of chat sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatSession'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    post:
+      operationId: createSession
+      tags:
+        - sessions
+      summary: Create a new chat session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '200':
+          description: Chat session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSession'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /sessions/{sessionId}:
+    get:
+      operationId: getSession
+      tags:
+        - sessions
+      summary: Get a specific chat session with messages
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the chat session
+      responses:
+        '200':
+          description: Chat session details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSession'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    put:
+      operationId: updateSession
+      tags:
+        - sessions
+      summary: Update a chat session title
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the chat session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSessionRequest'
+      responses:
+        '200':
+          description: Chat session updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSession'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -39,74 +164,251 @@ paths:
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
     delete:
+      operationId: deleteSession
       tags:
-        - chat
-      summary: Delete chat endpoint
+        - sessions
+      summary: Delete a chat session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the chat session
       responses:
         '204':
-          description: Successful response
+          description: Chat session deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /sessions/{sessionId}/messages:
+    post:
+      operationId: sendMessage
+      tags:
+        - sessions
+      summary: Send a message in a chat session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the chat session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '200':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /sessions/{sessionId}/history:
+    get:
+      operationId: getSessionHistory
+      tags:
+        - sessions
+      summary: Get message history for a chat session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the chat session
+      responses:
+        '200':
+          description: Message history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
 components:
   schemas:
+    # Legacy schemas
     ChatInput:
       type: object
       properties:
         chat:
           type: string
+          description: The chat message
       required:
         - chat
+
     ChatOutput:
       type: object
       properties:
         chat:
           type: string
+          description: The chat response
       required:
         - chat
+
+    # Chat session schemas
+    ChatSession:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the chat session
+        title:
+          type: string
+          description: Title of the chat session
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the session was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the session was last updated
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          description: List of messages in the session (only included in detail view)
+      required:
+        - id
+        - title
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the message
+        role:
+          type: string
+          enum: [user, assistant]
+          description: Role of the message sender
+        content:
+          type: string
+          description: Content of the message
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the message was created
+      required:
+        - id
+        - role
+        - content
+        - timestamp
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title for the new chat session
+          example: "New Chat"
+
+    UpdateSessionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: New title for the chat session
+      required:
+        - title
+
+    SendMessageRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The message content to send
+      required:
+        - message
+
     Error:
       type: object
       properties:
         timestamp:
           type: string
           format: date-time
+          description: Timestamp when the error occurred
         status:
           type: integer
           format: int32
+          description: HTTP status code
         code:
           type: string
+          description: Error code
         message:
           type: string
+          description: Error message
         traceId:
           type: string
+          description: Unique trace ID for debugging
+
   responses:
     BadRequest:
-      description: Bad Request
+      description: Bad Request - Invalid input
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Not Found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+
     Unauthorized:
-      description: Unauthorized
+      description: Unauthorized - Authentication required
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+
     Forbidden:
-      description: Forbidden
+      description: Forbidden - Insufficient permissions
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Not Found - Resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
     InternalServerError:
       description: Internal Server Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+
     ServiceUnavailable:
       description: Service Unavailable
       content:
