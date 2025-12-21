@@ -7,29 +7,21 @@ import { fetchUserInfo } from '@/lib/auth';
 
 interface SidebarProps {
   currentSessionId?: string;
-  onSessionSelect: (sessionId: string) => void;
+  onSessionSelect: (sessionId: string, sessionTitle: string) => void;
   onNewChat: () => void;
+  isCollapsed: boolean;
+  onToggle: () => void;
 }
 
-export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: SidebarProps) {
+export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollapsed, onToggle }: SidebarProps) {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
-  const [userName, setUserName] = useState<string>('');
 
   useEffect(() => {
     loadSessions();
-    loadUserInfo();
   }, []);
-
-  const loadUserInfo = async () => {
-    const info = await fetchUserInfo();
-    if (info) {
-      setUserName(info.userName);
-    }
-  };
 
   const loadSessions = async () => {
     try {
@@ -49,7 +41,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
       const newSession = await createSession();
       setSessions([newSession, ...sessions]);
       onNewChat();
-      onSessionSelect(newSession.id);
+      onSessionSelect(newSession.id, newSession.title);
     } catch (error) {
       console.error('Error creating session:', error);
     }
@@ -102,7 +94,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
     <>
       {/* Mobile toggle button */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={onToggle}
         className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,14 +112,15 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
         `}
       >
         <div className="flex flex-col h-full">
-          {/* Header */}
+          {/* Header with App Name and Version */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <button
-              onClick={handleNewChat}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              + New Chat
-            </button>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              AI Chat
+            </h1>
+            <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+              <div>Version 0.1.0</div>
+              <div>Built: {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</div>
+            </div>
           </div>
 
           {/* Sessions List */}
@@ -145,7 +138,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
                 {sessions.map((session) => (
                   <div
                     key={session.id}
-                    onClick={() => editingSessionId !== session.id && onSessionSelect(session.id)}
+                    onClick={() => editingSessionId !== session.id && onSessionSelect(session.id, session.title)}
                     className={`
                       group flex items-center justify-between p-3 rounded-lg cursor-pointer
                       transition-colors
@@ -229,20 +222,14 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
             )}
           </div>
 
-          {/* Footer with New Chat and Version */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
-            {/* New Chat Button */}
+          {/* Footer with New Chat Button */}
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4">
             <button
               onClick={handleNewChat}
               className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
               + New Chat
             </button>
-
-            {/* Version */}
-            <div className="text-xs text-center text-gray-500 dark:text-gray-400">
-              Version 1.0.0
-            </div>
           </div>
         </div>
       </div>
@@ -251,7 +238,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat }: Sideba
       {!isCollapsed && (
         <div
           className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
-          onClick={() => setIsCollapsed(true)}
+          onClick={onToggle}
         />
       )}
     </>

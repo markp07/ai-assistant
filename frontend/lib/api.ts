@@ -1,5 +1,5 @@
 import { ChatSession, CreateSessionRequest, Message, SendMessageRequest } from '@/types/chat';
-import { getTokens, refreshAccessToken, redirectToLogin } from './auth';
+import { getTokens, refreshAccessToken } from './auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7075';
 

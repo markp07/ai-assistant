@@ -104,3 +104,24 @@ export async function fetchUserInfo(): Promise<UserInfo | null> {
   }
 }
 
+export async function logout(): Promise<void> {
+  const tokens = getTokens();
+
+  if (tokens?.access_token) {
+    try {
+      await fetch(`${AUTH_URL}/api/auth/v1/logout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${tokens.access_token}`,
+        },
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Continue with local cleanup even if API call fails
+    }
+  }
+
+  clearTokens();
+  redirectToLogin();
+}
+
