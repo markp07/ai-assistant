@@ -1,7 +1,7 @@
 package nl.markpost.aiassistant.constant;
 
 /**
- * Constants used in the Weather Service.
+ * Constants used in the AI Assistant application.
  */
 public class Constants {
 
