@@ -19,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * Security configuration for the weather service.
+ * Security configuration for the AI Assistant application.
  */
 @Configuration
 @EnableWebSecurity
