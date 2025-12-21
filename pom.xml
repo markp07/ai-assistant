@@ -28,6 +28,7 @@
     <langchain4j.version>1.9.1</langchain4j.version>
     <hibernate-validator.version>9.1.0.Final</hibernate-validator.version>
     <mapdb.version>3.1.0</mapdb.version>
+    <jjwt.version>0.13.0</jjwt.version>
 
     <!-- API and validation versions -->
     <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
@@ -75,6 +76,10 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -126,6 +131,25 @@
       <artifactId>reactor-core</artifactId>
     </dependency>
 
+    <!-- JWT dependencies -->
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>${jjwt.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>${jjwt.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>${jjwt.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
     <!-- Code generation dependencies -->
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -164,6 +188,15 @@
     </dependency>
 
     <!-- Database and validation dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
@@ -344,7 +377,10 @@
                     <exclude>nl.markpost.aiassistant.api.model.*</exclude>
                     <exclude>nl.markpost.aiassistant.config.*</exclude>
                     <exclude>nl.markpost.aiassistant.constant.*</exclude>
-                    <exclude>nl.markpost.aiassistant.exception.*</exclude>
+                    <exclude>nl.markpost.aiassistant.exception.*Exception</exclude>
+                    <exclude>nl.markpost.aiassistant.models.*</exclude>
+                    <exclude>nl.markpost.aiassistant.models.entity.*</exclude>
+                    <exclude>nl.markpost.aiassistant.repository.*</exclude>
                     <exclude>nl.markpost.aiassistant.AiAssistant</exclude>
                   </excludes>
                   <limits>

@@ -1,4 +1,27 @@
 services:
+  postgres:
+    image: postgres:latest
+    container_name: ai-assistant-postgres
+    restart: unless-stopped
+    ports:
+      - "12503:5432"
+    environment:
+      POSTGRES_DB: ai_assistant
+      POSTGRES_USER: ai_assistant
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ai_assistant -d ai_assistant" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      default-network:
+        aliases:
+          - postgres-service
+
   ai-assistant:
     image: ai-assistant:latest
     container_name: ai-assistant
@@ -13,6 +36,14 @@ services:
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:7070}
+      DATABASE_URL: jdbc:postgresql://postgres:5432/ai_assistant
+      DATABASE_USERNAME: ai_assistant
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-https://auth.markpost.dev}
+      JWT_PUBLIC_KEY_URL: ${JWT_PUBLIC_KEY_URL:-https://auth.markpost.dev/api/auth/v1/public-key}
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7075/actuator/health"]
       interval: 30s
@@ -32,16 +63,15 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:7075}
+        NEXT_PUBLIC_AUTH_URL: ${AUTH_SERVICE_URL:-https://auth.markpost.dev}
     restart: unless-stopped
     ports:
       - "12502:3000"
-    depends_on:
-      ai-assistant:
-        condition: service_healthy
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:7075}
+      NEXT_PUBLIC_AUTH_URL: ${AUTH_SERVICE_URL:-https://auth.markpost.dev}
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3030"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -57,3 +87,4 @@ networks:
 
 volumes:
   ai_assistant:
+  postgres_data:

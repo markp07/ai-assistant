@@ -8,6 +8,35 @@ server:
 cors:
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:7070}
 
+# Authentication configuration
+auth:
+  service-url: ${AUTH_SERVICE_URL:https://auth.markpost.dev}
+
+# JWT configuration
+jwt:
+  public-key-url: ${JWT_PUBLIC_KEY_URL:https://auth.markpost.dev/api/auth/v1/public-key}
+
+# Security configuration
+security:
+  excluded-paths: /actuator/health,/actuator/info,/actuator/prometheus,/swagger-ui.html,/swagger-ui/**,/*/api-docs
+
+# Database configuration
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:13003/ai_assistant}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
 management:
   endpoints:
     web:

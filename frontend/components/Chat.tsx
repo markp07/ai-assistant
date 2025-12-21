@@ -2,11 +2,18 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Message } from '@/types/chat';
-import { sendMessage, clearChatHistory } from '@/lib/api';
+import { sendMessage, getSessionHistory } from '@/lib/api';
 import { ChatMessage } from './ChatMessage';
 import { ThemeToggle } from './ThemeToggle';
+import { UserProfile } from './UserProfile';
 
-export function Chat() {
+interface ChatProps {
+  sessionId?: string;
+  sessionTitle?: string;
+  onToggleSidebar: () => void;
+}
+
+export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,10 +28,30 @@ export function Chat() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (sessionId) {
+      loadHistory();
+    } else {
+      setMessages([]);
+    }
+  }, [sessionId]);
+
+  const loadHistory = async () => {
+    if (!sessionId) return;
+
+    try {
+      const history = await getSessionHistory(sessionId);
+      setMessages(history);
+    } catch (err) {
+      console.error('Error loading history:', err);
+      setError('Failed to load chat history');
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!input.trim() || isLoading) {
+    if (!input.trim() || isLoading || !sessionId) {
       return;
     }
 
@@ -32,25 +59,18 @@ export function Chat() {
       id: crypto.randomUUID(),
       content: input,
       role: 'user',
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const messageContent = input;
     setInput('');
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await sendMessage(input);
-      
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        content: response,
-        role: 'assistant',
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      const response = await sendMessage(sessionId, messageContent);
+      setMessages((prev) => [...prev, response]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
       console.error('Error sending message:', err);
@@ -59,37 +79,25 @@ export function Chat() {
     }
   };
 
-  const handleClearChat = async () => {
-    if (window.confirm('Are you sure you want to clear the chat history?')) {
-      try {
-        await clearChatHistory();
-        setMessages([]);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to clear chat history');
-        console.error('Error clearing chat:', err);
-      }
-    }
-  };
-
   return (
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-            AI Assistant
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
+            {sessionTitle || 'AI Assistant'}
           </h1>
           <div className="flex items-center gap-2">
-            {messages.length > 0 && (
-              <button
-                onClick={handleClearChat}
-                className="text-sm px-3 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
-              >
-                Clear
-              </button>
-            )}
-            <ThemeToggle />
+            <button
+              onClick={onToggleSidebar}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              title="Toggle Sidebar"
+            >
+              <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <UserProfile />
           </div>
         </div>
       </header>

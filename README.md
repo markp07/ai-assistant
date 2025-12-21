@@ -44,11 +44,21 @@ See [frontend/README.md](frontend/README.md) for detailed frontend documentation
 
 ## Features
 
-- **Natural Language Processing**: Understands and processes user inputs in natural language.
-- **Interactive Chat Interface**: Modern, responsive UI that works across all devices.
-- **Theme Support**: Toggle between light and dark modes.
-- **Real-time Communication**: Seamless interaction with the AI backend.
-- **Customizable**: Easily extendable to integrate with additional APIs or services.
+- **Authentication**: Secure JWT-based authentication with external auth service integration
+  - Login via configurable auth service (default: https://auth.markpost.dev)
+  - Automatic token refresh handling
+  - Session-based access control
+- **Multi-Session Chat**: Create and manage multiple chat conversations
+  - Sidebar for easy navigation between chats
+  - Persistent chat history stored in PostgreSQL
+  - Delete unwanted conversations
+- **Context-Aware AI**: Sends last 10 messages to OpenAI for better context understanding
+- **Natural Language Processing**: Understands and processes user inputs in natural language
+- **Interactive Chat Interface**: Modern, responsive UI that works across all devices
+- **Theme Support**: Toggle between light and dark modes
+- **Real-time Communication**: Seamless interaction with the AI backend
+- **PostgreSQL Database**: Reliable storage for chat sessions and message history
+- **Customizable**: Easily extendable to integrate with additional APIs or services
 
 ## Docker Setup
 
@@ -194,6 +204,47 @@ docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:7075 ai-assistan
 - **Frontend**: Access the chat interface at `http://localhost:3000`
 - **Backend API**: Access the API documentation at `http://localhost:7075/swagger-ui.html`
 
+## Authentication
+
+The application uses JWT-based authentication with an external auth service. Users must log in to access the chat functionality.
+
+### Authentication Flow
+
+1. User visits the frontend application
+2. If not authenticated, user is redirected to the login page with a callback URL
+3. After successful login, the auth service returns `access_token` and `refresh_token`
+4. Frontend stores tokens and uses them for API requests
+5. When access token expires (401 response), frontend automatically refreshes using refresh token
+6. If refresh fails, user is redirected back to login
+
+### Configuration
+
+Set the auth service URL in your `.env` file:
+```bash
+AUTH_SERVICE_URL=https://auth.markpost.dev
+JWT_PUBLIC_KEY_URL=https://auth.markpost.dev/api/auth/v1/public-key
+```
+
+## Database
+
+The application uses PostgreSQL to store chat sessions and message history. Each user can have multiple chat sessions with persistent history.
+
+### Database Schema
+
+- **chat_sessions**: Stores individual chat sessions
+  - `id`: UUID primary key
+  - `user_id`: User identifier from JWT token
+  - `title`: Session title
+  - `created_at`: Creation timestamp
+  - `updated_at`: Last update timestamp
+
+- **chat_messages**: Stores individual messages within sessions
+  - `id`: UUID primary key
+  - `session_id`: Foreign key to chat_sessions
+  - `role`: Either "user" or "assistant"
+  - `content`: Message text
+  - `timestamp`: Message timestamp
+
 ### Environment Variables
 
 The application uses a single `.env` file at the project root for both backend and frontend configuration.
@@ -203,7 +254,11 @@ The application uses a single `.env` file at the project root for both backend a
 | Variable | Description | Default Value | Required |
 |----------|-------------|---------------|----------|
 | `OPENAI_API_KEY` | Your OpenAI API key for AI functionality | - | Yes |
-| `NS_API_KEY` | NS API key (if applicable) | - | No |
+| `DATABASE_URL` | PostgreSQL connection URL | `jdbc:postgresql://localhost:5432/ai_assistant` | No |
+| `DATABASE_USERNAME` | PostgreSQL username | `postgres` | No |
+| `DATABASE_PASSWORD` | PostgreSQL password | `postgres` | No |
+| `AUTH_SERVICE_URL` | External authentication service URL | `https://auth.markpost.dev` | No |
+| `JWT_PUBLIC_KEY_URL` | URL to fetch JWT verification public key | `https://auth.markpost.dev/api/auth/v1/public-key` | No |
 | `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | `http://localhost:7070` | No |
 
 #### Frontend Variables
@@ -211,23 +266,43 @@ The application uses a single `.env` file at the project root for both backend a
 | Variable | Description | Default Value | Required |
 |----------|-------------|---------------|----------|
 | `NEXT_PUBLIC_API_URL` | Backend API URL for the frontend | `http://localhost:7075` | No |
+| `NEXT_PUBLIC_AUTH_URL` | Authentication service URL | `https://auth.markpost.dev` | No |
 
 Example `.env` file:
 ```bash
-# Backend Configuration
+# OpenAI Configuration
 OPENAI_API_KEY=sk-your-key-here
-ALLOWED_ORIGINS=http://localhost:7070,https://chat.markpost.dev:7070
+
+# Database Configuration
+DATABASE_URL=jdbc:postgresql://localhost:5432/ai_assistant
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+
+# Authentication
+AUTH_SERVICE_URL=https://auth.markpost.dev
+JWT_PUBLIC_KEY_URL=https://auth.markpost.dev/api/auth/v1/public-key
+
+# Backend CORS
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:7070
 
 # Frontend Configuration
 NEXT_PUBLIC_API_URL=http://localhost:7075
+NEXT_PUBLIC_AUTH_URL=https://auth.markpost.dev
 ```
 
 **Note:** For Docker deployments, all environment variables are loaded from the root `.env` file and passed to the appropriate services.
 
 ### API Endpoints
 
-- `POST /api/chat` - Send a message to the AI assistant
-- `DELETE /api/chat` - Clear chat history
+#### Chat Sessions
+- `POST /api/v1/sessions` - Create a new chat session
+- `GET /api/v1/sessions` - Get all user's chat sessions
+- `GET /api/v1/sessions/{sessionId}` - Get a specific session with messages
+- `GET /api/v1/sessions/{sessionId}/history` - Get message history for a session
+- `POST /api/v1/sessions/{sessionId}/messages` - Send a message in a session
+- `DELETE /api/v1/sessions/{sessionId}` - Delete a chat session
+
+All endpoints require JWT authentication via Authorization header: `Bearer <access_token>`
 
 ## License
 
