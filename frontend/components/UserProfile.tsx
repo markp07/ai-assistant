@@ -11,7 +11,9 @@ export function UserProfile() {
 
   useEffect(() => {
     const loadUserInfo = async () => {
+      console.log('[UserProfile] Loading user info...');
       const info = await fetchUserInfo();
+      console.log('[UserProfile] User info loaded:', info);
       setUserInfo(info);
       setIsLoading(false);
     };
@@ -53,16 +55,24 @@ export function UserProfile() {
   return (
     <div className="relative" ref={modalRef}>
       <button
-        onClick={() => setIsModalOpen(!isModalOpen)}
-        className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+        onClick={() => {
+          console.log('Profile button clicked, current state:', isModalOpen);
+          setIsModalOpen(!isModalOpen);
+        }}
+        className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors border border-transparent hover:border-gray-300 dark:hover:border-gray-600"
         title="User Profile"
+        type="button"
       >
-        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
           {userInfo.userName.charAt(0).toUpperCase()}
         </div>
         <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
           {userInfo.userName}
         </span>
+        {/* Dropdown arrow indicator */}
+        <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
       </button>
 
       {/* Modal */}
