@@ -25,12 +25,21 @@ public interface SessionApiMapper {
     List<ChatSession> toApiModelList(List<ChatSessionDTO> dtos);
 
     @Mapping(target = "timestamp", expression = "java(toOffsetDateTime(dto.getTimestamp()))")
+    @Mapping(target = "role", expression = "java(mapRole(dto.getRole()))")
     Message toApiModel(MessageDTO dto);
 
     List<Message> toApiMessageList(List<MessageDTO> dtos);
 
     default OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
         return localDateTime != null ? localDateTime.atOffset(ZoneOffset.UTC) : null;
+    }
+
+    default Message.RoleEnum mapRole(String role) {
+        if (role == null) {
+            return null;
+        }
+        // Use fromValue() which expects the lowercase string value
+        return Message.RoleEnum.fromValue(role.toLowerCase());
     }
 }
 

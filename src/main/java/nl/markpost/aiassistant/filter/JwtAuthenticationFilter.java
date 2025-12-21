@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.markpost.aiassistant.exception.CustomExceptionHandler;
+import nl.markpost.aiassistant.exception.ExceptionHandler;
 import nl.markpost.aiassistant.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ import nl.markpost.aiassistant.api.model.Error;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final CustomExceptionHandler customExceptionHandler;
+  private final ExceptionHandler exceptionHandler;
 
   private final ObjectMapper objectMapper;
 
@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       handleAuthentication(request, response, filterChain);
     } catch (UnauthorizedException e) {
       log.info("Unauthorized access attempt: {}", e.getMessage());
-      ResponseEntity<Error> errorResponse = customExceptionHandler.handleGenericExceptionException(
+      ResponseEntity<Error> errorResponse = exceptionHandler.handleGenericExceptionException(
           e);
       response.setContentType("application/json");
       response.setStatus(e.getHttpStatus().value());
@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
     } catch (Exception e) {
       log.error("Error during JWT authentication: {}", e.getMessage(), e);
-      ResponseEntity<Error> errorResponse = customExceptionHandler.handleException(e);
+      ResponseEntity<Error> errorResponse = exceptionHandler.handleException(e);
       response.setContentType("application/json");
       response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
       addCorsHeaders(request, response);

@@ -1,9 +1,6 @@
 package nl.markpost.aiassistant.service;
 
-import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import nl.markpost.aiassistant.exception.BadRequestException;
 import nl.markpost.aiassistant.mapper.ChatSessionMapper;
 import nl.markpost.aiassistant.models.ChatSessionDTO;
-import nl.markpost.aiassistant.models.MessageDTO;
-import nl.markpost.aiassistant.models.entity.ChatMessage;
 import nl.markpost.aiassistant.models.entity.ChatSession;
 import nl.markpost.aiassistant.repository.ChatMessageRepository;
 import nl.markpost.aiassistant.repository.ChatSessionRepository;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,43 +71,6 @@ public class ChatSessionService {
   }
 
   /**
-   * Sends a message in the specified chat session and gets a response from the assistant.
-   *
-   * @param sessionId      The ID of the chat session.
-   * @param userId         The ID of the user.
-   * @param messageContent The content of the user's message.
-   * @return The assistant's response as a MessageDTO.
-   */
-  @Transactional
-  public MessageDTO sendMessage(String sessionId, String userId, String messageContent) {
-    ChatSession session = getSessionEntity(sessionId, userId);
-
-    ChatMessage userMessage = chatSessionMapper.toChatMessage(session, "user", messageContent);
-    chatMessageRepository.save(userMessage);
-
-    chatMemory.clear();
-    List<ChatMessage> recentMessages =
-        chatMessageRepository.findLastMessagesBySessionId(sessionId, PageRequest.of(0, 9));
-    Collections.reverse(recentMessages);
-
-    for (ChatMessage msg : recentMessages) {
-      if ("user".equals(msg.getRole())) {
-        chatMemory.add(UserMessage.from(msg.getContent()));
-      } else {
-        chatMemory.add(AiMessage.from(msg.getContent()));
-      }
-    }
-
-    String assistantResponse = assistant.chat(messageContent);
-
-    ChatMessage assistantMessage = chatSessionMapper.toChatMessage(session, "assistant",
-        assistantResponse);
-    assistantMessage = chatMessageRepository.save(assistantMessage);
-
-    return chatSessionMapper.toMessageDTO(assistantMessage);
-  }
-
-  /**
    * Updates the title of the specified chat session.
    *
    * @param sessionId The ID of the chat session.
@@ -141,23 +98,6 @@ public class ChatSessionService {
   public void deleteSession(String sessionId, String userId) {
     ChatSession session = getSessionEntity(sessionId, userId);
     chatSessionRepository.delete(session);
-  }
-
-  /**
-   * Retrieves the message history for the specified chat session.
-   *
-   * @param sessionId The ID of the chat session.
-   * @param userId    The ID of the user.
-   * @return A list of MessageDTOs representing the session history.
-   */
-  @Transactional(readOnly = true)
-  public List<MessageDTO> getSessionHistory(String sessionId, String userId) {
-    List<ChatMessage> messages =
-        chatMessageRepository.findByChatSessionIdOrderByTimestampAsc(sessionId);
-
-    return messages.stream()
-        .map(chatSessionMapper::toMessageDTO)
-        .collect(Collectors.toList());
   }
 
   /**

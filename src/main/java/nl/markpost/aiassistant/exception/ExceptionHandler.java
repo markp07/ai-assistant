@@ -6,7 +6,6 @@ import nl.markpost.aiassistant.api.model.Error;
 import nl.markpost.aiassistant.constant.GenericErrorCodes;
 import nl.markpost.aiassistant.mapper.ErrorMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 @RequiredArgsConstructor
-public class CustomExceptionHandler {
+public class ExceptionHandler {
 
   private final ErrorMapper errorMapper;
 
@@ -25,7 +24,7 @@ public class CustomExceptionHandler {
    * @param exception The GenericException to handle.
    * @return A ResponseEntity containing the error details.
    */
-  @ExceptionHandler(GenericException.class)
+  @org.springframework.web.bind.annotation.ExceptionHandler(GenericException.class)
   public ResponseEntity<Error> handleGenericExceptionException(GenericException exception) {
     log.error("An error occurred", exception);
     return ResponseEntity.internalServerError()
@@ -38,7 +37,7 @@ public class CustomExceptionHandler {
    * @param e The exception to handle.
    * @return A ResponseEntity containing the error details.
    */
-  @ExceptionHandler(Exception.class)
+  @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
   public ResponseEntity<Error> handleException(Exception e) {
     log.error("An error occurred", e);
     return ResponseEntity.internalServerError()

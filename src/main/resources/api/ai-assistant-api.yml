@@ -7,6 +7,8 @@ servers:
   - url: /api/v1
     description: API v1
 tags:
+  - name: messages
+    description: Chat messages management
   - name: sessions
     description: Chat session management
 paths:
@@ -151,7 +153,7 @@ paths:
     post:
       operationId: sendMessage
       tags:
-        - sessions
+        - messages
       summary: Send a message in a chat session
       parameters:
         - name: sessionId
@@ -188,7 +190,7 @@ paths:
     get:
       operationId: getSessionHistory
       tags:
-        - sessions
+        - messages
       summary: Get message history for a chat session
       parameters:
         - name: sessionId
