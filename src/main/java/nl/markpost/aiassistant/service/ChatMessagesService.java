@@ -19,9 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for managing chat sessions and messages.
- */
+/** Service for managing chat sessions and messages. */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -36,8 +34,8 @@ public class ChatMessagesService {
   /**
    * Sends a message in the specified chat session and gets a response from the assistant.
    *
-   * @param sessionId      The ID of the chat session.
-   * @param userId         The ID of the user.
+   * @param sessionId The ID of the chat session.
+   * @param userId The ID of the user.
    * @param messageContent The content of the user's message.
    * @return The assistant's response as a MessageDTO.
    */
@@ -63,8 +61,8 @@ public class ChatMessagesService {
 
     String assistantResponse = assistant.chat(messageContent);
 
-    ChatMessage assistantMessage = chatSessionMapper.toChatMessage(session, "assistant",
-        assistantResponse);
+    ChatMessage assistantMessage =
+        chatSessionMapper.toChatMessage(session, "assistant", assistantResponse);
     assistantMessage = chatMessageRepository.save(assistantMessage);
 
     return chatSessionMapper.toMessageDTO(assistantMessage);
@@ -74,7 +72,7 @@ public class ChatMessagesService {
    * Retrieves the message history for the specified chat session.
    *
    * @param sessionId The ID of the chat session.
-   * @param userId    The ID of the user.
+   * @param userId The ID of the user.
    * @return A list of MessageDTOs representing the session history.
    */
   @Transactional(readOnly = true)
@@ -82,22 +80,20 @@ public class ChatMessagesService {
     List<ChatMessage> messages =
         chatMessageRepository.findByChatSessionIdOrderByTimestampAsc(sessionId);
 
-    return messages.stream()
-        .map(chatSessionMapper::toMessageDTO)
-        .collect(Collectors.toList());
+    return messages.stream().map(chatSessionMapper::toMessageDTO).collect(Collectors.toList());
   }
 
   /**
    * Helper method to retrieve a ChatSession entity by ID and user ID.
    *
    * @param sessionId The ID of the chat session.
-   * @param userId    The ID of the user.
+   * @param userId The ID of the user.
    * @return The ChatSession entity.
    * @throws BadRequestException if the session is not found.
    */
   private ChatSession getSessionEntity(String sessionId, String userId) {
-    return chatSessionRepository.findByIdAndUserId(sessionId, userId)
+    return chatSessionRepository
+        .findByIdAndUserId(sessionId, userId)
         .orElseThrow(() -> new BadRequestException("Session not found"));
   }
 }
-

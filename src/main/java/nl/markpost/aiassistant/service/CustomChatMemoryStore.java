@@ -12,7 +12,8 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 /**
- * A custom implementation of ChatMemoryStore that uses MapDB for persistent storage of chat messages.
+ * A custom implementation of ChatMemoryStore that uses MapDB for persistent storage of chat
+ * messages.
  */
 public class CustomChatMemoryStore implements ChatMemoryStore {
 

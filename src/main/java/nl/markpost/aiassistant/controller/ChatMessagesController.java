@@ -43,13 +43,13 @@ public class ChatMessagesController implements MessagesApi {
   /**
    * Sends a message in a chat session.
    *
-   * @param sessionId          the ID of the chat session
+   * @param sessionId the ID of the chat session
    * @param sendMessageRequest the request body containing the message
    * @return a ResponseEntity containing the sent Message
    */
   @Override
-  public ResponseEntity<Message> sendMessage(String sessionId,
-      SendMessageRequest sendMessageRequest) {
+  public ResponseEntity<Message> sendMessage(
+      String sessionId, SendMessageRequest sendMessageRequest) {
     String userId = getUserId();
     String messageContent = sendMessageRequest.getMessage();
     MessageDTO messageDTO = chatMessagesService.sendMessage(sessionId, userId, messageContent);
@@ -67,4 +67,3 @@ public class ChatMessagesController implements MessagesApi {
     return authentication.getName();
   }
 }
-

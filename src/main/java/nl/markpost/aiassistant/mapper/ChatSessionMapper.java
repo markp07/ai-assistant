@@ -8,27 +8,27 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * Mapper for converting between ChatSession and ChatSessionDTO, as well as ChatMessage and MessageDTO.
+ * Mapper for converting between ChatSession and ChatSessionDTO, as well as ChatMessage and
+ * MessageDTO.
  */
 @Mapper(componentModel = "spring")
 public interface ChatSessionMapper {
 
-    @Mapping(target = "messages", ignore = true)
-    ChatSessionDTO toDTOWithoutMessages(ChatSession session);
+  @Mapping(target = "messages", ignore = true)
+  ChatSessionDTO toDTOWithoutMessages(ChatSession session);
 
-    @Mapping(target = "messages", source = "messages")
-    ChatSessionDTO toDTOWithMessages(ChatSession session);
+  @Mapping(target = "messages", source = "messages")
+  ChatSessionDTO toDTOWithMessages(ChatSession session);
 
-    MessageDTO toMessageDTO(ChatMessage message);
+  MessageDTO toMessageDTO(ChatMessage message);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "messages", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    ChatSession toChatSession(String userId, String title);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "messages", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
+  ChatSession toChatSession(String userId, String title);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "timestamp", ignore = true)
-    ChatMessage toChatMessage(ChatSession chatSession, String role, String content);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "timestamp", ignore = true)
+  ChatMessage toChatMessage(ChatSession chatSession, String role, String content);
 }
-

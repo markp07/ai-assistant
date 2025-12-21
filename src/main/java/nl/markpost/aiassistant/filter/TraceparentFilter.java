@@ -25,10 +25,10 @@ public class TraceparentFilter implements Filter {
   /**
    * Extracts the traceparent header from the HTTP request and sets it in the MDC.
    *
-   * @param request  the servlet request
+   * @param request the servlet request
    * @param response the servlet response
-   * @param chain    the filter chain
-   * @throws IOException      if an I/O error occurs during processing
+   * @param chain the filter chain
+   * @throws IOException if an I/O error occurs during processing
    * @throws ServletException if a servlet error occurs during processing
    */
   @Override

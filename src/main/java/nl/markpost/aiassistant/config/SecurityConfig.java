@@ -18,9 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-/**
- * Security configuration for the AI Assistant application.
- */
+/** Security configuration for the AI Assistant application. */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -53,37 +51,40 @@ public class SecurityConfig {
   /**
    * Configures the security filter chain for non-unit test profiles.
    *
-   * @param http          the HttpSecurity to configure
+   * @param http the HttpSecurity to configure
    * @param excludedPaths paths to exclude from authentication
    * @return the configured SecurityFilterChain
    * @throws Exception in case of configuration errors
    */
   @Bean
   @Profile("!ut")
-  public SecurityFilterChain filterChain(HttpSecurity http,
-      @Value("${security.excluded-paths:}") String[] excludedPaths) throws Exception {
+  public SecurityFilterChain filterChain(
+      HttpSecurity http, @Value("${security.excluded-paths:}") String[] excludedPaths)
+      throws Exception {
     http
-        //TODO: Configure CSRF and CORS properly
+        // TODO: Configure CSRF and CORS properly
         .csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
         .addFilterBefore(traceparentFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .authorizeHttpRequests(authz -> authz
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers(excludedPaths).permitAll()
-            .anyRequest().authenticated()
-        );
+        .authorizeHttpRequests(
+            authz ->
+                authz
+                    .requestMatchers(HttpMethod.OPTIONS, "/**")
+                    .permitAll()
+                    .requestMatchers(excludedPaths)
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated());
     return http.build();
   }
 
   @Bean
   @Profile("ut")
   public SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(AbstractHttpConfigurer::disable)
+    http.csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authz -> authz.anyRequest().permitAll());
     return http.build();
   }
-
 }

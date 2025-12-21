@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.markpost.aiassistant.api.model.Error;
 import nl.markpost.aiassistant.exception.ExceptionHandler;
 import nl.markpost.aiassistant.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,11 +35,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import nl.markpost.aiassistant.api.model.Error;
 
-/**
- * Servlet filter for authenticating requests using JWT access tokens.
- */
+/** Servlet filter for authenticating requests using JWT access tokens. */
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -56,16 +54,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Value("${jwt.public-key-url}")
   private String publicKeyUrl;
 
-  //TODO: cleanup and refactor -- Can we move to common package?
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain) {
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
     try {
       handleAuthentication(request, response, filterChain);
     } catch (UnauthorizedException e) {
       log.info("Unauthorized access attempt: {}", e.getMessage());
-      ResponseEntity<Error> errorResponse = exceptionHandler.handleGenericExceptionException(
-          e);
+      ResponseEntity<Error> errorResponse = exceptionHandler.handleGenericExceptionException(e);
       response.setContentType("application/json");
       response.setStatus(e.getHttpStatus().value());
       addCorsHeaders(request, response);
@@ -87,20 +83,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.error("Error writing response: {}", ioException.getMessage(), ioException);
       }
     }
-
   }
 
-  private void handleAuthentication(HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain) throws Exception {
+  private void handleAuthentication(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws Exception {
     String path = request.getRequestURI();
     String contextPath = request.getContextPath();
     if (contextPath != null && !contextPath.isEmpty() && path.startsWith(contextPath)) {
       path = path.substring(contextPath.length());
     }
-    log.info("Processing request for path: {}", path);
-    log.info("Excluded paths: {}", (Object) excludedPaths);
-    if (excludedPaths != null && List.of(excludedPaths).contains(path) || isPreflightRequest(
-        request)) {
+    if (excludedPaths != null && List.of(excludedPaths).contains(path)
+        || isPreflightRequest(request)) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -113,11 +107,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     try {
       PublicKey publicKey = getOrFetchPublicKey();
-      Claims claims = Jwts.parser()
-          .verifyWith(publicKey)
-          .build()
-          .parseSignedClaims(accessToken)
-          .getPayload();
+      Claims claims =
+          Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(accessToken).getPayload();
       request.setAttribute("jwtClaims", claims);
 
       // Extract userId from claims - try "sub", "userId", or "user_id"
@@ -148,16 +139,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
   }
 
-  /**
-   * Checks if the request is a CORS preflight (OPTIONS) request.
-   */
+  /** Checks if the request is a CORS preflight (OPTIONS) request. */
   boolean isPreflightRequest(HttpServletRequest request) {
     return "OPTIONS".equalsIgnoreCase(request.getMethod());
   }
 
-  /**
-   * Extracts the access_token from Authorization header or cookies.
-   */
+  /** Extracts the access_token from Authorization header or cookies. */
   String extractAccessToken(HttpServletRequest request) {
     // First, try to get token from Authorization header
     String authHeader = request.getHeader("Authorization");
@@ -177,9 +164,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     return null;
   }
 
-  /**
-   * Gets the cached public key or fetches it from the authentication service if not cached.
-   */
+  /** Gets the cached public key or fetches it from the authentication service if not cached. */
   PublicKey getOrFetchPublicKey() throws Exception {
     PublicKey key = cachedPublicKey.get();
     if (key != null) {
@@ -190,24 +175,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     return fetchedKey;
   }
 
-  /**
-   * Fetches the public key from the authentication service.
-   */
+  /** Fetches the public key from the authentication service. */
   PublicKey fetchPublicKeyFromAuthService() throws Exception {
     HttpClient client = HttpClient.newHttpClient();
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(publicKeyUrl))
-        .GET()
-        .timeout(Duration.ofSeconds(2))
-        .build();
+    HttpRequest request =
+        HttpRequest.newBuilder()
+            .uri(URI.create(publicKeyUrl))
+            .GET()
+            .timeout(Duration.ofSeconds(10))
+            .build();
     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     if (response.statusCode() != 200) {
       throw new IOException("Failed to fetch public key");
     }
     String pem = response.body();
-    String publicKeyPEM = pem.replace("-----BEGIN PUBLIC KEY-----", "")
-        .replace("-----END PUBLIC KEY-----", "")
-        .replaceAll("\\s", "");
+    String publicKeyPEM =
+        pem.replace("-----BEGIN PUBLIC KEY-----", "")
+            .replace("-----END PUBLIC KEY-----", "")
+            .replaceAll("\\s", "");
     byte[] encoded = Base64.getDecoder().decode(publicKeyPEM);
     X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
     return KeyFactory.getInstance("RSA").generatePublic(keySpec);
@@ -216,14 +201,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   /**
    * Sets the authentication in the security context based on the userId from JWT claims.
    *
-   * @param userId  the userId extracted from JWT claims
+   * @param userId the userId extracted from JWT claims
    * @param request the HTTP request to set authentication details
    */
   private void setAuthentication(String userId, HttpServletRequest request) {
-    UserDetails userDetails = new User(userId, "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    UserDetails userDetails =
+        new User(userId, "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
     UsernamePasswordAuthenticationToken authToken =
-        new UsernamePasswordAuthenticationToken(userDetails, null,
-            List.of());
+        new UsernamePasswordAuthenticationToken(userDetails, null, List.of());
     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
     SecurityContextHolder.getContext().setAuthentication(authToken);
   }

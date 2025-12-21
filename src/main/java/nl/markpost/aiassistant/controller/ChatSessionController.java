@@ -72,13 +72,13 @@ public class ChatSessionController implements SessionsApi {
   /**
    * Updates the title of a chat session.
    *
-   * @param sessionId            the ID of the chat session to update
+   * @param sessionId the ID of the chat session to update
    * @param updateSessionRequest the request body containing the new title
    * @return a ResponseEntity containing the updated ChatSession
    */
   @Override
-  public ResponseEntity<ChatSession> updateSession(String sessionId,
-      UpdateSessionRequest updateSessionRequest) {
+  public ResponseEntity<ChatSession> updateSession(
+      String sessionId, UpdateSessionRequest updateSessionRequest) {
     String userId = getUserId();
     String newTitle = updateSessionRequest.getTitle();
     ChatSessionDTO sessionDTO = chatSessionService.updateSessionTitle(sessionId, userId, newTitle);
@@ -109,4 +109,3 @@ public class ChatSessionController implements SessionsApi {
     return authentication.getName();
   }
 }
-

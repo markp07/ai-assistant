@@ -8,9 +8,7 @@ import nl.markpost.aiassistant.mapper.ErrorMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-/**
- * Global exception handler for the application.
- */
+/** Global exception handler for the application. */
 @RestControllerAdvice
 @Slf4j
 @RequiredArgsConstructor
@@ -41,7 +39,9 @@ public class ExceptionHandler {
   public ResponseEntity<Error> handleException(Exception e) {
     log.error("An error occurred", e);
     return ResponseEntity.internalServerError()
-        .body(errorMapper.from(GenericErrorCodes.INTERNAL_SERVER_ERROR,
-            GenericErrorCodes.INTERNAL_SERVER_ERROR.getHttpStatus()));
+        .body(
+            errorMapper.from(
+                GenericErrorCodes.INTERNAL_SERVER_ERROR,
+                GenericErrorCodes.INTERNAL_SERVER_ERROR.getHttpStatus()));
   }
 }

@@ -14,9 +14,7 @@ import nl.markpost.aiassistant.repository.ChatSessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for managing chat sessions and messages.
- */
+/** Service for managing chat sessions and messages. */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -32,7 +30,7 @@ public class ChatSessionService {
    * Creates a new chat session for the specified user.
    *
    * @param userId The ID of the user.
-   * @param title  The title of the chat session.
+   * @param title The title of the chat session.
    * @return The created ChatSessionDTO.
    */
   @Transactional
@@ -61,7 +59,7 @@ public class ChatSessionService {
    * Retrieves a specific chat session by ID for the specified user.
    *
    * @param sessionId The ID of the chat session.
-   * @param userId    The ID of the user.
+   * @param userId The ID of the user.
    * @return The ChatSessionDTO with messages.
    */
   @Transactional(readOnly = true)
@@ -74,8 +72,8 @@ public class ChatSessionService {
    * Updates the title of the specified chat session.
    *
    * @param sessionId The ID of the chat session.
-   * @param userId    The ID of the user.
-   * @param newTitle  The new title for the chat session.
+   * @param userId The ID of the user.
+   * @param newTitle The new title for the chat session.
    * @return The updated ChatSessionDTO without messages.
    */
   @Transactional
@@ -92,7 +90,7 @@ public class ChatSessionService {
    * Deletes the specified chat session.
    *
    * @param sessionId The ID of the chat session.
-   * @param userId    The ID of the user.
+   * @param userId The ID of the user.
    */
   @Transactional
   public void deleteSession(String sessionId, String userId) {
@@ -104,13 +102,13 @@ public class ChatSessionService {
    * Helper method to retrieve a ChatSession entity by ID and user ID.
    *
    * @param sessionId The ID of the chat session.
-   * @param userId    The ID of the user.
+   * @param userId The ID of the user.
    * @return The ChatSession entity.
    * @throws BadRequestException if the session is not found.
    */
   private ChatSession getSessionEntity(String sessionId, String userId) {
-    return chatSessionRepository.findByIdAndUserId(sessionId, userId)
+    return chatSessionRepository
+        .findByIdAndUserId(sessionId, userId)
         .orElseThrow(() -> new BadRequestException("Session not found"));
   }
 }
-

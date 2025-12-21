@@ -377,7 +377,10 @@
                     <exclude>nl.markpost.aiassistant.api.model.*</exclude>
                     <exclude>nl.markpost.aiassistant.config.*</exclude>
                     <exclude>nl.markpost.aiassistant.constant.*</exclude>
-                    <exclude>nl.markpost.aiassistant.exception.*</exclude>
+                    <exclude>nl.markpost.aiassistant.exception.*Exception</exclude>
+                    <exclude>nl.markpost.aiassistant.models.*</exclude>
+                    <exclude>nl.markpost.aiassistant.models.entity.*</exclude>
+                    <exclude>nl.markpost.aiassistant.repository.*</exclude>
                     <exclude>nl.markpost.aiassistant.AiAssistant</exclude>
                   </excludes>
                   <limits>
