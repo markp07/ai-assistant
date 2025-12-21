@@ -67,9 +67,6 @@ services:
     restart: unless-stopped
     ports:
       - "12502:3000"
-    depends_on:
-      ai-assistant:
-        condition: service_healthy
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:7075}
       NEXT_PUBLIC_AUTH_URL: ${AUTH_SERVICE_URL:-https://auth.markpost.dev}
