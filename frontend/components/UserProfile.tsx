@@ -49,7 +49,39 @@ export function UserProfile() {
   }
 
   if (!userInfo) {
-    return null;
+    console.log('[UserProfile] No user info available, showing fallback');
+    // Show a fallback user button even if userInfo is null
+    return (
+      <div className="relative" ref={modalRef}>
+        <button
+          onClick={() => {
+            console.log('Fallback profile button clicked');
+            setIsModalOpen(!isModalOpen);
+          }}
+          className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors border border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+          title="User Profile"
+          type="button"
+        >
+          <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+            ?
+          </div>
+          <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
+            Profile
+          </span>
+          <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {isModalOpen && (
+          <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+            <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+              Unable to load profile information
+            </div>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
