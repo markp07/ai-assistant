@@ -1,5 +1,41 @@
 # Release Notes
 
+## Version 1.0.1 - 2025-12-21
+
+### 🧹 Cleanup Release: Deprecated Code Removal
+
+This release removes all deprecated chat endpoints and related code.
+
+### ⚠️ Breaking Changes
+- **Old Chat Endpoints REMOVED**: `/api/v1/chat` POST and DELETE endpoints are no longer available
+- **Required Migration**: All clients must use the session-based endpoints
+
+### Removed
+- **Backend Components**
+  - `ChatController` - Deprecated REST controller
+  - `ChatService` interface and `OpenAIChatService` implementation
+  - `ChatInputDTO` and `ChatOutputDTO` records
+  - `ChatInputDTOMapper` and `ChatOutputMapper` MapStruct interfaces
+  - All associated test files
+
+- **OpenAPI Specification**
+  - `/chat` POST and DELETE endpoints
+  - `ChatInput` and `ChatOutput` schemas
+  - Deprecated `chat` tag
+
+### Documentation
+- Added comprehensive `API_MIGRATION_GUIDE.md`
+- Updated `http/README.md` with usage examples
+- Modernized `http/postChat.sh` and `http/chatbot.py` test scripts
+
+### Technical Details
+- Reduced test count from 12 to 5 (removed deprecated tests)
+- Reduced compiled classes from 51 to 39
+- Cleaner codebase with single, well-defined API structure
+- All functionality now uses session-based architecture with MapStruct mappers
+
+---
+
 ## Version 1.0.0 - 2025-12-18
 
 ### 🎉 Major Release: Multi-Session Chat with Authentication

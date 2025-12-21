@@ -7,49 +7,9 @@ servers:
   - url: /api/v1
     description: API v1
 tags:
-  - name: chat
-    description: Legacy chat endpoint (deprecated)
   - name: sessions
     description: Chat session management
 paths:
-  # Legacy chat endpoints (deprecated)
-  /chat:
-    post:
-      operationId: sendChatMessage
-      tags:
-        - chat
-      summary: Send a chat message (deprecated)
-      deprecated: true
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ChatInput'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ChatOutput'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        '503':
-          $ref: '#/components/responses/ServiceUnavailable'
-    delete:
-      operationId: clearChatHistory
-      tags:
-        - chat
-      summary: Clear chat history (deprecated)
-      deprecated: true
-      responses:
-        '204':
-          description: Chat history cleared successfully
 
   # Chat session endpoints
   /sessions:
@@ -257,24 +217,6 @@ paths:
 
 components:
   schemas:
-    # Legacy schemas
-    ChatInput:
-      type: object
-      properties:
-        chat:
-          type: string
-          description: The chat message
-      required:
-        - chat
-
-    ChatOutput:
-      type: object
-      properties:
-        chat:
-          type: string
-          description: The chat response
-      required:
-        - chat
 
     # Chat session schemas
     ChatSession:
