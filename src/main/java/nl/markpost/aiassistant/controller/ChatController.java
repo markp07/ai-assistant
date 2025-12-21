@@ -1,5 +1,6 @@
 package nl.markpost.aiassistant.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.markpost.aiassistant.api.controller.ChatApi;
 import nl.markpost.aiassistant.api.model.ChatInput;
@@ -13,25 +14,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Controller for handling chat-related API requests.
+ */
 @Slf4j
 @Controller
 @RequestMapping("/api/v1")
+@AllArgsConstructor
 public class ChatController implements ChatApi {
 
   private final ChatService chatService;
   private final ChatInputDTOMapper chatInputDTOMapper;
-
   private final ChatOutputMapper chatOutputMapper;
 
-  public ChatController(
-      ChatService chatService,
-      ChatInputDTOMapper chatInputDTOMapper,
-      ChatOutputMapper chatOutputMapper) {
-    this.chatService = chatService;
-    this.chatInputDTOMapper = chatInputDTOMapper;
-    this.chatOutputMapper = chatOutputMapper;
-  }
-
+  /**
+   * Handles POST requests for chat messages.
+   *
+   * @param chatInput the chat input
+   * @return the chat output response entity
+   */
   @Override
   public ResponseEntity<ChatOutput> chatPost(ChatInput chatInput) {
     log.info("Received chat message: {}", chatInput.getChat());
@@ -42,6 +43,11 @@ public class ChatController implements ChatApi {
     return ResponseEntity.ok(chatOutput);
   }
 
+  /**
+   * Handles DELETE requests to clear chat history.
+   *
+   * @return a response entity with no content
+   */
   @Override
   public ResponseEntity<Void> chatDelete() {
     chatService.clearHistory();

@@ -3,9 +3,16 @@ package nl.markpost.aiassistant.service;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.markpost.aiassistant.models.*;
+import nl.markpost.aiassistant.exception.BadRequestException;
+import nl.markpost.aiassistant.mapper.ChatSessionMapper;
+import nl.markpost.aiassistant.models.ChatSessionDTO;
+import nl.markpost.aiassistant.models.MessageDTO;
+import nl.markpost.aiassistant.models.entity.ChatMessage;
 import nl.markpost.aiassistant.models.entity.ChatSession;
 import nl.markpost.aiassistant.repository.ChatMessageRepository;
 import nl.markpost.aiassistant.repository.ChatSessionRepository;
@@ -13,150 +20,157 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
+/**
+ * Service for managing chat sessions and messages.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ChatSessionService {
 
-    private final ChatSessionRepository chatSessionRepository;
-    private final ChatMessageRepository chatMessageRepository;
-    private final Assistant assistant;
-    private final ChatMemory chatMemory;
+  private final ChatSessionRepository chatSessionRepository;
+  private final ChatMessageRepository chatMessageRepository;
+  private final Assistant assistant;
+  private final ChatMemory chatMemory;
+  private final ChatSessionMapper chatSessionMapper;
 
-    @Transactional
-    public ChatSessionDTO createSession(String userId, String title) {
-        ChatSession session = ChatSession.builder()
-                .userId(userId)
-                .title(title != null && !title.isBlank() ? title : "New Chat")
-                .build();
+  /**
+   * Creates a new chat session for the specified user.
+   *
+   * @param userId The ID of the user.
+   * @param title  The title of the chat session.
+   * @return The created ChatSessionDTO.
+   */
+  @Transactional
+  public ChatSessionDTO createSession(String userId, String title) {
+    String sessionTitle = title != null && !title.isBlank() ? title : "New Chat";
+    ChatSession session = chatSessionMapper.toChatSession(userId, sessionTitle);
+    session = chatSessionRepository.save(session);
+    return chatSessionMapper.toDTOWithoutMessages(session);
+  }
 
-        session = chatSessionRepository.save(session);
-        return mapToDTO(session, false);
+  /**
+   * Retrieves all chat sessions for the specified user.
+   *
+   * @param userId The ID of the user.
+   * @return A list of ChatSessionDTOs.
+   */
+  @Transactional(readOnly = true)
+  public List<ChatSessionDTO> getUserSessions(String userId) {
+    List<ChatSession> sessions = chatSessionRepository.findByUserIdOrderByUpdatedAtDesc(userId);
+    return sessions.stream()
+        .map(chatSessionMapper::toDTOWithoutMessages)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Retrieves a specific chat session by ID for the specified user.
+   *
+   * @param sessionId The ID of the chat session.
+   * @param userId    The ID of the user.
+   * @return The ChatSessionDTO with messages.
+   */
+  @Transactional(readOnly = true)
+  public ChatSessionDTO getSession(String sessionId, String userId) {
+    ChatSession session = getSessionEntity(sessionId, userId);
+    return chatSessionMapper.toDTOWithMessages(session);
+  }
+
+  /**
+   * Sends a message in the specified chat session and gets a response from the assistant.
+   *
+   * @param sessionId      The ID of the chat session.
+   * @param userId         The ID of the user.
+   * @param messageContent The content of the user's message.
+   * @return The assistant's response as a MessageDTO.
+   */
+  @Transactional
+  public MessageDTO sendMessage(String sessionId, String userId, String messageContent) {
+    ChatSession session = getSessionEntity(sessionId, userId);
+
+    ChatMessage userMessage = chatSessionMapper.toChatMessage(session, "user", messageContent);
+    chatMessageRepository.save(userMessage);
+
+    chatMemory.clear();
+    List<ChatMessage> recentMessages =
+        chatMessageRepository.findLastMessagesBySessionId(sessionId, PageRequest.of(0, 9));
+    Collections.reverse(recentMessages);
+
+    for (ChatMessage msg : recentMessages) {
+      if ("user".equals(msg.getRole())) {
+        chatMemory.add(UserMessage.from(msg.getContent()));
+      } else {
+        chatMemory.add(AiMessage.from(msg.getContent()));
+      }
     }
 
-    @Transactional(readOnly = true)
-    public List<ChatSessionDTO> getUserSessions(String userId) {
-        List<ChatSession> sessions = chatSessionRepository.findByUserIdOrderByUpdatedAtDesc(userId);
-        return sessions.stream()
-                .map(session -> mapToDTO(session, false))
-                .collect(Collectors.toList());
-    }
+    String assistantResponse = assistant.chat(messageContent);
 
-    @Transactional(readOnly = true)
-    public ChatSessionDTO getSession(String sessionId, String userId) {
-        ChatSession session = chatSessionRepository.findByIdAndUserId(sessionId, userId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
-        return mapToDTO(session, true);
-    }
+    ChatMessage assistantMessage = chatSessionMapper.toChatMessage(session, "assistant",
+        assistantResponse);
+    assistantMessage = chatMessageRepository.save(assistantMessage);
 
-    @Transactional
-    public MessageDTO sendMessage(String sessionId, String userId, String messageContent) {
-        ChatSession session = chatSessionRepository.findByIdAndUserId(sessionId, userId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
+    return chatSessionMapper.toMessageDTO(assistantMessage);
+  }
 
-        // Save user message
-        nl.markpost.aiassistant.models.entity.ChatMessage userMessage =
-            nl.markpost.aiassistant.models.entity.ChatMessage.builder()
-                .chatSession(session)
-                .role("user")
-                .content(messageContent)
-                .build();
-        userMessage = chatMessageRepository.save(userMessage);
+  /**
+   * Updates the title of the specified chat session.
+   *
+   * @param sessionId The ID of the chat session.
+   * @param userId    The ID of the user.
+   * @param newTitle  The new title for the chat session.
+   * @return The updated ChatSessionDTO without messages.
+   */
+  @Transactional
+  public ChatSessionDTO updateSessionTitle(String sessionId, String userId, String newTitle) {
+    ChatSession session = getSessionEntity(sessionId, userId);
 
-        // Clear current memory
-        chatMemory.clear();
+    session.setTitle(newTitle != null && !newTitle.isBlank() ? newTitle : session.getTitle());
+    session = chatSessionRepository.save(session);
 
-        // Get last 10 messages for context
-        List<nl.markpost.aiassistant.models.entity.ChatMessage> recentMessages =
-            chatMessageRepository.findLastMessagesBySessionId(sessionId, PageRequest.of(0, 9));
+    return chatSessionMapper.toDTOWithoutMessages(session);
+  }
 
-        // Reverse to get chronological order (excluding current message)
-        Collections.reverse(recentMessages);
+  /**
+   * Deletes the specified chat session.
+   *
+   * @param sessionId The ID of the chat session.
+   * @param userId    The ID of the user.
+   */
+  @Transactional
+  public void deleteSession(String sessionId, String userId) {
+    ChatSession session = getSessionEntity(sessionId, userId);
+    chatSessionRepository.delete(session);
+  }
 
-        // Add context messages to memory
-        for (nl.markpost.aiassistant.models.entity.ChatMessage msg : recentMessages) {
-            if ("user".equals(msg.getRole())) {
-                chatMemory.add(UserMessage.from(msg.getContent()));
-            } else {
-                chatMemory.add(AiMessage.from(msg.getContent()));
-            }
-        }
+  /**
+   * Retrieves the message history for the specified chat session.
+   *
+   * @param sessionId The ID of the chat session.
+   * @param userId    The ID of the user.
+   * @return A list of MessageDTOs representing the session history.
+   */
+  @Transactional(readOnly = true)
+  public List<MessageDTO> getSessionHistory(String sessionId, String userId) {
+    List<ChatMessage> messages =
+        chatMessageRepository.findByChatSessionIdOrderByTimestampAsc(sessionId);
 
-        // Get response from OpenAI using Assistant
-        String assistantResponse = assistant.chat(messageContent);
+    return messages.stream()
+        .map(chatSessionMapper::toMessageDTO)
+        .collect(Collectors.toList());
+  }
 
-        // Save assistant message
-        nl.markpost.aiassistant.models.entity.ChatMessage assistantMessage =
-            nl.markpost.aiassistant.models.entity.ChatMessage.builder()
-                .chatSession(session)
-                .role("assistant")
-                .content(assistantResponse)
-                .build();
-        assistantMessage = chatMessageRepository.save(assistantMessage);
-
-        return mapMessageToDTO(assistantMessage);
-    }
-
-    @Transactional
-    public ChatSessionDTO updateSessionTitle(String sessionId, String userId, String newTitle) {
-        ChatSession session = chatSessionRepository.findByIdAndUserId(sessionId, userId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
-
-        session.setTitle(newTitle != null && !newTitle.isBlank() ? newTitle : session.getTitle());
-        session = chatSessionRepository.save(session);
-
-        return mapToDTO(session, false);
-    }
-
-    @Transactional
-    public void deleteSession(String sessionId, String userId) {
-        ChatSession session = chatSessionRepository.findByIdAndUserId(sessionId, userId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
-        chatSessionRepository.delete(session);
-    }
-
-    @Transactional(readOnly = true)
-    public List<MessageDTO> getSessionHistory(String sessionId, String userId) {
-        ChatSession session = chatSessionRepository.findByIdAndUserId(sessionId, userId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
-
-        List<nl.markpost.aiassistant.models.entity.ChatMessage> messages =
-            chatMessageRepository.findByChatSessionIdOrderByTimestampAsc(sessionId);
-
-        return messages.stream()
-                .map(this::mapMessageToDTO)
-                .collect(Collectors.toList());
-    }
-
-    private ChatSessionDTO mapToDTO(ChatSession session, boolean includeMessages) {
-        ChatSessionDTO dto = ChatSessionDTO.builder()
-                .id(session.getId())
-                .title(session.getTitle())
-                .createdAt(session.getCreatedAt())
-                .updatedAt(session.getUpdatedAt())
-                .build();
-
-        if (includeMessages) {
-            List<MessageDTO> messages = session.getMessages().stream()
-                    .map(this::mapMessageToDTO)
-                    .collect(Collectors.toList());
-            dto.setMessages(messages);
-        }
-
-        return dto;
-    }
-
-    private MessageDTO mapMessageToDTO(nl.markpost.aiassistant.models.entity.ChatMessage message) {
-        return MessageDTO.builder()
-                .id(message.getId())
-                .role(message.getRole())
-                .content(message.getContent())
-                .timestamp(message.getTimestamp())
-                .build();
-    }
+  /**
+   * Helper method to retrieve a ChatSession entity by ID and user ID.
+   *
+   * @param sessionId The ID of the chat session.
+   * @param userId    The ID of the user.
+   * @return The ChatSession entity.
+   * @throws BadRequestException if the session is not found.
+   */
+  private ChatSession getSessionEntity(String sessionId, String userId) {
+    return chatSessionRepository.findByIdAndUserId(sessionId, userId)
+        .orElseThrow(() -> new BadRequestException("Session not found"));
+  }
 }
 

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for managing ChatMessage entities.
+ */
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
 

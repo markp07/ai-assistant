@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for managing ChatSession entities.
+ */
 @Repository
 public interface ChatSessionRepository extends JpaRepository<ChatSession, String> {
 

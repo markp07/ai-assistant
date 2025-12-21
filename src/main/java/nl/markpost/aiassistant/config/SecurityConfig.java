@@ -38,7 +38,7 @@ public class SecurityConfig {
   @Bean
   @Profile("local")
   public CorsFilter corsFilter(
-      @Value("${weather.cors.allowed-origin-patterns:}") String[] allowedOriginPatterns) {
+      @Value("${cors.allowed-origin-patterns:}") String[] allowedOriginPatterns) {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
     config.setAllowedOriginPatterns(
@@ -50,11 +50,20 @@ public class SecurityConfig {
     return new CorsFilter(source);
   }
 
+  /**
+   * Configures the security filter chain for non-unit test profiles.
+   *
+   * @param http          the HttpSecurity to configure
+   * @param excludedPaths paths to exclude from authentication
+   * @return the configured SecurityFilterChain
+   * @throws Exception in case of configuration errors
+   */
   @Bean
   @Profile("!ut")
   public SecurityFilterChain filterChain(HttpSecurity http,
       @Value("${security.excluded-paths:}") String[] excludedPaths) throws Exception {
     http
+        //TODO: Configure CSRF and CORS properly
         .csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
         .addFilterBefore(traceparentFilter, UsernamePasswordAuthenticationFilter.class)

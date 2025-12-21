@@ -11,12 +11,22 @@ import java.util.Map;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
+/**
+ * A custom implementation of ChatMemoryStore that uses MapDB for persistent storage of chat messages.
+ */
 public class CustomChatMemoryStore implements ChatMemoryStore {
 
   private final DB db =
       DBMaker.fileDB("chat-memory.db").transactionEnable().fileLockDisable().make();
   private final Map<String, String> map = db.hashMap("messages", STRING, STRING).createOrOpen();
 
+  /**
+   * Retrieves chat messages associated with the given memory ID.
+   *
+   * @param memoryId the memory ID (expected to be a String)
+   * @return a list of ChatMessage objects
+   * @throws IllegalArgumentException if the memory ID is null or of an unsupported type
+   */
   @Override
   public List<ChatMessage> getMessages(Object memoryId) {
     var id =
@@ -31,6 +41,13 @@ public class CustomChatMemoryStore implements ChatMemoryStore {
     return messagesFromJson(json);
   }
 
+  /**
+   * Updates chat messages associated with the given memory ID.
+   *
+   * @param memoryId the memory ID (expected to be a String)
+   * @param messages the list of ChatMessage objects to store
+   * @throws IllegalArgumentException if the memory ID is null or of an unsupported type
+   */
   @Override
   public void updateMessages(Object memoryId, List<ChatMessage> messages) {
     var id =
@@ -46,6 +63,12 @@ public class CustomChatMemoryStore implements ChatMemoryStore {
     db.commit();
   }
 
+  /**
+   * Deletes chat messages associated with the given memory ID.
+   *
+   * @param memoryId the memory ID (expected to be a String)
+   * @throws IllegalArgumentException if the memory ID is null or of an unsupported type
+   */
   @Override
   public void deleteMessages(Object memoryId) {
     var id =
