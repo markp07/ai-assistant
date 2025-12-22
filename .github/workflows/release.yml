@@ -113,13 +113,13 @@ jobs:
           echo "New version: $NEW_VERSION"
 
       - name: Create release branch
+        id: create_branch
         if: steps.check_commits.outputs.skip_release == 'false'
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
           BRANCH_NAME="release/v$NEW_VERSION"
           git checkout -b $BRANCH_NAME
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-        id: create_branch
 
       - name: Update version in pom.xml and package.json
         if: steps.check_commits.outputs.skip_release == 'false'
