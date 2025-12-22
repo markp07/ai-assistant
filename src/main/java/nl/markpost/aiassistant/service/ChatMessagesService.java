@@ -75,8 +75,8 @@ public class ChatMessagesService {
       tokenStream
           .onPartialResponse(token -> {
             fullResponse.append(token);
-            // Emit in SSE format: "data: <token>\n\n"
-            emitter.next("data: " + token + "\n\n");
+            // Just emit the token - Spring will handle SSE formatting
+            emitter.next(token);
           })
           .onCompleteResponse(response -> {
             // Save the complete assistant message to database asynchronously
@@ -90,8 +90,7 @@ public class ChatMessagesService {
                 log.error("Error saving assistant message to database", e);
               }
             });
-            // Send completion event
-            emitter.next("data: [DONE]\n\n");
+            // Complete the stream
             emitter.complete();
           })
           .onError(throwable -> {

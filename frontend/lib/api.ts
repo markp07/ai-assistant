@@ -147,6 +147,8 @@ export async function sendMessageStream(
         const { done, value } = await reader.read();
 
         if (done) {
+          // Stream completed normally
+          console.log('[API] Stream completed');
           onComplete();
           break;
         }
@@ -154,41 +156,33 @@ export async function sendMessageStream(
         // Decode the chunk and add to buffer
         buffer += decoder.decode(value, { stream: true });
 
-        // Split by SSE delimiters (double newline)
-        const lines = buffer.split('\n');
+        // Process complete lines (SSE format uses \n\n as delimiter)
+        let newlineIndex;
+        while ((newlineIndex = buffer.indexOf('\n\n')) !== -1) {
+          const line = buffer.substring(0, newlineIndex);
+          buffer = buffer.substring(newlineIndex + 2);
 
-        // Keep the last incomplete line in the buffer
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const trimmedLine = line.trim();
-
-          if (trimmedLine.startsWith('data: ')) {
-            const data = trimmedLine.substring(6);
-
-            // Check for completion signal
-            if (data === '[DONE]') {
-              onComplete();
-              return;
-            }
-
-            // Emit the token
-            if (data) {
+          // Parse SSE format: "data: <content>"
+          if (line.startsWith('data: ')) {
+            const data = line.substring(6);
+            if (data && data.trim()) {
               onToken(data);
             }
           }
         }
       }
     } catch (readError) {
-      // If we get a network error but already received data, consider it complete
-      if (readError instanceof TypeError && readError.message.includes('network')) {
-        console.log('[API] Stream ended with network error (likely complete)');
+      // Network errors during stream read are common when stream completes
+      // Check if it's a connection close error after successful streaming
+      if (readError instanceof TypeError) {
+        console.log('[API] Stream ended (connection closed)');
         onComplete();
         return;
       }
       throw readError;
     }
   } catch (error) {
+    console.error('[API] Streaming error:', error);
     onError(error instanceof Error ? error : new Error('Streaming failed'));
   }
 }
