@@ -69,7 +69,7 @@ function HomeContent() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex max-h-screen overflow-hidden">
       <Sidebar
         currentSessionId={currentSessionId}
         onSessionSelect={handleSessionSelect}

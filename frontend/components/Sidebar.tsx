@@ -92,21 +92,13 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
 
   return (
     <>
-      {/* Mobile toggle button */}
-      <button
-        onClick={onToggle}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-
       {/* Sidebar */}
       <div
         className={`
           fixed md:relative inset-y-0 left-0 z-40
-          w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+          w-64 bg-white/95 dark:bg-gray-800/95 md:bg-white md:dark:bg-gray-800
+          backdrop-blur-sm md:backdrop-blur-none
+          border-r border-gray-200 dark:border-gray-700
           transform transition-transform duration-200 ease-in-out
           ${isCollapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0'}
         `}
@@ -115,11 +107,11 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
           {/* Header with App Name and Version */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              AI Chat
+              AI Chat Buddy
             </h1>
             <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-              <div>Version 0.1.0</div>
-              <div>Built: {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</div>
+              <div>Version {process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0'}</div>
+              <div>{new Date(process.env.NEXT_PUBLIC_BUILD_TIME || Date.now()).toLocaleString()}</div>
             </div>
           </div>
 
@@ -237,7 +229,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
       {/* Overlay for mobile */}
       {!isCollapsed && (
         <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          className="md:hidden fixed inset-0 z-30 bg-black/50"
           onClick={onToggle}
         />
       )}
