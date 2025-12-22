@@ -165,7 +165,8 @@ export async function sendMessageStream(
           // Parse SSE format: "data: <content>"
           if (line.startsWith('data: ')) {
             const data = line.substring(6);
-            if (data && data.trim()) {
+            // Don't trim the data - preserve spaces in tokens!
+            if (data !== '') {
               onToken(data);
             }
           }
@@ -173,9 +174,9 @@ export async function sendMessageStream(
       }
     } catch (readError) {
       // Network errors during stream read are common when stream completes
-      // Check if it's a connection close error after successful streaming
+      // The browser logs ERR_HTTP2_PROTOCOL_ERROR but it's harmless
+      // Our code handles it by treating it as successful completion
       if (readError instanceof TypeError) {
-        console.log('[API] Stream ended (connection closed)');
         onComplete();
         return;
       }
