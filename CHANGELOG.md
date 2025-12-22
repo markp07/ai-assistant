@@ -1,6 +1,21 @@
 # Release Notes
 
 ## Version 1.0.1 - 2025-12-21
+## [2025.13.0] - 2025-12-22
+
+### Changed
+- Refactor release workflow to use PR-based approach for branch protection (#37)
+- chore(github-actions)(deps): bump actions/setup-node (#35)
+- chore(maven)(deps): bump the maven-dependencies group with 2 updates (#36)
+- Feature/user serssion store chat (#34)
+- Add Next.js frontend with responsive chat interface, theme support, and Docker deployment (#32)
+- Migrate AI Assistant to Java 25 (#30)
+- Migrate AI-Assistant to Springboot 4 (#29)
+- chore(maven)(deps): bump the maven-dependencies group with 2 updates (#27)
+- chore(github-actions)(deps): bump the github-actions group with 2 updates (#23)
+- Migrate to Spring Boot 4 and update dependencies (#26)
+- Fix/update GitHub actions (#22)
+
 
 ### 🧹 Cleanup Release: Deprecated Code Removal
 
