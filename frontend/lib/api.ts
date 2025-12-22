@@ -140,29 +140,53 @@ export async function sendMessageStream(
       throw new Error('Response body is not readable');
     }
 
-    while (true) {
-      const { done, value } = await reader.read();
+    let buffer = '';
 
-      if (done) {
-        onComplete();
-        break;
-      }
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
 
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
+        if (done) {
+          onComplete();
+          break;
+        }
 
-      for (const line of lines) {
-        if (line.trim()) {
-          // Handle SSE format: data: <content>
-          if (line.startsWith('data: ')) {
-            const token = line.substring(6);
-            onToken(token);
-          } else {
-            // Plain text streaming (no SSE format)
-            onToken(line);
+        // Decode the chunk and add to buffer
+        buffer += decoder.decode(value, { stream: true });
+
+        // Split by SSE delimiters (double newline)
+        const lines = buffer.split('\n');
+
+        // Keep the last incomplete line in the buffer
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmedLine = line.trim();
+
+          if (trimmedLine.startsWith('data: ')) {
+            const data = trimmedLine.substring(6);
+
+            // Check for completion signal
+            if (data === '[DONE]') {
+              onComplete();
+              return;
+            }
+
+            // Emit the token
+            if (data) {
+              onToken(data);
+            }
           }
         }
       }
+    } catch (readError) {
+      // If we get a network error but already received data, consider it complete
+      if (readError instanceof TypeError && readError.message.includes('network')) {
+        console.log('[API] Stream ended with network error (likely complete)');
+        onComplete();
+        return;
+      }
+      throw readError;
     }
   } catch (error) {
     onError(error instanceof Error ? error : new Error('Streaming failed'));

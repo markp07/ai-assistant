@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Sinks;
 
 /** Service for managing chat sessions and messages. */
 @Service
@@ -66,40 +65,41 @@ public class ChatMessagesService {
       }
     }
 
-    // Create a sink for streaming
-    Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
-    StringBuilder fullResponse = new StringBuilder();
+    return Flux.create(emitter -> {
+      StringBuilder fullResponse = new StringBuilder();
 
-    // Get streaming response from assistant
-    TokenStream tokenStream = assistant.chatStream(messageContent);
+      // Get streaming response from assistant
+      TokenStream tokenStream = assistant.chatStream(messageContent);
 
-    // Configure the token stream with proper handlers
-    tokenStream
-        .onPartialResponse(token -> {
-          fullResponse.append(token);
-          sink.tryEmitNext(token);
-        })
-        .onCompleteResponse(response -> {
-          // Save the complete assistant message to database asynchronously
-          CompletableFuture.runAsync(() -> {
-            try {
-              ChatMessage assistantMessage =
-                  chatSessionMapper.toChatMessage(session, "assistant", fullResponse.toString());
-              chatMessageRepository.save(assistantMessage);
-              log.info("Saved assistant message to database for session: {}", sessionId);
-            } catch (Exception e) {
-              log.error("Error saving assistant message to database", e);
-            }
-          });
-          sink.tryEmitComplete();
-        })
-        .onError(throwable -> {
-          log.error("Error during streaming", throwable);
-          sink.tryEmitError(throwable);
-        })
-        .start();
-
-    return sink.asFlux();
+      // Configure the token stream with proper handlers
+      tokenStream
+          .onPartialResponse(token -> {
+            fullResponse.append(token);
+            // Emit in SSE format: "data: <token>\n\n"
+            emitter.next("data: " + token + "\n\n");
+          })
+          .onCompleteResponse(response -> {
+            // Save the complete assistant message to database asynchronously
+            CompletableFuture.runAsync(() -> {
+              try {
+                ChatMessage assistantMessage =
+                    chatSessionMapper.toChatMessage(session, "assistant", fullResponse.toString());
+                chatMessageRepository.save(assistantMessage);
+                log.info("Saved assistant message to database for session: {}", sessionId);
+              } catch (Exception e) {
+                log.error("Error saving assistant message to database", e);
+              }
+            });
+            // Send completion event
+            emitter.next("data: [DONE]\n\n");
+            emitter.complete();
+          })
+          .onError(throwable -> {
+            log.error("Error during streaming", throwable);
+            emitter.error(throwable);
+          })
+          .start();
+    });
   }
 
   /**
