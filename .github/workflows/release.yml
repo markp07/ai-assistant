@@ -130,11 +130,9 @@ jobs:
           sed -i "s/<revision>.*<\/revision>/<revision>$NEW_VERSION<\/revision>/" pom.xml
           echo "Updated pom.xml to version $NEW_VERSION"
           
-          # Update frontend version in package.json
-          cd frontend
-          sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" package.json
+          # Update frontend version in package.json (using subshell to avoid directory issues)
+          (cd frontend && sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" package.json)
           echo "Updated package.json to version $NEW_VERSION"
-          cd ..
 
       - name: Generate changelog entry
         id: changelog
@@ -247,9 +245,9 @@ jobs:
           
           # Get commit list for PR body
           if [ "$LATEST_TAG" != "v0.0.0" ]; then
-            COMMITS=$(git log $LATEST_TAG..HEAD~1 --pretty=format:"- %s" --no-merges)
+            COMMITS=$(git log $LATEST_TAG..HEAD --pretty=format:"- %s" --no-merges)
           else
-            COMMITS=$(git log HEAD~1 --pretty=format:"- %s" --no-merges | head -20)
+            COMMITS=$(git log HEAD --pretty=format:"- %s" --no-merges | head -20)
           fi
           
           # Create PR body file
