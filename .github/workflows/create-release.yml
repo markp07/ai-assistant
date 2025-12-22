@@ -43,12 +43,11 @@ jobs:
           CHANGELOG_FILE="CHANGELOG.md"
           OUTPUT_FILE="/tmp/release_notes.md"
 
-          # Find the section for this version in the changelog
-          # Look for patterns like "## [1.0.1]" or "## Version 1.0.1"
-          START_PATTERN="## \[$VERSION\]"
+          # Escape special regex characters in version for safe pattern matching
+          ESCAPED_VERSION=$(echo "$VERSION" | sed 's/[.[\*^$()+?{|]/\\&/g')
 
-          # Check if the version exists in the changelog
-          if ! grep -q "$START_PATTERN" "$CHANGELOG_FILE"; then
+          # Check if the version exists in the changelog using literal match
+          if ! grep -F "## [$VERSION]" "$CHANGELOG_FILE" > /dev/null; then
             echo "Warning: Version $VERSION not found in CHANGELOG.md"
             echo "Creating a default release note"
             echo "Release $VERSION" > "$OUTPUT_FILE"
@@ -56,11 +55,14 @@ jobs:
             echo "See CHANGELOG.md for details." >> "$OUTPUT_FILE"
           else
             # Extract content between this version and next version
-            awk "/^## \[$VERSION\]/{flag=1; next} \
-                 /^## \[/{flag=0} \
-                 /^## Version /{flag=0} \
-                 /^---$/{flag=0} \
-                 flag" "$CHANGELOG_FILE" > "$OUTPUT_FILE"
+            # Use awk with properly escaped regex pattern
+            awk -v ver="$ESCAPED_VERSION" '
+              $0 ~ "^## \\[" ver "\\]" {flag=1; next}
+              /^## \[/{flag=0}
+              /^## Version /{flag=0}
+              /^---$/{flag=0}
+              flag
+            ' "$CHANGELOG_FILE" > "$OUTPUT_FILE"
 
             # Trim trailing empty lines
             sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$OUTPUT_FILE"
