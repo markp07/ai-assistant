@@ -131,7 +131,7 @@ jobs:
           echo "Updated pom.xml to version $NEW_VERSION"
           
           # Update frontend version in package.json (using subshell to avoid directory issues)
-          (cd frontend && sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" package.json)
+          (cd frontend && sed -i 's/"version":[[:space:]]*"[^"]*"/"version": "'"$NEW_VERSION"'"/' package.json)
           echo "Updated package.json to version $NEW_VERSION"
 
       - name: Generate changelog entry
