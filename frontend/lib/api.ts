@@ -165,6 +165,8 @@ export async function sendMessageStream(
           // Parse SSE format: "data: <content>"
           if (line.startsWith('data: ')) {
             const data = line.substring(6);
+            // Debug: Log what we're receiving
+            console.log('[SSE] Token received:', JSON.stringify(data), 'length:', data.length);
             // Don't trim the data - preserve spaces in tokens!
             if (data !== '') {
               onToken(data);

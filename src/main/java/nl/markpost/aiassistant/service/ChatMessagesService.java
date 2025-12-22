@@ -76,6 +76,8 @@ public class ChatMessagesService {
               .onPartialResponse(
                   token -> {
                     fullResponse.append(token);
+                    // Debug: Log what we're emitting
+                    log.debug("Emitting token: '{}' (length: {})", token, token.length());
                     // Just emit the token - Spring will handle SSE formatting
                     emitter.next(token);
                   })
