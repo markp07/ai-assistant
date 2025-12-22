@@ -13,9 +13,7 @@ public class AssistantConfig {
 
   @Bean
   public Assistant createAssistant(
-      OpenAiChatModel model,
-      OpenAiStreamingChatModel streamingModel,
-      ChatMemory memory) {
+      OpenAiChatModel model, OpenAiStreamingChatModel streamingModel, ChatMemory memory) {
     return AiServices.builder(Assistant.class)
         .chatModel(model)
         .streamingChatModel(streamingModel)

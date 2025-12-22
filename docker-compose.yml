@@ -48,7 +48,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:7075/actuator/health"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 6
       start_period: 40s
     networks:
       default-network:
@@ -74,7 +74,7 @@ services:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 6
       start_period: 30s
     networks:
       default-network:

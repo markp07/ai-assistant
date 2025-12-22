@@ -77,10 +77,9 @@ public class ChatMessagesController implements MessagesApi {
       @PathVariable String sessionId, @RequestBody SendMessageRequest sendMessageRequest) {
     String userId = getUserId();
     String messageContent = sendMessageRequest.getMessage();
-    return chatMessagesService.sendMessageStream(sessionId, userId, messageContent)
-        .map(token -> ServerSentEvent.<String>builder()
-            .data(token)
-            .build());
+    return chatMessagesService
+        .sendMessageStream(sessionId, userId, messageContent)
+        .map(token -> ServerSentEvent.<String>builder().data(token).build());
   }
 
   /**

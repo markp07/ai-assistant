@@ -35,8 +35,7 @@ public class ChatMessagesService {
   private final ChatSessionMapper chatSessionMapper;
 
   /**
-   * Sends a message in the specified chat session and gets a streaming response from the
-   * assistant.
+   * Sends a message in the specified chat session and gets a streaming response from the assistant.
    *
    * @param sessionId The ID of the chat session.
    * @param userId The ID of the user.
@@ -65,40 +64,47 @@ public class ChatMessagesService {
       }
     }
 
-    return Flux.create(emitter -> {
-      StringBuilder fullResponse = new StringBuilder();
+    return Flux.create(
+        emitter -> {
+          StringBuilder fullResponse = new StringBuilder();
 
-      // Get streaming response from assistant
-      TokenStream tokenStream = assistant.chatStream(messageContent);
+          // Get streaming response from assistant
+          TokenStream tokenStream = assistant.chatStream(messageContent);
 
-      // Configure the token stream with proper handlers
-      tokenStream
-          .onPartialResponse(token -> {
-            fullResponse.append(token);
-            // Just emit the token - Spring will handle SSE formatting
-            emitter.next(token);
-          })
-          .onCompleteResponse(response -> {
-            // Save the complete assistant message to database asynchronously
-            CompletableFuture.runAsync(() -> {
-              try {
-                ChatMessage assistantMessage =
-                    chatSessionMapper.toChatMessage(session, "assistant", fullResponse.toString());
-                chatMessageRepository.save(assistantMessage);
-                log.info("Saved assistant message to database for session: {}", sessionId);
-              } catch (Exception e) {
-                log.error("Error saving assistant message to database", e);
-              }
-            });
-            // Complete the stream
-            emitter.complete();
-          })
-          .onError(throwable -> {
-            log.error("Error during streaming", throwable);
-            emitter.error(throwable);
-          })
-          .start();
-    });
+          // Configure the token stream with proper handlers
+          tokenStream
+              .onPartialResponse(
+                  token -> {
+                    fullResponse.append(token);
+                    // Just emit the token - Spring will handle SSE formatting
+                    emitter.next(token);
+                  })
+              .onCompleteResponse(
+                  response -> {
+                    // Save the complete assistant message to database asynchronously
+                    CompletableFuture.runAsync(
+                        () -> {
+                          try {
+                            ChatMessage assistantMessage =
+                                chatSessionMapper.toChatMessage(
+                                    session, "assistant", fullResponse.toString());
+                            chatMessageRepository.save(assistantMessage);
+                            log.info(
+                                "Saved assistant message to database for session: {}", sessionId);
+                          } catch (Exception e) {
+                            log.error("Error saving assistant message to database", e);
+                          }
+                        });
+                    // Complete the stream
+                    emitter.complete();
+                  })
+              .onError(
+                  throwable -> {
+                    log.error("Error during streaming", throwable);
+                    emitter.error(throwable);
+                  })
+              .start();
+        });
   }
 
   /**
@@ -137,7 +143,6 @@ public class ChatMessagesService {
 
     return chatSessionMapper.toMessageDTO(assistantMessage);
   }
-
 
   /**
    * Retrieves the message history for the specified chat session.
