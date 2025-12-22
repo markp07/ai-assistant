@@ -103,7 +103,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
           ${isCollapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0'}
         `}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col full-height">
           {/* Header with App Name and Version */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
@@ -116,7 +116,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
           </div>
 
           {/* Sessions List */}
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="flex-1 overflow-y-auto mobile-scroll p-2">
             {isLoading ? (
               <div className="text-center py-4 text-gray-500 dark:text-gray-400">
                 Loading...
