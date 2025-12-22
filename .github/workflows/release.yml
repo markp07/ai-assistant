@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   release:
@@ -112,14 +111,7 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION"
 
-      - name: Create release branch
-        id: create_branch
-        if: steps.check_commits.outputs.skip_release == 'false'
-        run: |
-          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
-          BRANCH_NAME="release/v$NEW_VERSION"
-          git checkout -b $BRANCH_NAME
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
 
       - name: Update version in pom.xml and package.json
         if: steps.check_commits.outputs.skip_release == 'false'
@@ -225,61 +217,50 @@ jobs:
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
           git add pom.xml frontend/package.json CHANGELOG.md
-          git commit -m "chore: bump version to $NEW_VERSION"
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]" || echo "No changes to commit"
+          git push origin main
 
-      - name: Push release branch
+      - name: Create and push tag
         if: steps.check_commits.outputs.skip_release == 'false'
         run: |
-          BRANCH_NAME="${{ steps.create_branch.outputs.branch_name }}"
-          git push origin $BRANCH_NAME
+          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+          git tag -a "v$NEW_VERSION" -m "Release version $NEW_VERSION"
+          git push origin "v$NEW_VERSION"
 
-      - name: Create Pull Request
+      - name: Create GitHub Release
         if: steps.check_commits.outputs.skip_release == 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_VERSION: ${{ steps.new_version.outputs.new_version }}
           BUMP_TYPE: ${{ steps.version_bump.outputs.bump_type }}
         run: |
-          BRANCH_NAME="${{ steps.create_branch.outputs.branch_name }}"
           LATEST_TAG="${{ steps.check_commits.outputs.latest_tag }}"
           
-          # Get commit list for PR body
-          if [ "$LATEST_TAG" != "v0.0.0" ]; then
-            COMMITS=$(git log $LATEST_TAG..HEAD --pretty=format:"- %s" --no-merges)
+          # Extract release notes from CHANGELOG.md
+          if [ -f CHANGELOG.md ]; then
+            # Find the section for this version
+            START_LINE=$(grep -n "^## \[$NEW_VERSION\]" CHANGELOG.md | cut -d: -f1 | head -1)
+            
+            if [ -n "$START_LINE" ]; then
+              # Find the next version section
+              NEXT_SECTION=$(tail -n +$((START_LINE + 1)) CHANGELOG.md | grep -n "^## \[" | head -1 | cut -d: -f1)
+              
+              if [ -n "$NEXT_SECTION" ]; then
+                END_LINE=$((START_LINE + NEXT_SECTION - 1))
+                RELEASE_NOTES=$(sed -n "$((START_LINE)),$((END_LINE))p" CHANGELOG.md)
+              else
+                RELEASE_NOTES=$(tail -n +$START_LINE CHANGELOG.md)
+              fi
+            else
+              RELEASE_NOTES="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
+            fi
           else
-            COMMITS=$(git log HEAD --pretty=format:"- %s" --no-merges | head -20)
+            RELEASE_NOTES="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
           fi
           
-          # Create PR body file
-          cat > /tmp/pr_body.md << 'EOF'
-          ## Release v$NEW_VERSION
+          gh release create "v$NEW_VERSION" \
+            --title "Release v$NEW_VERSION" \
+            --notes "$RELEASE_NOTES" \
+            --latest
           
-          This is an automated release PR created by the weekly release workflow.
-          
-          ### Version Bump Type
-          $BUMP_TYPE
-          
-          ### Changes
-          $COMMITS
-          
-          ### Files Updated
-          - `pom.xml` - Backend version updated to $NEW_VERSION
-          - `frontend/package.json` - Frontend version updated to $NEW_VERSION
-          - `CHANGELOG.md` - Updated with release notes
-          
-          After merging this PR, a GitHub release and tag will be created automatically.
-          EOF
-          
-          # Substitute variables
-          sed -i "s/\$NEW_VERSION/$NEW_VERSION/g" /tmp/pr_body.md
-          sed -i "s/\$BUMP_TYPE/$BUMP_TYPE/g" /tmp/pr_body.md
-          echo "$COMMITS" > /tmp/commits.txt
-          sed -i "/\$COMMITS/r /tmp/commits.txt" /tmp/pr_body.md
-          sed -i "/\$COMMITS/d" /tmp/pr_body.md
-          
-          gh pr create \
-            --title "chore: Release v$NEW_VERSION" \
-            --body-file /tmp/pr_body.md \
-            --base main \
-            --head $BRANCH_NAME \
-            --label "release"
+          echo "Created GitHub release for v$NEW_VERSION"
