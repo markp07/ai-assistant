@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="sparkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FCD34D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F59E0B;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#bgGradient)"/>
+  
+  <!-- Chat bubble -->
+  <path d="M 16 20 Q 16 16 20 16 L 44 16 Q 48 16 48 20 L 48 36 Q 48 40 44 40 L 30 40 L 22 46 L 22 40 L 20 40 Q 16 40 16 36 Z" 
+        fill="white" opacity="0.95"/>
+  
+  <!-- AI sparkle elements -->
+  <g fill="url(#sparkGradient)">
+    <!-- Top sparkle -->
+    <circle cx="26" cy="24" r="2"/>
+    <circle cx="32" cy="22" r="1.5"/>
+    <circle cx="38" cy="24" r="2"/>
+    
+    <!-- Middle sparkle -->
+    <circle cx="24" cy="30" r="1.5"/>
+    <circle cx="32" cy="29" r="2.5"/>
+    <circle cx="40" cy="30" r="1.5"/>
+    
+    <!-- Bottom sparkle -->
+    <circle cx="28" cy="35" r="1.5"/>
+    <circle cx="36" cy="35" r="1.5"/>
+  </g>
+  
+  <!-- Accent dots for chat effect -->
+  <g fill="#4F46E5" opacity="0.6">
+    <circle cx="24" cy="28" r="1"/>
+    <circle cx="28" cy="28" r="1"/>
+    <circle cx="32" cy="28" r="1"/>
+  </g>
+</svg>
