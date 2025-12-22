@@ -43,9 +43,6 @@ jobs:
           CHANGELOG_FILE="CHANGELOG.md"
           OUTPUT_FILE="/tmp/release_notes.md"
 
-          # Escape special regex characters in version for safe pattern matching
-          ESCAPED_VERSION=$(echo "$VERSION" | sed 's/[.[\*^$()+?{|]/\\&/g')
-
           # Check if the version exists in the changelog using literal match
           if ! grep -F "## [$VERSION]" "$CHANGELOG_FILE" > /dev/null; then
             echo "Warning: Version $VERSION not found in CHANGELOG.md"
@@ -55,9 +52,9 @@ jobs:
             echo "See CHANGELOG.md for details." >> "$OUTPUT_FILE"
           else
             # Extract content between this version and next version
-            # Use awk with properly escaped regex pattern
-            awk -v ver="$ESCAPED_VERSION" '
-              $0 ~ "^## \\[" ver "\\]" {flag=1; next}
+            # Use awk index() function for exact string matching (no regex issues)
+            awk -v ver="$VERSION" '
+              index($0, "## [" ver "]") == 1 {flag=1; next}
               /^## \[/{flag=0}
               /^## Version /{flag=0}
               /^---$/{flag=0}
