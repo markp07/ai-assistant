@@ -1,0 +1,106 @@
+name: Create Release and Tag
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create Release and Tag
+    runs-on: ubuntu-latest
+    # Only run if PR was merged (not just closed) and branch starts with release/
+    if: |
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Extract version from branch name
+        id: extract_version
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          # Extract version from branch name (e.g., release/v1.0.1 -> 1.0.1)
+          VERSION=$(echo "$BRANCH_NAME" | sed 's/release\/v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Extract changelog entry
+        id: changelog
+        run: |
+          VERSION="${{ steps.extract_version.outputs.version }}"
+          
+          # Create a temporary file for the changelog content
+          CHANGELOG_FILE="CHANGELOG.md"
+          OUTPUT_FILE="/tmp/release_notes.md"
+          
+          # Find the section for this version in the changelog
+          # Look for patterns like "## [1.0.1]" or "## Version 1.0.1"
+          START_PATTERN="## \[$VERSION\]"
+          
+          # Check if the version exists in the changelog
+          if ! grep -q "$START_PATTERN" "$CHANGELOG_FILE"; then
+            echo "Warning: Version $VERSION not found in CHANGELOG.md"
+            echo "Creating a default release note"
+            echo "Release $VERSION" > "$OUTPUT_FILE"
+            echo "" >> "$OUTPUT_FILE"
+            echo "See CHANGELOG.md for details." >> "$OUTPUT_FILE"
+          else
+            # Extract the content between this version and the next version header
+            awk "/$START_PATTERN/,/^## \[|^## Version/" "$CHANGELOG_FILE" | \
+              sed '1d' | \
+              sed '/^## \[/d' | \
+              sed '/^## Version/d' | \
+              sed '/^---$/,$d' | \
+              sed '/^[[:space:]]*$/{ N; /^\n$/D; }' > "$OUTPUT_FILE"
+            
+            # Trim leading and trailing whitespace
+            sed -i '/./,$!d' "$OUTPUT_FILE"
+            sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$OUTPUT_FILE"
+          fi
+          
+          # Output the changelog for debugging
+          echo "Changelog content:"
+          cat "$OUTPUT_FILE"
+          
+          # Set output - save the file path
+          echo "file=$OUTPUT_FILE" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          VERSION="${{ steps.extract_version.outputs.version }}"
+          TAG_NAME="v$VERSION"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create and push the tag
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+          git push origin "$TAG_NAME"
+          
+          echo "Created and pushed tag: $TAG_NAME"
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.extract_version.outputs.version }}"
+          TAG_NAME="v$VERSION"
+          CHANGELOG_FILE="${{ steps.changelog.outputs.file }}"
+          
+          # Create the release using gh CLI
+          gh release create "$TAG_NAME" \
+            --title "Release $TAG_NAME" \
+            --notes-file "$CHANGELOG_FILE" \
+            --target main
+
+          echo "Created GitHub release: $TAG_NAME"

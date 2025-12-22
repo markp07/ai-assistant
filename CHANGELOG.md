@@ -1,6 +1,5 @@
 # Release Notes
 
-## Version 1.0.1 - 2025-12-21
 ## [2025.13.0] - 2025-12-22
 
 ### Changed
