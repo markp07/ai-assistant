@@ -1,0 +1,81 @@
+name: Create Release Tag
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    name: Create Tag and GitHub Release
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Extract version from branch name
+        id: extract_version
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=$(echo $BRANCH_NAME | sed 's/release\/v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ steps.extract_version.outputs.version }}"
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
+          echo "Created and pushed tag v$VERSION"
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.extract_version.outputs.version }}"
+          
+          # Extract release notes from CHANGELOG.md
+          if [ -f CHANGELOG.md ]; then
+            # Find the section for this version
+            START_LINE=$(grep -n "^## \[$VERSION\]" CHANGELOG.md | cut -d: -f1 | head -1)
+            
+            if [ -n "$START_LINE" ]; then
+              # Find the next version section
+              NEXT_SECTION=$(tail -n +$((START_LINE + 1)) CHANGELOG.md | grep -n "^## \[" | head -1 | cut -d: -f1)
+              
+              if [ -n "$NEXT_SECTION" ]; then
+                END_LINE=$((START_LINE + NEXT_SECTION - 1))
+                RELEASE_NOTES=$(sed -n "$((START_LINE)),$((END_LINE))p" CHANGELOG.md)
+              else
+                RELEASE_NOTES=$(tail -n +$START_LINE CHANGELOG.md)
+              fi
+            else
+              RELEASE_NOTES="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
+            fi
+          else
+            RELEASE_NOTES="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
+          fi
+          
+          gh release create "v$VERSION" \
+            --title "Release v$VERSION" \
+            --notes "$RELEASE_NOTES" \
+            --latest
+          
+          echo "Created GitHub release for v$VERSION"
