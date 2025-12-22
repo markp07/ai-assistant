@@ -86,11 +86,14 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
         // onToken callback - update the assistant message as tokens arrive
         (token: string) => {
           setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === assistantMessageId
-                ? { ...msg, content: msg.content + token }
-                : msg
-            )
+            prev.map((msg) => {
+              if (msg.id === assistantMessageId) {
+                // Add space before token if content already exists (not first token)
+                const separator = msg.content === '' ? '' : ' ';
+                return { ...msg, content: msg.content + separator + token };
+              }
+              return msg;
+            })
           );
         },
         // onComplete callback
