@@ -108,6 +108,67 @@ export async function sendMessage(sessionId: string, message: string): Promise<M
   return response.json();
 }
 
+/**
+ * Sends a message with streaming response using Server-Sent Events
+ * @param sessionId The session ID
+ * @param message The message content
+ * @param onToken Callback for each token received
+ * @param onComplete Callback when streaming completes
+ * @param onError Callback for errors
+ */
+export async function sendMessageStream(
+  sessionId: string,
+  message: string,
+  onToken: (token: string) => void,
+  onComplete: () => void,
+  onError: (error: Error) => void
+): Promise<void> {
+  try {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/v1/sessions/${sessionId}/messages/stream`, {
+      method: 'POST',
+      body: JSON.stringify({ message } as SendMessageRequest),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to send message: ${response.statusText}`);
+    }
+
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+
+    if (!reader) {
+      throw new Error('Response body is not readable');
+    }
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        onComplete();
+        break;
+      }
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+
+      for (const line of lines) {
+        if (line.trim()) {
+          // Handle SSE format: data: <content>
+          if (line.startsWith('data: ')) {
+            const token = line.substring(6);
+            onToken(token);
+          } else {
+            // Plain text streaming (no SSE format)
+            onToken(line);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    onError(error instanceof Error ? error : new Error('Streaming failed'));
+  }
+}
+
 export async function updateSession(sessionId: string, title: string): Promise<ChatSession> {
   const response = await fetchWithAuth(`${API_BASE_URL}/api/v1/sessions/${sessionId}`, {
     method: 'PUT',

@@ -3,8 +3,10 @@ package nl.markpost.aiassistant.service;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.service.TokenStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,8 @@ import nl.markpost.aiassistant.repository.ChatSessionRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 /** Service for managing chat sessions and messages. */
 @Service
@@ -30,6 +34,73 @@ public class ChatMessagesService {
   private final Assistant assistant;
   private final ChatMemory chatMemory;
   private final ChatSessionMapper chatSessionMapper;
+
+  /**
+   * Sends a message in the specified chat session and gets a streaming response from the
+   * assistant.
+   *
+   * @param sessionId The ID of the chat session.
+   * @param userId The ID of the user.
+   * @param messageContent The content of the user's message.
+   * @return A Flux of streaming response chunks.
+   */
+  @Transactional
+  public Flux<String> sendMessageStream(String sessionId, String userId, String messageContent) {
+    ChatSession session = getSessionEntity(sessionId, userId);
+
+    // Save user message
+    ChatMessage userMessage = chatSessionMapper.toChatMessage(session, "user", messageContent);
+    chatMessageRepository.save(userMessage);
+
+    // Load recent messages into memory
+    chatMemory.clear();
+    List<ChatMessage> recentMessages =
+        chatMessageRepository.findLastMessagesBySessionId(sessionId, PageRequest.of(0, 9));
+    Collections.reverse(recentMessages);
+
+    for (ChatMessage msg : recentMessages) {
+      if ("user".equals(msg.getRole())) {
+        chatMemory.add(UserMessage.from(msg.getContent()));
+      } else {
+        chatMemory.add(AiMessage.from(msg.getContent()));
+      }
+    }
+
+    // Create a sink for streaming
+    Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
+    StringBuilder fullResponse = new StringBuilder();
+
+    // Get streaming response from assistant
+    TokenStream tokenStream = assistant.chatStream(messageContent);
+
+    // Configure the token stream with proper handlers
+    tokenStream
+        .onPartialResponse(token -> {
+          fullResponse.append(token);
+          sink.tryEmitNext(token);
+        })
+        .onCompleteResponse(response -> {
+          // Save the complete assistant message to database asynchronously
+          CompletableFuture.runAsync(() -> {
+            try {
+              ChatMessage assistantMessage =
+                  chatSessionMapper.toChatMessage(session, "assistant", fullResponse.toString());
+              chatMessageRepository.save(assistantMessage);
+              log.info("Saved assistant message to database for session: {}", sessionId);
+            } catch (Exception e) {
+              log.error("Error saving assistant message to database", e);
+            }
+          });
+          sink.tryEmitComplete();
+        })
+        .onError(throwable -> {
+          log.error("Error during streaming", throwable);
+          sink.tryEmitError(throwable);
+        })
+        .start();
+
+    return sink.asFlux();
+  }
 
   /**
    * Sends a message in the specified chat session and gets a response from the assistant.
@@ -67,6 +138,7 @@ public class ChatMessagesService {
 
     return chatSessionMapper.toMessageDTO(assistantMessage);
   }
+
 
   /**
    * Retrieves the message history for the specified chat session.

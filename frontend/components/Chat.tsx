@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Message } from '@/types/chat';
-import { sendMessage, getSessionHistory } from '@/lib/api';
+import { sendMessageStream, getSessionHistory } from '@/lib/api';
 import { ChatMessage } from './ChatMessage';
 import { ThemeToggle } from './ThemeToggle';
 import { UserProfile } from './UserProfile';
@@ -68,14 +68,50 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
     setIsLoading(true);
     setError(null);
 
+    // Create a placeholder message for the assistant's streaming response
+    const assistantMessageId = crypto.randomUUID();
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      content: '',
+      role: 'assistant',
+      timestamp: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, assistantMessage]);
+
     try {
-      const response = await sendMessage(sessionId, messageContent);
-      setMessages((prev) => [...prev, response]);
+      await sendMessageStream(
+        sessionId,
+        messageContent,
+        // onToken callback - update the assistant message as tokens arrive
+        (token: string) => {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantMessageId
+                ? { ...msg, content: msg.content + token }
+                : msg
+            )
+          );
+        },
+        // onComplete callback
+        () => {
+          setIsLoading(false);
+        },
+        // onError callback
+        (err: Error) => {
+          setError(err.message || 'Failed to send message');
+          console.error('Error sending message:', err);
+          setIsLoading(false);
+          // Remove the placeholder message on error
+          setMessages((prev) => prev.filter((msg) => msg.id !== assistantMessageId));
+        }
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
       console.error('Error sending message:', err);
-    } finally {
       setIsLoading(false);
+      // Remove the placeholder message on error
+      setMessages((prev) => prev.filter((msg) => msg.id !== assistantMessageId));
     }
   };
 
