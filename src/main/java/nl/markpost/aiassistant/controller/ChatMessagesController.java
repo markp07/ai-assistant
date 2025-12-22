@@ -10,6 +10,7 @@ import nl.markpost.aiassistant.models.MessageDTO;
 import nl.markpost.aiassistant.service.ChatMessagesService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -72,11 +73,14 @@ public class ChatMessagesController implements MessagesApi {
   @PostMapping(
       value = "/sessions/{sessionId}/messages/stream",
       produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-  public Flux<String> sendMessageStream(
+  public Flux<ServerSentEvent<String>> sendMessageStream(
       @PathVariable String sessionId, @RequestBody SendMessageRequest sendMessageRequest) {
     String userId = getUserId();
     String messageContent = sendMessageRequest.getMessage();
-    return chatMessagesService.sendMessageStream(sessionId, userId, messageContent);
+    return chatMessagesService.sendMessageStream(sessionId, userId, messageContent)
+        .map(token -> ServerSentEvent.<String>builder()
+            .data(token)
+            .build());
   }
 
   /**
