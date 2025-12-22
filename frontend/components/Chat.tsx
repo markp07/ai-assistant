@@ -80,7 +80,7 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col full-height bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6">
         <div className="flex items-center justify-between">
@@ -88,22 +88,22 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
             {sessionTitle || 'AI Assistant'}
           </h1>
           <div className="flex items-center gap-2">
-            <button
-              onClick={onToggleSidebar}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              title="Toggle Sidebar"
-            >
-              <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+<button
+  onClick={onToggleSidebar}
+  className="p-2 sm:hidden hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+  title="Toggle Sidebar"
+>
+  <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+</button>
             <UserProfile />
           </div>
         </div>
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+      <div className="flex-1 overflow-y-auto mobile-scroll px-4 py-6 sm:px-6">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="mb-4">

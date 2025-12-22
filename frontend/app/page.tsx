@@ -9,7 +9,7 @@ import { createSession, getSessions } from '@/lib/api';
 function HomeContent() {
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>();
   const [currentSessionTitle, setCurrentSessionTitle] = useState<string>('AI Assistant');
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isInitializing, setIsInitializing] = useState(true);
   const hasInitialized = useRef(false);
 
@@ -69,7 +69,7 @@ function HomeContent() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex full-height overflow-hidden">
       <Sidebar
         currentSessionId={currentSessionId}
         onSessionSelect={handleSessionSelect}

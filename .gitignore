@@ -58,3 +58,4 @@ frontend/.next/
 frontend/out/
 frontend/build/
 frontend/.env
+.env
