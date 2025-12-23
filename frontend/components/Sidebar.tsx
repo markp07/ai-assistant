@@ -69,7 +69,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
     setEditingTitle(currentTitle);
   };
 
-  const handleSaveEdit = async (sessionId: string, e: React.MouseEvent) => {
+  const handleSaveEdit = async (sessionId: string, e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     if (!editingTitle.trim()) {
       setEditingSessionId(null);
@@ -85,7 +85,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
     }
   };
 
-  const handleCancelEdit = (e: React.MouseEvent) => {
+  const handleCancelEdit = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     setEditingSessionId(null);
   };
@@ -148,8 +148,8 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
                           onChange={(e) => setEditingTitle(e.target.value)}
                           onClick={(e) => e.stopPropagation()}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleSaveEdit(session.id, e as any);
-                            if (e.key === 'Escape') handleCancelEdit(e as any);
+                            if (e.key === 'Enter') handleSaveEdit(session.id, e);
+                            if (e.key === 'Escape') handleCancelEdit(e);
                           }}
                           className="w-full text-sm font-medium px-2 py-1 rounded border border-blue-500 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           autoFocus
@@ -189,7 +189,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
                         <>
                           <button
                             onClick={(e) => handleEdit(session.id, session.title, e)}
-                            className="opacity-0 group-hover:opacity-100 p-1 hover:bg-blue-100 dark:hover:bg-blue-900 rounded transition-opacity"
+                            className="md:opacity-0 md:group-hover:opacity-100 p-1 hover:bg-blue-100 dark:hover:bg-blue-900 rounded transition-opacity"
                             title="Edit"
                           >
                             <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@ export function Sidebar({ currentSessionId, onSessionSelect, onNewChat, isCollap
                           </button>
                           <button
                             onClick={(e) => handleDelete(session.id, e)}
-                            className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-opacity"
+                            className="md:opacity-0 md:group-hover:opacity-100 p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-opacity"
                             title="Delete"
                           >
                             <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
