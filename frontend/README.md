@@ -1,49 +1,90 @@
 # AI Assistant Frontend
 
-A responsive chat interface for the AI Assistant built with Next.js, React, and Tailwind CSS.
+Modern web interface for the AI Assistant application, providing a responsive chat experience with multi-session support and real-time streaming responses.
 
-## Features
+## Description
 
-- 💬 Real-time chat interface
-- 🌓 Light and dark mode support
-- 📱 Responsive design (desktop, tablet, and mobile)
-- 🎨 Modern UI with Tailwind CSS
-- ⚡ Built with Next.js 15 and React 19
+The frontend is a Next.js-based single-page application that connects to the AI Assistant backend. It features a sidebar for managing multiple chat sessions, a main chat interface with streaming message support, and automatic authentication handling with JWT token refresh capabilities.
+
+## Technologies
+
+### Core Framework
+- **Next.js 16.0.10**: React framework with App Router and server-side rendering
+- **React 19.2.1**: Component-based UI library
+- **TypeScript 5**: Static type checking
+
+### Styling
+- **Tailwind CSS 4**: Utility-first CSS framework
+- **next-themes 0.4.6**: Theme management for light/dark mode
+
+### Security
+- **JWT Authentication**: Token-based authentication with HTTP-only cookies
+- **Automatic Token Refresh**: Handles 401 responses by refreshing access tokens
+- **Secure Cookie Storage**: Credentials stored in HTTP-only cookies to prevent XSS attacks
+
+## Project Structure
+
+```
+frontend/
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx         # Root layout with providers
+│   ├── page.tsx           # Main chat page
+│   └── globals.css        # Global styles
+├── components/            # React components
+│   ├── Chat.tsx          # Main chat interface
+│   ├── ChatMessage.tsx   # Individual message component
+│   ├── Sidebar.tsx       # Session management sidebar
+│   ├── AuthProvider.tsx  # Authentication context
+│   ├── ThemeProvider.tsx # Theme context wrapper
+│   ├── ThemeToggle.tsx   # Dark/light mode toggle
+│   └── UserProfile.tsx   # User profile display
+├── lib/                   # Utility libraries
+│   ├── api.ts            # API client with auth handling
+│   └── auth.ts           # Authentication utilities
+└── types/                 # TypeScript type definitions
+    └── chat.ts           # Chat-related types
+```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ installed
-- AI Assistant backend running on port 7075
+- Node.js 18 or higher
+- Backend API running on port 7075 (or configured port)
 
 ### Installation
 
-1. Install dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. Create a `.env.local` file (optional):
+### Configuration
+
+Create a `.env.local` file for local development:
 
 ```bash
-cp .env.example .env.local
+NEXT_PUBLIC_API_URL=http://localhost:7075
 ```
 
-Edit the `.env.local` file if you need to change the API URL (default is `http://localhost:7075`).
+**Environment Variables:**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL | `http://localhost:7075` |
 
 ### Development
 
-Run the development server:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+Access the application at http://localhost:3000
 
-### Building for Production
+### Production Build
 
 Build the application:
 
@@ -59,7 +100,7 @@ npm start
 
 ### Docker Deployment
 
-#### Using Docker Compose (with backend)
+#### Using Docker Compose
 
 From the project root directory:
 
@@ -67,56 +108,34 @@ From the project root directory:
 docker compose up -d
 ```
 
-This will start both the backend and frontend services. The frontend will be available at http://localhost:12502.
-
-#### Standalone Docker Container
-
-Build the application first, then build and run the frontend container:
+#### Standalone Container
 
 ```bash
-# Build the Next.js application
+# Build the application
 npm run build
 
-# Build the Docker image
-docker build -t ai-assistant-frontend:latest .
+# Build Docker image
+docker build -t ai-assistant-frontend .
 
-# Run the container
-docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:7075 ai-assistant-frontend:latest
+# Run container
+docker run -p 3000:3000 \
+  -e NEXT_PUBLIC_API_URL=http://localhost:7075 \
+  ai-assistant-frontend
 ```
-
-**Note:** The Dockerfile expects the `.next` build output to be present. Make sure to run `npm run build` before building the Docker image.
-
-**Environment Variables for Docker:**
-- `NEXT_PUBLIC_API_URL`: Backend API URL (default: `http://localhost:7075`)
-- `PORT`: Port to run the server on (default: `3000`)
-- `HOSTNAME`: Hostname to bind to (default: `0.0.0.0`)
-
-## Architecture
-
-- **Next.js 16**: React framework with App Router
-- **TypeScript**: Type-safe development
-- **Tailwind CSS**: Utility-first CSS framework
-- **next-themes**: Theme management for light/dark mode
 
 ## API Integration
 
-The frontend communicates with the backend API at:
-- `POST /api/chat` - Send a message to the AI
-- `DELETE /api/chat` - Clear chat history
+The frontend integrates with the following backend endpoints:
 
-## Environment Variables
+### Session Management
+- `GET /api/v1/sessions` - Retrieve all user sessions
+- `POST /api/v1/sessions` - Create new session
+- `GET /api/v1/sessions/{sessionId}` - Get session details
+- `PUT /api/v1/sessions/{sessionId}` - Update session title
+- `DELETE /api/v1/sessions/{sessionId}` - Delete session
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:7075` |
+### Messages
+- `POST /api/v1/sessions/{sessionId}/messages/stream` - Send message and receive streaming response
+- `GET /api/v1/sessions/{sessionId}/history` - Get message history
 
-## Responsive Design
-
-The application is fully responsive and works seamlessly on:
-- 📱 Mobile phones (320px+)
-- 📱 Tablets (768px+)
-- 💻 Desktops (1024px+)
-
-## Building the Application
-
-The application uses Next.js 16 with Turbopack for fast builds.
+All requests include automatic authentication handling with token refresh on 401 responses.
