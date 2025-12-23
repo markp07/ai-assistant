@@ -36,3 +36,5 @@ yarn-error.log*
 .idea
 *.swp
 *.swo
+
+.flattened-pom.xml

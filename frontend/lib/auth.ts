@@ -1,4 +1,4 @@
-export const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL || 'https://auth.markpost.dev';
+export const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:7080';
 
 /**
  * Redirects the user to the login page with a callback to return to the current page

@@ -10,11 +10,11 @@ cors:
 
 # Authentication configuration
 auth:
-  service-url: ${AUTH_SERVICE_URL:https://auth.markpost.dev}
+  service-url: ${AUTH_SERVICE_URL:http://localhost:7080}
 
 # JWT configuration
 jwt:
-  public-key-url: ${JWT_PUBLIC_KEY_URL:https://auth.markpost.dev/api/auth/v1/public-key}
+  public-key-url: ${JWT_PUBLIC_KEY_URL:http://localhost:7080/api/auth/v1/public-key}
 
 # Security configuration
 security:

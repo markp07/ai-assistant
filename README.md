@@ -45,7 +45,7 @@ See [frontend/README.md](frontend/README.md) for detailed frontend documentation
 ## Features
 
 - **Authentication**: Secure JWT-based authentication with external auth service integration
-  - Login via configurable auth service (default: https://auth.markpost.dev)
+  - Login via configurable auth service
   - Automatic token refresh handling
   - Session-based access control
 - **Multi-Session Chat**: Create and manage multiple chat conversations
@@ -221,8 +221,8 @@ The application uses JWT-based authentication with an external auth service. Use
 
 Set the auth service URL in your `.env` file:
 ```bash
-AUTH_SERVICE_URL=https://auth.markpost.dev
-JWT_PUBLIC_KEY_URL=https://auth.markpost.dev/api/auth/v1/public-key
+AUTH_SERVICE_URL=http://localhost:7080
+JWT_PUBLIC_KEY_URL=http://localhost:7080/api/auth/v1/public-key
 ```
 
 ## Database
@@ -251,22 +251,22 @@ The application uses a single `.env` file at the project root for both backend a
 
 #### Backend Variables
 
-| Variable | Description | Default Value | Required |
-|----------|-------------|---------------|----------|
-| `OPENAI_API_KEY` | Your OpenAI API key for AI functionality | - | Yes |
-| `DATABASE_URL` | PostgreSQL connection URL | `jdbc:postgresql://localhost:5432/ai_assistant` | No |
-| `DATABASE_USERNAME` | PostgreSQL username | `postgres` | No |
-| `DATABASE_PASSWORD` | PostgreSQL password | `postgres` | No |
-| `AUTH_SERVICE_URL` | External authentication service URL | `https://auth.markpost.dev` | No |
-| `JWT_PUBLIC_KEY_URL` | URL to fetch JWT verification public key | `https://auth.markpost.dev/api/auth/v1/public-key` | No |
-| `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | `http://localhost:7070` | No |
+| Variable             | Description                                  | Default Value                                      | Required |
+|----------------------|----------------------------------------------|----------------------------------------------------|----------|
+| `OPENAI_API_KEY`     | Your OpenAI API key for AI functionality     | -                                                  | Yes      |
+| `DATABASE_URL`       | PostgreSQL connection URL                    | `jdbc:postgresql://localhost:5432/ai_assistant`    | No       |
+| `DATABASE_USERNAME`  | PostgreSQL username                          | `postgres`                                         | No       |
+| `DATABASE_PASSWORD`  | PostgreSQL password                          | `postgres`                                         | No       |
+| `AUTH_SERVICE_URL`   | External authentication service URL          | `http://localhost:7080`                        | No       |
+| `JWT_PUBLIC_KEY_URL` | URL to fetch JWT verification public key     | `http://localhost:7080/api/auth/v1/public-key` | No       |
+| `ALLOWED_ORIGINS`    | Comma-separated list of allowed CORS origins | `http://localhost:7070`                            | No       |
 
 #### Frontend Variables
 
-| Variable | Description | Default Value | Required |
-|----------|-------------|---------------|----------|
-| `NEXT_PUBLIC_API_URL` | Backend API URL for the frontend | `http://localhost:7075` | No |
-| `NEXT_PUBLIC_AUTH_URL` | Authentication service URL | `https://auth.markpost.dev` | No |
+| Variable               | Description                      | Default Value           | Required |
+|------------------------|----------------------------------|-------------------------|----------|
+| `NEXT_PUBLIC_API_URL`  | Backend API URL for the frontend | `http://localhost:7075` | No       |
+| `NEXT_PUBLIC_AUTH_URL` | Authentication service URL       | `http://localhost:7080  | No       |
 
 Example `.env` file:
 ```bash
@@ -279,15 +279,15 @@ DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=postgres
 
 # Authentication
-AUTH_SERVICE_URL=https://auth.markpost.dev
-JWT_PUBLIC_KEY_URL=https://auth.markpost.dev/api/auth/v1/public-key
+AUTH_SERVICE_URL=http://localhost:7080
+JWT_PUBLIC_KEY_URL=http://localhost:7080/api/auth/v1/public-key
 
 # Backend CORS
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:7070
 
 # Frontend Configuration
 NEXT_PUBLIC_API_URL=http://localhost:7075
-NEXT_PUBLIC_AUTH_URL=https://auth.markpost.dev
+NEXT_PUBLIC_AUTH_URL=http://localhost:7080
 ```
 
 **Note:** For Docker deployments, all environment variables are loaded from the root `.env` file and passed to the appropriate services.
