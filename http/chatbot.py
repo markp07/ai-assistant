@@ -8,7 +8,7 @@ API_BASE_URL = "http://localhost:7075/api/v1"
 # Usage: python chatbot.py YOUR_JWT_TOKEN
 if len(sys.argv) < 2:
     print("Usage: python chatbot.py YOUR_JWT_TOKEN")
-    print("Get your token from https://auth.markpost.dev")
+    print("Get your token from http://localhost:7080")
     sys.exit(1)
 
 JWT_TOKEN = sys.argv[1]

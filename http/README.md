@@ -9,7 +9,7 @@ Bash script demonstrating the session-based chat API.
 
 **Prerequisites:**
 - `jq` command-line JSON processor: `brew install jq` (macOS) or `apt-get install jq` (Linux)
-- JWT token from https://auth.markpost.dev
+- JWT token from http://localhost:7080
 
 **Usage:**
 ```bash
@@ -23,7 +23,7 @@ Interactive Python chatbot using the session-based chat API.
 **Prerequisites:**
 - Python 3.x
 - requests library: `pip install requests`
-- JWT token from https://auth.markpost.dev
+- JWT token from http://localhost:7080
 
 **Usage:**
 ```bash
@@ -58,7 +58,7 @@ Goodbye!
 
 ## Getting a JWT Token
 
-1. Visit https://auth.markpost.dev/login?callback=http://localhost:3000
+1. Visit http://localhost:7080/login?callback=http://localhost:3000
 2. Log in with your credentials
 3. After successful login, you'll be redirected with tokens in the URL
 4. Copy the `access_token` from the URL or browser storage
