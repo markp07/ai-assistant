@@ -33,7 +33,7 @@
     <!-- API and validation versions -->
     <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
     <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
-    <springdoc-openapi.version>3.0.0</springdoc-openapi.version>
+    <springdoc-openapi.version>3.0.1</springdoc-openapi.version>
 
     <!-- Test dependency versions -->
     <assertj.version>3.27.6</assertj.version>
