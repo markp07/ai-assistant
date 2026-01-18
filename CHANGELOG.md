@@ -1,5 +1,30 @@
 # Release Notes
 
+## [2025.13.0] - 2025-12-29
+
+### Changed
+- chore(maven)(deps): bump the maven-dependencies group with 3 updates (#47)
+- Fix release workflow: remove non-existent label reference (#46)
+- Fix NEXT_PUBLIC_AUTH_URL not being embedded at build time (#45)
+- Fix/cleanup readme (#44)
+- fix: update authentication URLs to use localhost for local development (#43)
+- Fix invisible edit/delete buttons on iOS touch devices (#42)
+- Fix/multiple small fixes (#41)
+- Add custom favicon and app icons for AI Chat application (#40)
+- Automate release and tag creation on PR merge from release branches (#39)
+- chore: bump version to 2025.13.0 (#38)
+- Refactor release workflow to use PR-based approach for branch protection (#37)
+- chore(github-actions)(deps): bump actions/setup-node (#35)
+- chore(maven)(deps): bump the maven-dependencies group with 2 updates (#36)
+- Feature/user serssion store chat (#34)
+- Add Next.js frontend with responsive chat interface, theme support, and Docker deployment (#32)
+- Migrate AI Assistant to Java 25 (#30)
+- Migrate AI-Assistant to Springboot 4 (#29)
+- chore(maven)(deps): bump the maven-dependencies group with 2 updates (#27)
+- chore(github-actions)(deps): bump the github-actions group with 2 updates (#23)
+- Migrate to Spring Boot 4 and update dependencies (#26)
+- Fix/update GitHub actions (#22)
+
 ## [2025.13.0] - 2025-12-22
 
 ### Changed
