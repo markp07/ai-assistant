@@ -1,5 +1,11 @@
 # Release Notes
 
+## [2025.14.0] - 2026-01-19
+
+### Changed
+- Fix/add update script (#50)
+- chore(maven)(deps): bump org.springdoc:springdoc-openapi-starter-webmvc-ui (#49)
+
 ## [2025.13.0] - 2025-12-29
 
 ### Changed
