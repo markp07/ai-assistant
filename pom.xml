@@ -19,20 +19,20 @@
 
     <!-- Spring Framework versions -->
     <spring.boot.version>4.0.2</spring.boot.version>
-    <spring.cloud.version>2025.1.0</spring.cloud.version>
+    <spring.cloud.version>2025.1.1</spring.cloud.version>
 
     <!-- Core dependency versions -->
     <lombok.version>1.18.42</lombok.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
-    <langchain4j.version>1.10.0</langchain4j.version>
+    <langchain4j.version>1.11.0</langchain4j.version>
     <hibernate-validator.version>9.1.0.Final</hibernate-validator.version>
     <mapdb.version>3.1.0</mapdb.version>
     <jjwt.version>0.13.0</jjwt.version>
 
     <!-- API and validation versions -->
     <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
-    <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
+    <jackson-databind-nullable.version>0.2.9</jackson-databind-nullable.version>
     <springdoc-openapi.version>3.0.1</springdoc-openapi.version>
 
     <!-- Test dependency versions -->
@@ -44,7 +44,7 @@
     <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
     <maven.failsafe.version>3.5.4</maven.failsafe.version>
     <flatten.maven.version>1.7.3</flatten.maven.version>
-    <maven.compiler.version>3.14.1</maven.compiler.version>
+    <maven.compiler.version>3.15.0</maven.compiler.version>
     <maven.resources.version>3.3.1</maven.resources.version>
     <openapi-generator-maven-plugin.version>7.19.0</openapi-generator-maven-plugin.version>
     <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
