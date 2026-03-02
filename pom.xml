@@ -33,11 +33,11 @@
     <!-- API and validation versions -->
     <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
     <jackson-databind-nullable.version>0.2.9</jackson-databind-nullable.version>
-    <springdoc-openapi.version>3.0.1</springdoc-openapi.version>
+    <springdoc-openapi.version>3.0.2</springdoc-openapi.version>
 
     <!-- Test dependency versions -->
     <assertj.version>3.27.7</assertj.version>
-    <mockito.version>5.21.0</mockito.version>
+    <mockito.version>5.22.0</mockito.version>
 
     <!-- Plugin versions -->
     <jacoco.version>0.8.14</jacoco.version>
