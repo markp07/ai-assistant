@@ -27,7 +27,7 @@ public class ChatMessagesService {
 
   private final ChatSessionRepository chatSessionRepository;
   private final ChatMessageRepository chatMessageRepository;
-  private final Assistant assistant;
+  private final AiProviderService aiProviderService;
   private final ChatMemory chatMemory;
   private final ChatSessionMapper chatSessionMapper;
 
@@ -37,10 +37,13 @@ public class ChatMessagesService {
    * @param sessionId The ID of the chat session.
    * @param userId The ID of the user.
    * @param messageContent The content of the user's message.
+   * @param provider The AI provider to use ("openai" or "ollama"). Defaults to "openai".
+   * @param model The model name (required when provider is "ollama").
    * @return The assistant's response as a MessageDTO.
    */
   @Transactional
-  public MessageDTO sendMessage(String sessionId, String userId, String messageContent) {
+  public MessageDTO sendMessage(
+      String sessionId, String userId, String messageContent, String provider, String model) {
     ChatSession session = getSessionEntity(sessionId, userId);
 
     ChatMessage userMessage = chatSessionMapper.toChatMessage(session, "user", messageContent);
@@ -59,7 +62,7 @@ public class ChatMessagesService {
       }
     }
 
-    String assistantResponse = assistant.chat(messageContent);
+    String assistantResponse = aiProviderService.chat(provider, model, messageContent, chatMemory);
 
     ChatMessage assistantMessage =
         chatSessionMapper.toChatMessage(session, "assistant", assistantResponse);

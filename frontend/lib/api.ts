@@ -1,4 +1,4 @@
-import { ChatSession, CreateSessionRequest, Message, SendMessageRequest } from '@/types/chat';
+import { ChatSession, CreateSessionRequest, Message, OllamaModel, SendMessageRequest } from '@/types/chat';
 import { refreshAccessToken, redirectToLogin } from './auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7075';
@@ -95,10 +95,10 @@ export async function getSessionHistory(sessionId: string): Promise<Message[]> {
   return response.json();
 }
 
-export async function sendMessage(sessionId: string, message: string): Promise<Message> {
+export async function sendMessage(sessionId: string, message: string, provider?: string, model?: string): Promise<Message> {
   const response = await fetchWithAuth(`${API_BASE_URL}/api/v1/sessions/${sessionId}/messages`, {
     method: 'POST',
-    body: JSON.stringify({ message } as SendMessageRequest),
+    body: JSON.stringify({ message, provider, model } as SendMessageRequest),
   });
 
   if (!response.ok) {
@@ -129,4 +129,14 @@ export async function deleteSession(sessionId: string): Promise<void> {
   if (!response.ok) {
     throw new Error(`Failed to delete session: ${response.statusText}`);
   }
+}
+
+export async function getOllamaModels(): Promise<OllamaModel[]> {
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/v1/ollama/models`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to get Ollama models: ${response.statusText}`);
+  }
+
+  return response.json();
 }

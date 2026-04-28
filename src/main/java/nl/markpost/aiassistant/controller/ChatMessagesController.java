@@ -52,7 +52,13 @@ public class ChatMessagesController implements MessagesApi {
       String sessionId, SendMessageRequest sendMessageRequest) {
     String userId = getUserId();
     String messageContent = sendMessageRequest.getMessage();
-    MessageDTO messageDTO = chatMessagesService.sendMessage(sessionId, userId, messageContent);
+    String provider =
+        sendMessageRequest.getProvider() != null
+            ? sendMessageRequest.getProvider().getValue()
+            : null;
+    String model = sendMessageRequest.getModel();
+    MessageDTO messageDTO =
+        chatMessagesService.sendMessage(sessionId, userId, messageContent, provider, model);
     Message response = sessionApiMapper.toApiModel(messageDTO);
     return ResponseEntity.ok(response);
   }

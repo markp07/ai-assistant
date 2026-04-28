@@ -1,17 +1,10 @@
 package nl.markpost.aiassistant.config;
 
-import dev.langchain4j.memory.ChatMemory;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.service.AiServices;
-import nl.markpost.aiassistant.service.Assistant;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Assistant configuration. The Assistant is now built dynamically per request in AiProviderService
+ * to support runtime switching between AI providers (OpenAI and Ollama).
+ */
 @Configuration
-public class AssistantConfig {
-
-  @Bean
-  public Assistant createAssistant(OpenAiChatModel model, ChatMemory memory) {
-    return AiServices.builder(Assistant.class).chatModel(model).chatMemory(memory).build();
-  }
-}
+public class AssistantConfig {}

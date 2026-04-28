@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Message } from '@/types/chat';
-import { sendMessage, getSessionHistory } from '@/lib/api';
+import { sendMessage, getSessionHistory, getOllamaModels } from '@/lib/api';
 import { ChatMessage } from './ChatMessage';
 import { ThemeToggle } from './ThemeToggle';
 import { UserProfile } from './UserProfile';
+
+type Provider = 'openai' | 'ollama';
 
 interface ChatProps {
   sessionId?: string;
@@ -18,6 +20,10 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [provider, setProvider] = useState<Provider>('openai');
+  const [ollamaModel, setOllamaModel] = useState('');
+  const [ollamaModels, setOllamaModels] = useState<string[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -36,6 +42,12 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
     }
   }, [sessionId]);
 
+  useEffect(() => {
+    if (provider === 'ollama') {
+      loadOllamaModels();
+    }
+  }, [provider]);
+
   const loadHistory = async () => {
     if (!sessionId) return;
 
@@ -48,10 +60,32 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
     }
   };
 
+  const loadOllamaModels = async () => {
+    setModelsLoading(true);
+    try {
+      const models = await getOllamaModels();
+      const names = models.map((m) => m.name);
+      setOllamaModels(names);
+      if (names.length > 0 && !ollamaModel) {
+        setOllamaModel(names[0]);
+      }
+    } catch (err) {
+      console.error('Error loading Ollama models:', err);
+      setOllamaModels([]);
+    } finally {
+      setModelsLoading(false);
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!input.trim() || isLoading || !sessionId) {
+      return;
+    }
+
+    if (provider === 'ollama' && !ollamaModel) {
+      setError('Please select an Ollama model before sending a message.');
       return;
     }
 
@@ -69,7 +103,12 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
     setError(null);
 
     try {
-      const response = await sendMessage(sessionId, messageContent);
+      const response = await sendMessage(
+        sessionId,
+        messageContent,
+        provider,
+        provider === 'ollama' ? ollamaModel : undefined
+      );
       setMessages((prev) => [...prev, response]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
@@ -161,6 +200,42 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
         onSubmit={handleSendMessage}
         className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-4 sm:px-6"
       >
+        {/* Provider / Model selector */}
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">Provider:</label>
+          <select
+            value={provider}
+            onChange={(e) => setProvider(e.target.value as Provider)}
+            disabled={isLoading}
+            className="text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <option value="openai">OpenAI</option>
+            <option value="ollama">Ollama</option>
+          </select>
+
+          {provider === 'ollama' && (
+            <>
+              <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">Model:</label>
+              {modelsLoading ? (
+                <span className="text-sm text-gray-500 dark:text-gray-400">Loading models…</span>
+              ) : ollamaModels.length > 0 ? (
+                <select
+                  value={ollamaModel}
+                  onChange={(e) => setOllamaModel(e.target.value)}
+                  disabled={isLoading}
+                  className="text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {ollamaModels.map((m) => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              ) : (
+                <span className="text-sm text-red-500 dark:text-red-400">No models found</span>
+              )}
+            </>
+          )}
+        </div>
+
         <div className="flex gap-2 sm:gap-3">
           <input
             type="text"

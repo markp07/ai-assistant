@@ -102,6 +102,7 @@ class ChatMessagesControllerTest {
   void sendMessage_shouldReturnAssistantResponse() {
     SendMessageRequest request = new SendMessageRequest();
     request.setMessage(MESSAGE_CONTENT);
+    request.setProvider(SendMessageRequest.ProviderEnum.OPENAI);
 
     MessageDTO responseDTO =
         MessageDTO.builder()
@@ -119,7 +120,7 @@ class ChatMessagesControllerTest {
             .timestamp(OffsetDateTime.now(ZoneOffset.UTC))
             .build();
 
-    when(chatMessagesService.sendMessage(SESSION_ID, USER_ID, MESSAGE_CONTENT))
+    when(chatMessagesService.sendMessage(SESSION_ID, USER_ID, MESSAGE_CONTENT, "openai", null))
         .thenReturn(responseDTO);
     when(sessionApiMapper.toApiModel(responseDTO)).thenReturn(apiMessage);
 
@@ -130,7 +131,7 @@ class ChatMessagesControllerTest {
     assertThat(response.getBody().getId()).isEqualTo("msg-123");
     assertThat(response.getBody().getRole()).isEqualTo(Message.RoleEnum.ASSISTANT);
     assertThat(response.getBody().getContent()).isEqualTo("Response from AI");
-    verify(chatMessagesService).sendMessage(SESSION_ID, USER_ID, MESSAGE_CONTENT);
+    verify(chatMessagesService).sendMessage(SESSION_ID, USER_ID, MESSAGE_CONTENT, "openai", null);
     verify(sessionApiMapper).toApiModel(responseDTO);
   }
 }

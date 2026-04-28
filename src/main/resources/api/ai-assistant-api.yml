@@ -11,7 +11,29 @@ tags:
     description: Chat messages management
   - name: sessions
     description: Chat session management
+  - name: ollama
+    description: Ollama model management
 paths:
+
+  /ollama/models:
+    get:
+      operationId: getOllamaModels
+      tags:
+        - ollama
+      summary: Get available Ollama models
+      responses:
+        '200':
+          description: List of available Ollama models
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OllamaModel'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
 
   # Chat session endpoints
   /sessions:
@@ -293,8 +315,25 @@ components:
         message:
           type: string
           description: The message content to send
+        provider:
+          type: string
+          description: The AI provider to use
+          enum: [openai, ollama]
+          default: openai
+        model:
+          type: string
+          description: The model to use (required when provider is ollama)
       required:
         - message
+
+    OllamaModel:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The model name
+      required:
+        - name
 
     Error:
       type: object
