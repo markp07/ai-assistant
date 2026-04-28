@@ -47,7 +47,7 @@ class ChatMessagesServiceTest {
   private static final String MESSAGE_CONTENT = "Hello, AI!";
   private static final String ASSISTANT_RESPONSE = "Hello! How can I help you?";
   private static final String PROVIDER = "openai";
-  private static final String MODEL = null;
+  private static final String OPENAI_MODEL = null;
 
   @Test
   void sendMessage_shouldSaveUserMessageAndReturnAssistantResponse() {
@@ -84,7 +84,7 @@ class ChatMessagesServiceTest {
     when(chatMessageRepository.findLastMessagesBySessionId(eq(SESSION_ID), any(PageRequest.class)))
         .thenReturn(List.of());
     when(aiProviderService.chat(
-            eq(PROVIDER), eq(MODEL), eq(MESSAGE_CONTENT), any(ChatMemory.class)))
+            eq(PROVIDER), eq(OPENAI_MODEL), eq(MESSAGE_CONTENT), any(ChatMemory.class)))
         .thenReturn(ASSISTANT_RESPONSE);
     when(chatSessionMapper.toChatMessage(session, "assistant", ASSISTANT_RESPONSE))
         .thenReturn(assistantMessage);
@@ -92,7 +92,8 @@ class ChatMessagesServiceTest {
     when(chatSessionMapper.toMessageDTO(assistantMessage)).thenReturn(messageDTO);
 
     MessageDTO result =
-        chatMessagesService.sendMessage(SESSION_ID, USER_ID, MESSAGE_CONTENT, PROVIDER, MODEL);
+        chatMessagesService.sendMessage(
+            SESSION_ID, USER_ID, MESSAGE_CONTENT, PROVIDER, OPENAI_MODEL);
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo("assistant-msg-1");
@@ -102,7 +103,7 @@ class ChatMessagesServiceTest {
     verify(chatMessageRepository).save(userMessage);
     verify(chatMessageRepository).save(assistantMessage);
     verify(aiProviderService)
-        .chat(eq(PROVIDER), eq(MODEL), eq(MESSAGE_CONTENT), any(ChatMemory.class));
+        .chat(eq(PROVIDER), eq(OPENAI_MODEL), eq(MESSAGE_CONTENT), any(ChatMemory.class));
   }
 
   @Test
@@ -150,14 +151,15 @@ class ChatMessagesServiceTest {
     when(chatMessageRepository.findLastMessagesBySessionId(eq(SESSION_ID), any(PageRequest.class)))
         .thenReturn(recentMessages);
     when(aiProviderService.chat(
-            eq(PROVIDER), eq(MODEL), eq(MESSAGE_CONTENT), any(ChatMemory.class)))
+            eq(PROVIDER), eq(OPENAI_MODEL), eq(MESSAGE_CONTENT), any(ChatMemory.class)))
         .thenReturn(ASSISTANT_RESPONSE);
     when(chatSessionMapper.toChatMessage(session, "assistant", ASSISTANT_RESPONSE))
         .thenReturn(assistantMessage);
     when(chatSessionMapper.toMessageDTO(assistantMessage)).thenReturn(messageDTO);
 
     MessageDTO result =
-        chatMessagesService.sendMessage(SESSION_ID, USER_ID, MESSAGE_CONTENT, PROVIDER, MODEL);
+        chatMessagesService.sendMessage(
+            SESSION_ID, USER_ID, MESSAGE_CONTENT, PROVIDER, OPENAI_MODEL);
 
     assertThat(result).isNotNull();
     verify(chatMemory).clear();
@@ -171,7 +173,7 @@ class ChatMessagesServiceTest {
     assertThatThrownBy(
             () ->
                 chatMessagesService.sendMessage(
-                    SESSION_ID, USER_ID, MESSAGE_CONTENT, PROVIDER, MODEL))
+                    SESSION_ID, USER_ID, MESSAGE_CONTENT, PROVIDER, OPENAI_MODEL))
         .isInstanceOf(BadRequestException.class)
         .hasMessage("Session not found");
   }

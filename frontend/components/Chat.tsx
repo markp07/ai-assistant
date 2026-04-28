@@ -66,12 +66,11 @@ export function Chat({ sessionId, sessionTitle, onToggleSidebar }: ChatProps) {
       const models = await getOllamaModels();
       const names = models.map((m) => m.name);
       setOllamaModels(names);
-      if (names.length > 0 && !ollamaModel) {
-        setOllamaModel(names[0]);
-      }
+      setOllamaModel(names.length > 0 ? names[0] : '');
     } catch (err) {
       console.error('Error loading Ollama models:', err);
       setOllamaModels([]);
+      setOllamaModel('');
     } finally {
       setModelsLoading(false);
     }

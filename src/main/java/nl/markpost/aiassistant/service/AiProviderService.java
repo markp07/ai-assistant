@@ -6,6 +6,7 @@ import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 import lombok.RequiredArgsConstructor;
+import nl.markpost.aiassistant.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,10 @@ public class AiProviderService {
 
   private ChatModel resolveModel(String provider, String model) {
     if ("ollama".equals(provider)) {
+      if (model == null || model.isBlank()) {
+        throw new BadRequestException(
+            "A model name must be specified when using the Ollama provider.");
+      }
       return OllamaChatModel.builder().baseUrl(ollamaBaseUrl).modelName(model).build();
     }
     return openAiChatModel;
