@@ -1,5 +1,26 @@
 # Release Notes
 
+## [2025.14.0] - 2026-05-04
+
+### Changed
+- chore(docker)(deps): bump maven in the docker-dependencies group (#68)
+- chore(maven)(deps): bump the maven-dependencies group with 5 updates (#69)
+- chore(maven)(deps): bump the maven-dependencies group with 3 updates (#67)
+- chore(maven)(deps): bump the maven-dependencies group with 4 updates (#66)
+- chore(maven)(deps): bump the maven-dependencies group with 2 updates (#65)
+- chore(deps): bump next (#64)
+- chore(maven)(deps): bump the maven-dependencies group with 2 updates (#63)
+- chore(docker)(deps): bump maven in the docker-dependencies group (#62)
+- chore(deps-dev): bump minimatch (#58)
+- chore(github-actions)(deps): bump docker/setup-buildx-action (#60)
+- chore(maven)(deps): bump the maven-dependencies group across 1 directory with 4 updates (#61)
+- chore(maven)(deps): bump the maven-dependencies group across 1 directory with 8 updates (#57)
+- chore(maven)(deps): bump the maven-dependencies group across 1 directory with 5 updates (#52)
+- chore(deps): bump next (#54)
+- chore(maven)(deps-dev): bump org.assertj:assertj-core (#53)
+- Fix/add update script (#50)
+- chore(maven)(deps): bump org.springdoc:springdoc-openapi-starter-webmvc-ui (#49)
+
 ## [2025.13.0] - 2025-12-29
 
 ### Changed
