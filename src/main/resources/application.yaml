@@ -57,8 +57,7 @@ ns:
 logging:
   level:
     root: info
-    dev:
-      langchain4j: debug
+    "dev.langchain4j": debug
     "nl.markpost.aiassistant.service.AiProviderService": debug
     nl:
       markpost:
