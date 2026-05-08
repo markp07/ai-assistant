@@ -1,7 +1,6 @@
 package nl.markpost.aiassistant.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +19,6 @@ public class WebConfig implements WebMvcConfigurer {
   public ObjectMapper objectMapper() {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.findAndRegisterModules();
-    objectMapper.registerModule(new JavaTimeModule());
     return objectMapper;
   }
 
