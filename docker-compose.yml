@@ -35,6 +35,7 @@ services:
       - /data/ai_assistant
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://localhost:11434}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:7070}
       DATABASE_URL: jdbc:postgresql://postgres:5432/ai_assistant
       DATABASE_USERNAME: ai_assistant
