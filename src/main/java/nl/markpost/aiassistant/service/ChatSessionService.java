@@ -1,6 +1,5 @@
 package nl.markpost.aiassistant.service;
 
-import dev.langchain4j.memory.ChatMemory;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +8,6 @@ import nl.markpost.aiassistant.exception.BadRequestException;
 import nl.markpost.aiassistant.mapper.ChatSessionMapper;
 import nl.markpost.aiassistant.models.ChatSessionDTO;
 import nl.markpost.aiassistant.models.entity.ChatSession;
-import nl.markpost.aiassistant.repository.ChatMessageRepository;
 import nl.markpost.aiassistant.repository.ChatSessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatSessionService {
 
   private final ChatSessionRepository chatSessionRepository;
-  private final ChatMessageRepository chatMessageRepository;
-  private final Assistant assistant;
-  private final ChatMemory chatMemory;
   private final ChatSessionMapper chatSessionMapper;
 
   /**

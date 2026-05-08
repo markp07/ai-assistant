@@ -11,7 +11,6 @@ import nl.markpost.aiassistant.exception.BadRequestException;
 import nl.markpost.aiassistant.mapper.ChatSessionMapper;
 import nl.markpost.aiassistant.models.ChatSessionDTO;
 import nl.markpost.aiassistant.models.entity.ChatSession;
-import nl.markpost.aiassistant.repository.ChatMessageRepository;
 import nl.markpost.aiassistant.repository.ChatSessionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,12 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ChatSessionServiceTest {
 
   @Mock private ChatSessionRepository chatSessionRepository;
-
-  @Mock private ChatMessageRepository chatMessageRepository;
-
-  @Mock private Assistant assistant;
-
-  @Mock private dev.langchain4j.memory.ChatMemory chatMemory;
 
   @Mock private ChatSessionMapper chatSessionMapper;
 
