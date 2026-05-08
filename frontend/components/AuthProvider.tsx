@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { initializeAuthFromUrl } from '@/lib/auth';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -8,12 +9,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const initAuth = () => {
-      // Tokens are now stored as HTTP-only cookies by the auth service
-      // No need to extract them from URL or store in localStorage
-      // The browser will automatically send them with requests
-
-      // Simply mark as ready - let the backend verify tokens via cookies
-      // If tokens are invalid, backend will return 401 and trigger login
+      initializeAuthFromUrl();
       setIsAuthenticated(true);
       setIsLoading(false);
     };
@@ -38,4 +34,3 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
-

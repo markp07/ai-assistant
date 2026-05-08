@@ -1,4 +1,65 @@
 export const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:7080';
+const ACCESS_TOKEN_KEY = 'access_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+
+function extractTokensFromUrl(): { accessToken: string | null; refreshToken: string | null } {
+  if (typeof window === 'undefined') {
+    return { accessToken: null, refreshToken: null };
+  }
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+
+  const accessToken =
+    searchParams.get('access_token')
+    ?? hashParams.get('access_token')
+    ?? searchParams.get('token')
+    ?? hashParams.get('token');
+  const refreshToken =
+    searchParams.get('refresh_token')
+    ?? hashParams.get('refresh_token');
+
+  return { accessToken, refreshToken };
+}
+
+export function initializeAuthFromUrl(): void {
+  if (typeof window === 'undefined') return;
+
+  const { accessToken, refreshToken } = extractTokensFromUrl();
+
+  if (accessToken) {
+    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+  }
+
+  if (refreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+  }
+
+  if (accessToken || refreshToken) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
+
+export function getAccessToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(ACCESS_TOKEN_KEY);
+}
+
+function setAccessToken(accessToken: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+}
+
+export function getAuthHeaders(headers: HeadersInit = {}): Headers {
+  const result = new Headers(headers);
+  const accessToken = getAccessToken();
+
+  if (accessToken && !result.has('Authorization')) {
+    result.set('Authorization', `Bearer ${accessToken}`);
+  }
+
+  return result;
+}
 
 /**
  * Redirects the user to the login page with a callback to return to the current page
@@ -25,6 +86,22 @@ export async function refreshAccessToken(): Promise<boolean> {
       return false;
     }
 
+    const authHeader = response.headers.get('Authorization');
+    if (authHeader?.startsWith('Bearer ')) {
+      setAccessToken(authHeader.substring(7));
+      return true;
+    }
+
+    const responseData = await response.clone().json().catch(() => null);
+    const tokenFromBody =
+      responseData?.access_token
+      ?? responseData?.accessToken
+      ?? responseData?.token;
+
+    if (typeof tokenFromBody === 'string' && tokenFromBody.length > 0) {
+      setAccessToken(tokenFromBody);
+    }
+
     return true;
   } catch (error) {
     console.error('Error refreshing token:', error);
@@ -43,6 +120,7 @@ async function authenticatedFetch(url: string, options: RequestInit = {}): Promi
   // First attempt with credentials (cookies)
   const response = await fetch(url, {
     ...options,
+    headers: getAuthHeaders(options.headers),
     credentials: 'include',
   });
 
@@ -60,6 +138,7 @@ async function authenticatedFetch(url: string, options: RequestInit = {}): Promi
     console.log('[Auth] Token refreshed, retrying request...');
     const retryResponse = await fetch(url, {
       ...options,
+      headers: getAuthHeaders(options.headers),
       credentials: 'include',
     });
 
@@ -128,4 +207,3 @@ export async function logout(): Promise<void> {
   // Always redirect to login after logout, cookies will be cleared by the auth service
   redirectToLogin();
 }
-

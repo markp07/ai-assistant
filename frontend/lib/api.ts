@@ -1,5 +1,5 @@
 import { ChatSession, CreateSessionRequest, Message, OllamaModel, SendMessageRequest } from '@/types/chat';
-import { refreshAccessToken, redirectToLogin } from './auth';
+import { getAuthHeaders, refreshAccessToken, redirectToLogin } from './auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7075';
 
@@ -14,10 +14,10 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
   let response = await fetch(url, {
     ...options,
     credentials: 'include', // Include HTTP-only cookies
-    headers: {
+    headers: getAuthHeaders({
       'Content-Type': 'application/json',
       ...options.headers,
-    },
+    }),
   });
 
   // If we get a 401, try to refresh the token and retry
@@ -35,10 +35,10 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
     response = await fetch(url, {
       ...options,
       credentials: 'include',
-      headers: {
+      headers: getAuthHeaders({
         'Content-Type': 'application/json',
         ...options.headers,
-      },
+      }),
     });
 
     if (response.status === 401) {
