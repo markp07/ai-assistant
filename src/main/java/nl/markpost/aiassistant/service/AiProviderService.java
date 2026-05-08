@@ -7,6 +7,7 @@ import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.markpost.aiassistant.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,19 @@ import org.springframework.stereotype.Service;
 /** Service that selects and delegates to the appropriate AI provider (OpenAI or Ollama). */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AiProviderService {
 
   private final OpenAiChatModel openAiChatModel;
 
   @Value("${ollama.base-url}")
   private String ollamaBaseUrl;
+
+  @Value("${ollama.log-requests:true}")
+  private boolean ollamaLogRequests;
+
+  @Value("${ollama.log-responses:true}")
+  private boolean ollamaLogResponses;
 
   /**
    * Sends a chat message using the specified provider and model.
@@ -33,7 +41,24 @@ public class AiProviderService {
   public String chat(String provider, String model, String message, ChatMemory chatMemory) {
     ChatModel chatModel = resolveModel(provider, model);
     List<ChatMessage> messages = chatMemory.messages();
-    return chatModel.chat(messages);
+    if ("ollama".equals(provider)) {
+      log.info(
+          "Calling Ollama endpoint {} with model {} (messages={})",
+          ollamaBaseUrl + "/api/chat",
+          model,
+          messages.size());
+      log.debug("Ollama request payload messages: {}", messages);
+    }
+
+    String response = chatModel.chat(messages);
+
+    if ("ollama".equals(provider)) {
+      log.info(
+          "Received Ollama response from model {} (chars={})", model, response == null ? 0 : response.length());
+      log.debug("Ollama response payload: {}", response);
+    }
+
+    return response;
   }
 
   private ChatModel resolveModel(String provider, String model) {
@@ -42,7 +67,13 @@ public class AiProviderService {
         throw new BadRequestException(
             "A model name must be specified when using the Ollama provider.");
       }
-      return OllamaChatModel.builder().baseUrl(ollamaBaseUrl).modelName(model).build();
+      return OllamaChatModel.builder()
+          .baseUrl(ollamaBaseUrl)
+          .modelName(model)
+          .logRequests(ollamaLogRequests)
+          .logResponses(ollamaLogResponses)
+          .logger(log)
+          .build();
     }
     return openAiChatModel;
   }

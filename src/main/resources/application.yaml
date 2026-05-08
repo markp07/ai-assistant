@@ -48,6 +48,8 @@ openai:
 
 ollama:
   base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+  log-requests: ${OLLAMA_LOG_REQUESTS:true}
+  log-responses: ${OLLAMA_LOG_RESPONSES:true}
 
 ns:
   api-key: ${NS_API_KEY}
@@ -55,6 +57,9 @@ ns:
 logging:
   level:
     root: info
+    dev:
+      langchain4j: debug
+    "nl.markpost.aiassistant.service.AiProviderService": debug
     nl:
       markpost:
         aiassistant: info
