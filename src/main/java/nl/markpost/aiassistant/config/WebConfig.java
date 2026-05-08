@@ -1,7 +1,10 @@
 package nl.markpost.aiassistant.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -12,6 +15,14 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Value("${cors.allowed-origins}")
   private String allowedOrigins;
+
+  @Bean
+  public ObjectMapper objectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.findAndRegisterModules();
+    objectMapper.registerModule(new JavaTimeModule());
+    return objectMapper;
+  }
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
