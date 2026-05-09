@@ -1,17 +1,23 @@
 package nl.markpost.aiassistant.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.SystemMessage;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
-import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
-import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.markpost.aiassistant.exception.BadRequestException;
+import nl.markpost.aiassistant.exception.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /** Service that selects and delegates to the appropriate AI provider (OpenAI or Ollama). */
 @Service
@@ -40,9 +46,21 @@ public class AiProviderService {
    * @return The assistant's response.
    */
   public String chat(String provider, String model, String message, ChatMemory chatMemory) {
-    ChatModel chatModel = resolveModel(provider, model);
     List<ChatMessage> messages = chatMemory.messages();
     if ("ollama".equals(provider)) {
+      return ollamaChat(model, messages);
+    }
+    ChatResponse chatResponse = openAiChatModel.chat(messages);
+    return chatResponse.aiMessage().text();
+  }
+
+  private String ollamaChat(String model, List<ChatMessage> messages) {
+    if (model == null || model.isBlank()) {
+      throw new BadRequestException(
+          "A model name must be specified when using the Ollama provider.");
+    }
+
+    if (ollamaLogRequests) {
       log.info(
           "Calling Ollama endpoint {} with model {} (messages={})",
           ollamaBaseUrl + "/api/chat",
@@ -51,32 +69,59 @@ public class AiProviderService {
       log.debug("Ollama request payload messages: {}", messages);
     }
 
-    ChatResponse chatResponse = chatModel.chat(messages);
-    String response = chatResponse.aiMessage().text();
+    List<Map<String, String>> ollamaMessages =
+        messages.stream().map(this::toOllamaMessage).toList();
 
-    if ("ollama".equals(provider)) {
+    OllamaChatApiResponse response =
+        WebClient.builder()
+            .baseUrl(ollamaBaseUrl)
+            .build()
+            .post()
+            .uri("/api/chat")
+            .bodyValue(Map.of("model", model, "messages", ollamaMessages, "stream", false))
+            .retrieve()
+            .bodyToMono(OllamaChatApiResponse.class)
+            .block();
+
+    if (response == null || response.message() == null) {
+      throw new InternalServerErrorException("Empty response from Ollama");
+    }
+
+    String result = response.message().content();
+
+    if (ollamaLogResponses) {
       log.info(
-          "Received Ollama response from model {} (chars={})", model, response == null ? 0 : response.length());
-      log.debug("Ollama response payload: {}", response);
+          "Received Ollama response from model {} (chars={})",
+          model,
+          result == null ? 0 : result.length());
+      log.debug("Ollama response payload: {}", result);
     }
 
-    return response;
+    return result;
   }
 
-  private ChatModel resolveModel(String provider, String model) {
-    if ("ollama".equals(provider)) {
-      if (model == null || model.isBlank()) {
-        throw new BadRequestException(
-            "A model name must be specified when using the Ollama provider.");
-      }
-      return OllamaChatModel.builder()
-          .baseUrl(ollamaBaseUrl)
-          .modelName(model)
-          .logRequests(ollamaLogRequests)
-          .logResponses(ollamaLogResponses)
-          .logger(log)
-          .build();
-    }
-    return openAiChatModel;
+  private Map<String, String> toOllamaMessage(ChatMessage message) {
+    String role =
+        switch (message.type()) {
+          case USER -> "user";
+          case AI -> "assistant";
+          case SYSTEM -> "system";
+          default -> "user";
+        };
+    String content =
+        switch (message) {
+          case UserMessage um -> um.singleText();
+          case AiMessage am -> am.text();
+          case SystemMessage sm -> sm.text();
+          default -> "";
+        };
+    return Map.of("role", role, "content", content != null ? content : "");
   }
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  record OllamaChatApiResponse(@JsonProperty("message") OllamaMessage message) {}
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  record OllamaMessage(
+      @JsonProperty("role") String role, @JsonProperty("content") String content) {}
 }
