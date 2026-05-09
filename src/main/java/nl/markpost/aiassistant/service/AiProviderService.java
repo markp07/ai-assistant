@@ -3,6 +3,7 @@ package nl.markpost.aiassistant.service;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import java.util.List;
@@ -50,7 +51,8 @@ public class AiProviderService {
       log.debug("Ollama request payload messages: {}", messages);
     }
 
-    String response = chatModel.chat(messages);
+    ChatResponse chatResponse = chatModel.chat(messages);
+    String response = chatResponse.aiMessage().text();
 
     if ("ollama".equals(provider)) {
       log.info(
