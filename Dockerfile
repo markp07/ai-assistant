@@ -1,5 +1,5 @@
 # Use OpenJDK 21 with Alpine Linux as the base image for the build stage
-FROM maven:3.9.14-eclipse-temurin-25-alpine AS build
+FROM maven:3.9.15-eclipse-temurin-26-alpine AS build
 WORKDIR /workspace/app
 
 # Copy Maven wrapper and project files to the container
